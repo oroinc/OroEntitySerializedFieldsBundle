@@ -1,0 +1,12 @@
+oro_entity_config:
+    datagrid:
+        field:
+            items:
+                show_filter:
+                    options:
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  extend
+                               code:      is_serialized
+                               value:     false

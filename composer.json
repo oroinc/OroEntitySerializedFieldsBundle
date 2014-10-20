@@ -1,0 +1,30 @@
+{
+    "name": "oro/bap-serialised-fields",
+    "description": "Oro Platform Serialized Fields",
+    "homepage": "https://github.com/laboro/OroEntitySerializedFieldsBundle",
+    "license": "OSL-3.0",
+    "keywords": ["Oro", "Platform", "fields", "entity"],
+    "authors": [
+        {
+            "name": "Oro, Inc",
+            "homepage": "http://www.orocrm.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Oro\\Bundle\\EntitySerializedFieldsBundle": "src/"
+        }
+    },
+    "target-dir": "src/Oro/Bundle/EntitySerializedFieldsBundle",
+    "require": {
+        "php": ">=5.4.9",
+        "oro/platform": "1.x-dev"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    }
+}
