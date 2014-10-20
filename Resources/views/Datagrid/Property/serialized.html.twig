@@ -1,0 +1,3 @@
+{% if field_name is defined and record.getValue('serialized_data') is defined and record.getValue('serialized_data')[field_name] is defined %}
+    {{ record.getValue('serialized_data')[field_name] }}
+{% endif %}
