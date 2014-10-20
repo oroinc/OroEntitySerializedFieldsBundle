@@ -1,0 +1,36 @@
+oro_entity_config:
+    extend:
+        field:
+            items:
+                #
+                # TODO: remove it, used for testing
+                #
+                is_serialized:
+                    options:
+                        indexed:            true
+                    form:
+                        type:               choice
+                        options:
+                            required:       false
+                            choices:        ['No', 'Yes']
+                            label:          is Serialized
+                            block:          other
+                    grid:
+                        type:               boolean
+                        label:              DataBase field
+                        filter_type:        boolean
+                        required:           true
+                        sortable:           true
+                        filterable:         true
+                        show_filter:        false
+    datagrid:
+        field:
+            items:
+                show_filter:
+                    options:
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  extend
+                               code:      is_serialized
+                               value:     false

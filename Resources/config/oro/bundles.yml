@@ -1,0 +1,2 @@
+bundles:
+    - { name: Oro\Bundle\EntitySerializedFieldsBundle\OroEntitySerializedFieldsBundle, priority: 100 }
