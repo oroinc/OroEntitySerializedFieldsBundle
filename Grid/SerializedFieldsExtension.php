@@ -22,6 +22,9 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
         return parent::isApplicable($config);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitDatasource(DatagridConfiguration $config, DatasourceInterface $datasource)
     {
         $entityClassName = $this->entityClassResolver->getEntityClass($this->getEntityName($config));
