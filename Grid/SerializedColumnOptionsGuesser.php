@@ -2,14 +2,10 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Grid;
 
-use Oro\Bundle\DataGridBundle\Datagrid\AbstractColumnOptionsGuesser;
-use Oro\Bundle\DataGridBundle\Datagrid\DatagridGuesser;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface as Property;
 use Oro\Bundle\DataGridBundle\Datagrid\Guess\ColumnGuess;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+
 use Oro\Bundle\EntityExtendBundle\Grid\ExtendColumnOptionsGuesser;
-use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 
 class SerializedColumnOptionsGuesser extends ExtendColumnOptionsGuesser
 {
@@ -43,7 +39,9 @@ class SerializedColumnOptionsGuesser extends ExtendColumnOptionsGuesser
         $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
         if ($extendFieldConfig->is('is_serialized')) {
             return new ColumnGuess(
-                [Property::DISABLED_KEY => true],
+                [
+                    Property::DISABLED_KEY => true
+                ],
                 ColumnGuess::HIGH_CONFIDENCE
             );
         }
@@ -58,24 +56,15 @@ class SerializedColumnOptionsGuesser extends ExtendColumnOptionsGuesser
     {
         $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
         if ($extendFieldConfig->is('is_serialized')) {
-            $options = [
-                'type' => 'string',
-                DatagridGuesser::FILTER => [
-                    'data_name' => $property,
-                    'enabled'   => false
+            return new ColumnGuess(
+                [
+                    Property::TYPE_KEY     => Property::TYPE_STRING,
+                    Property::DISABLED_KEY => true
                 ],
-            ];
+                ColumnGuess::HIGH_CONFIDENCE
+            );
         }
 
-        /*$extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
-        if ($extendFieldConfig->is('is_serialized')) {
-            $options = [
-                'type'       => 'null',
-            ];
-        }*/
-
-        return isset($options)
-            ? new ColumnGuess($options, ColumnGuess::HIGH_CONFIDENCE)
-            : null;
+        return null;
     }
 }
