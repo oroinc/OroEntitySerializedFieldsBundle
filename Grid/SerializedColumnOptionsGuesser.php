@@ -2,13 +2,26 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Grid;
 
+use Oro\Bundle\DataGridBundle\Datagrid\AbstractColumnOptionsGuesser;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface as Property;
 use Oro\Bundle\DataGridBundle\Datagrid\Guess\ColumnGuess;
 
-use Oro\Bundle\EntityExtendBundle\Grid\ExtendColumnOptionsGuesser;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 
-class SerializedColumnOptionsGuesser extends ExtendColumnOptionsGuesser
+class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
 {
+    /** @var ConfigManager */
+    protected $configManager;
+
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function __construct(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -66,5 +79,21 @@ class SerializedColumnOptionsGuesser extends ExtendColumnOptionsGuesser
         }
 
         return null;
+    }
+
+    /**
+     * @param string $scope
+     * @param string $class
+     * @param string $property
+     *
+     * @return ConfigInterface
+     */
+    protected function getFieldConfig($scope, $class, $property)
+    {
+        $configProvider = $this->configManager->getProvider($scope);
+
+        return $configProvider->hasConfig($class, $property)
+            ? $configProvider->getConfig($class, $property)
+            : null;
     }
 }
