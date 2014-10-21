@@ -38,7 +38,7 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
          * Entity processing
          */
         $class->setProperty(PhpProperty::create('serialized_data')->setVisibility('protected'));
-        $schema['property']['serialized_data'] = 'serialized_data';
+        $schema['property']['serialized_data']                             = 'serialized_data';
         $schema['doctrine'][$entityClassName]['fields']['serialized_data'] = [
             'column'   => 'serialized_data',
             'type'     => 'array',
@@ -67,7 +67,9 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
                     ->setMethod(
                         $this->generateClassMethod(
                             'get' . ucfirst(Inflector::camelize($fieldName)),
-                            'return $this->serialized_data[\'' . $fieldName . '\'];'
+                            'return isset($this->serialized_data[\'' . $fieldName . '\']) ' .
+                            '   ? $this->serialized_data[\'' . $fieldName . '\'] ' .
+                            '   : null;'
                         )
                     )
                     ->setMethod(

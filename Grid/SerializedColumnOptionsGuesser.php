@@ -34,7 +34,8 @@ class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
                 'type'          => 'twig',
                 'template'      => 'OroEntitySerializedFieldsBundle:Datagrid:Property/serialized.html.twig',
                 'context'       => [
-                    'field_name' => $property
+                    'field_name' => $property,
+                    'field_type' => $type,
                 ],
             ];
         }
