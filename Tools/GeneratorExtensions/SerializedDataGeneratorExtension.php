@@ -67,7 +67,9 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
                     ->setMethod(
                         $this->generateClassMethod(
                             'get' . ucfirst(Inflector::camelize($fieldName)),
-                            'return $this->serialized_data[\'' . $fieldName . '\'];'
+                            'return isset($this->serialized_data[\'' . $fieldName . '\']) ' .
+                            '   ? $this->serialized_data[\'' . $fieldName . '\'] ' .
+                            '   : null;'
                         )
                     )
                     ->setMethod(

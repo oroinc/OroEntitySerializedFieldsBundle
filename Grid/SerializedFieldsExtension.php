@@ -1,0 +1,86 @@
+<?php
+
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Grid;
+
+use Doctrine\ORM\Query\Expr\From;
+use Doctrine\ORM\Query\Expr\Select;
+use Doctrine\ORM\QueryBuilder;
+
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
+
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datasource\DatasourceInterface;
+
+class SerializedFieldsExtension extends DynamicFieldsExtension
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicable(DatagridConfiguration $config)
+    {
+        return parent::isApplicable($config);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function visitDatasource(DatagridConfiguration $config, DatasourceInterface $datasource)
+    {
+        $entityClassName = $this->entityClassResolver->getEntityClass($this->getEntityName($config));
+
+        /** @var QueryBuilder $qb */
+        $qb        = $datasource->getQueryBuilder();
+        $fromParts = $qb->getDQLPart('from');
+        $alias     = false;
+
+        /** @var From $fromPart */
+        foreach ($fromParts as $fromPart) {
+            if ($this->entityClassResolver->getEntityClass($fromPart->getFrom()) == $entityClassName) {
+                $alias = $fromPart->getAlias();
+            }
+        }
+
+        if ($alias === false) {
+            // add entity if it not exists in from clause
+            $alias = 'o';
+            $qb->from($entityClassName, $alias);
+        }
+
+        $extendConfigProvider = $this->configManager->getProvider('extend');
+        $extendConfig = $extendConfigProvider->getConfig($entityClassName);
+        if ($extendConfig->is('is_extend')) {
+            /** @var FieldConfigId[] $fields */
+            $fields = $this->getFields($config);
+            $fields = array_filter(
+                $fields,
+                function (FieldConfigId $field) use ($extendConfigProvider, $entityClassName) {
+                    $fieldConfig = $extendConfigProvider->getConfig($entityClassName, $field->getFieldName());
+                    return $fieldConfig->has('is_serialized') && $fieldConfig->is('is_serialized');
+                }
+            );
+            array_walk(
+                $fields,
+                function (&$value) use ($alias) {
+                    $value = sprintf('%s.%s', $alias, $value->getFieldName());
+                }
+            );
+
+            /** @var Select[] $selects */
+            $selects = $qb->getDQLPart('select');
+            $selects = array_filter(
+                $selects,
+                function (Select $select) use ($fields) {
+                    return !array_search($select, $fields);
+                }
+            );
+
+            $qb->resetDQLPart('select');
+            foreach ($selects as $select) {
+                $qb->addSelect($select->getParts());
+            }
+
+            $qb->addSelect(sprintf('%s.%s', $alias, 'serialized_data'));
+        }
+    }
+}
