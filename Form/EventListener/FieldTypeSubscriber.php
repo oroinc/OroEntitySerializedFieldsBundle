@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener;
 
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class FieldTypeSubscriber implements EventSubscriberInterface
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+
+class FieldTypeSubscriber extends AbstractTypeExtension
 {
-    /**
-     * @var Session
-     */
+    /** @var Session */
     protected $session;
 
     /**
@@ -26,15 +26,10 @@ class FieldTypeSubscriber implements EventSubscriberInterface
         $this->factory = $factory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        return [
-            FormEvents::PRE_SET_DATA  => 'preSet',
-            FormEvents::POST_SUBMIT   => ['postSubmit', 20],
-        ];
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSet']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
     /**
@@ -70,20 +65,30 @@ class FieldTypeSubscriber implements EventSubscriberInterface
             )
         );
 
-/*        $form->add(
+        /*$form->add(
             'is_serialized',
             'choice',
             [
                 'choices'  => [
-                    'regular'       => 'oro.entity_extend.form.storage_type.regular',
-                    'serializable'  => 'oro.entity_extend.form.storage_type.serializable'
+                    0 => 'Yes',
+                    1 => 'No'
                 ],
                 'required'  => true,
-                'label'     => 'oro.entity_extend.form.storage_type.label',
+                'label'     => 'oro.entity_serialized_fields.form.is_serialized.label',
                 'mapped'    => false,
                 'block'     => 'general',
                 'tooltip'   => 'oro.entity_extend.field.storage_type.tooltip',
             ]
         );*/
+    }
+
+    /**
+     * Returns the name of the type being extended.
+     *
+     * @return string The name of the type being extended
+     */
+    public function getExtendedType()
+    {
+        return 'oro_entity_extend_field_type';
     }
 }

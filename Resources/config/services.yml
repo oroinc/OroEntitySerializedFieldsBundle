@@ -6,9 +6,9 @@ parameters:
     oro_serialized_fields.datagrid.serialized_fields_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension
 
     oro_serialized_fields.form.subscriber.field_subscriber.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener\FieldTypeSubscriber
-    oro_serialized_fields.form.subscriber.config_subscriber.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener\ConfigTypeSubscriber
+    #oro_serialized_fields.form.subscriber.config_subscriber.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener\ConfigTypeSubscriber
     oro_serialized_fields.form.type.is_serialized_field.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType
-    #oro_entity_extend.type.field.class:  Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\FieldType
+
 services:
     oro_serialized_fields.migration.searilized_data.post_up.listener:
           class: %oro_serialized_fields.migration.searilized_data.post_up.listener.class%
@@ -40,17 +40,23 @@ services:
         tags:
             - { name: oro_datagrid.extension }
 
-    oro_serialized_fields.form.subscriber.config_subscriber:
-        class: %oro_serialized_fields.form.subscriber.config_subscriber.class%
-        arguments:
-            - @session
-            - @oro_entity_config.config_manager
+
+
+
+
+#    oro_serialized_fields.form.subscriber.config_subscriber:
+#        class: %oro_serialized_fields.form.subscriber.config_subscriber.class%
+#        arguments:
+#            - @session
+#            - @oro_entity_config.config_manager
 
     oro_serialized_fields.form.subscriber.field_subscriber:
         class: %oro_serialized_fields.form.subscriber.field_subscriber.class%
         arguments:
             - @session
             - @form.factory
+        tags:
+            - { name: form.type_extension, alias: oro_entity_extend_field_type }
 
     oro_serialized_fields.form.type.is_serialized_field:
         class: %oro_serialized_fields.form.type.is_serialized_field.class%
