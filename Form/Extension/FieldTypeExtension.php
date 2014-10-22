@@ -7,6 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -67,6 +69,29 @@ class FieldTypeExtension extends AbstractTypeExtension
                 'oro_serialized_fields_is_serialized_type'
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $fieldsOrder = [
+            'fieldName',
+            'is_serialized',
+            'type'
+        ];
+        $fields = [];
+        foreach ($fieldsOrder as $field) {
+            if ($view->offsetExists($field)) {
+                $fields[$field] = $view->offsetGet($field);
+                $view->offsetUnset($field);
+            }
+        }
+
+        $view->children = $fields + $view->children;
+
+        parent::finishView($view, $form, $options);
     }
 
     /**

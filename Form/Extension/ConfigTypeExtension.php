@@ -56,41 +56,15 @@ class ConfigTypeExtension extends AbstractTypeExtension
             return false;
         }
 
-        $fieldOptions = [
-            'extend' => [
-                'is_serialized' => true,
-            ]
-        ];
-        $this->updateFieldConfigs($this->configManager, $configModel, $fieldOptions);
-    }
+        // Update field config
+        $className = $configModel->getEntity()->getClassName();
+        $fieldName = $configModel->getFieldName();
 
-    /**
-     * @param ConfigManager    $configManager
-     * @param FieldConfigModel $fieldModel
-     * @param array            $options
-     */
-    protected function updateFieldConfigs(ConfigManager $configManager, FieldConfigModel $fieldModel, $options)
-    {
-        $className = $fieldModel->getEntity()->getClassName();
-        $fieldName = $fieldModel->getFieldName();
-        foreach ($options as $scope => $scopeValues) {
-            $configProvider = $configManager->getProvider($scope);
-            $config         = $configProvider->getConfig($className, $fieldName);
-            $hasChanges     = false;
-            foreach ($scopeValues as $code => $val) {
-                if (!$config->is($code, $val)) {
-                    $config->set($code, $val);
-                    $hasChanges = true;
-                }
-            }
-            if ($hasChanges) {
-                $configProvider->persist($config);
-                $indexedValues = $configProvider->getPropertyConfig()->getIndexedValues($config->getId());
-                $fieldModel->fromArray($config->getId()->getScope(), $config->all(), $indexedValues);
-
-                $configProvider->flush();
-            }
-        }
+        $configProvider = $this->configManager->getProvider('extend');
+        $config         = $configProvider->getConfig($className, $fieldName);
+        $config->set('is_serialized', true);
+        $configProvider->persist($config);
+        $configProvider->flush();
     }
 
     /**
