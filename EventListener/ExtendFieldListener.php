@@ -9,7 +9,6 @@ use Oro\Bundle\EntityConfigBundle\Entity\ConfigModelIndexValue;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Event\AfterFlushFieldEvent;
 use Oro\Bundle\EntityExtendBundle\Event\BeforePersistFieldEvent;
-use Oro\Bundle\EntityExtendBundle\Event\CollectFieldOptions;
 use Oro\Bundle\EntityExtendBundle\Event\CollectFieldOptionsEvent;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 
