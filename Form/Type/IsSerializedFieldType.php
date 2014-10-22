@@ -3,7 +3,8 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\TranslationBundle\Translation\Translator;
@@ -74,37 +75,14 @@ class IsSerializedFieldType extends AbstractType
     /**
      * {@inheritdoc}
      */
-/*    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder->add(
-            'is_serialized',
-            'choice',
-            [
-                'choices'  => [
-                    'regular'       => 'oro.entity_extend.form.storage_type.regular',
-                    'serializable'  => 'oro.entity_extend.form.storage_type.serializable'
-                ],
-                'required'  => true,
-                'label'     => 'oro.entity_extend.form.storage_type.label',
-                'mapped'    => false,
-                'block'     => 'general',
-                'tooltip'   => 'oro.entity_extend.field.storage_type.tooltip',
-            ]
-        );
-    }*/
-
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        # $b = $this->getFieldTypeChoices();
         $resolver
             ->setDefaults(
                 [
                     'choices'  => [
-                        1   => 'oro.entity_serialized_fields.form.is_serialized.yes',
-                        0   => 'oro.entity_serialized_fields.form.is_serialized.no'
+                        0   => 'oro.entity_serialized_fields.form.is_serialized.yes',
+                        1   => 'oro.entity_serialized_fields.form.is_serialized.no'
                     ],
                     'auto_initialize' => false,
                     'required'  => true,
@@ -135,9 +113,9 @@ class IsSerializedFieldType extends AbstractType
     /**
      * {@inheritdoc}
      */
-/*    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['regularTypes']      = $form->get('type')->getConfig()->getOption('choices');
-        $view->vars['serializableTypes'] = $this->getFieldTypeChoices(array(), $this->serializableTypes);
-    }*/
+        $view->vars['regularTypes']         = $form->getParent()->get('type')->getConfig()->getOption('choices');
+        $view->vars['serializableTypes']    = $this->getFieldTypeChoices();
+    }
 }

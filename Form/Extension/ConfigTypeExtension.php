@@ -1,25 +1,28 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension;
 
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
-class ConfigTypeSubscriber implements EventSubscriberInterface
+class ConfigTypeExtension extends AbstractTypeExtension
 {
-
     /** @var Session $session */
     protected $session;
 
     /** @var ConfigManager $configManager */
     protected $configManager;
 
-
+    /**
+     * @param Session       $session
+     * @param ConfigManager $configManager
+     */
     public function __construct(Session $session, ConfigManager $configManager)
     {
         $this->session          = $session;
@@ -27,13 +30,12 @@ class ConfigTypeSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormBuilderInterface $builder
+     * @param array                $options
      */
-    public static function getSubscribedEvents()
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        return [
-            FormEvents::POST_SUBMIT   => ['postSubmit', -20],
-        ];
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit'], -20);
     }
 
     /**
@@ -89,5 +91,15 @@ class ConfigTypeSubscriber implements EventSubscriberInterface
                 $configProvider->flush();
             }
         }
+    }
+
+    /**
+     * Returns the name of the type being extended.
+     *
+     * @return string The name of the type being extended
+     */
+    public function getExtendedType()
+    {
+        return 'oro_entity_config_type';
     }
 }

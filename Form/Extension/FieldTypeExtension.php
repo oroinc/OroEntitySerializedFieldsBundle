@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,10 +11,13 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
-class FieldTypeSubscriber extends AbstractTypeExtension
+class FieldTypeExtension extends AbstractTypeExtension
 {
     /** @var Session */
     protected $session;
+
+    /** @var FormFactoryInterface */
+    protected $factory;
 
     /**
      * @param Session              $session
@@ -64,22 +67,6 @@ class FieldTypeSubscriber extends AbstractTypeExtension
                 'oro_serialized_fields_is_serialized_type'
             )
         );
-
-        /*$form->add(
-            'is_serialized',
-            'choice',
-            [
-                'choices'  => [
-                    0 => 'Yes',
-                    1 => 'No'
-                ],
-                'required'  => true,
-                'label'     => 'oro.entity_serialized_fields.form.is_serialized.label',
-                'mapped'    => false,
-                'block'     => 'general',
-                'tooltip'   => 'oro.entity_extend.field.storage_type.tooltip',
-            ]
-        );*/
     }
 
     /**

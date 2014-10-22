@@ -1,7 +1,34 @@
 {% block oro_serialized_fields_is_serialized_type_widget %}
-    <div style="background-color: #000066">
-        test
-        <br>
-    </div>
-    {{ form_widget(form) }}
+    {% spaceless %}
+        {{ form_widget(form) }}
+
+        {% set serializableTypes = form.vars.serializableTypes|json_encode() %}
+        {% set regularTypes = form.vars.regularTypes|json_encode() %}
+
+        <script type="text/javascript">
+            require(['jquery'], function($){
+                $(document).on('change', 'form select#oro_entity_extend_field_type_is_serialized', function (e) {
+                    $('form select#oro_entity_extend_field_type_type').empty();
+
+                    var regularTypes        = {{ regularTypes|raw }};
+                    var serializableTypes   = {{ serializableTypes|raw }};
+                    var categories          = $(this).val() == 1 ? serializableTypes : regularTypes;
+
+                    $.each(categories, function(group_name, data) {
+                        var optgroup = $('<optgroup>');
+                        optgroup.attr('label', group_name);
+
+                        $.each(data, function (key, value) {
+                            var option = $("<option></option>");
+                            option.val(key);
+                            option.text(value);
+                            optgroup.append(option);
+                        });
+                        $("form select#oro_entity_extend_field_type_type").append(optgroup);
+                    });
+                    $("form select#oro_entity_extend_field_type_type").select2("val", "");
+                });
+            });
+        </script>
+    {% endspaceless %}
 {% endblock %}

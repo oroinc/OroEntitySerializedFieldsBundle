@@ -4,9 +4,8 @@ parameters:
 
     oro_serialized_fields.datagrid.column_options_guesser.class:  Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser
     oro_serialized_fields.datagrid.serialized_fields_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension
-
-    oro_serialized_fields.form.subscriber.field_subscriber.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener\FieldTypeSubscriber
-    #oro_serialized_fields.form.subscriber.config_subscriber.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener\ConfigTypeSubscriber
+    oro_serialized_fields.form.extension.config_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\ConfigTypeExtension
+    oro_serialized_fields.form.extension.field_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension
     oro_serialized_fields.form.type.is_serialized_field.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType
 
 services:
@@ -40,23 +39,21 @@ services:
         tags:
             - { name: oro_datagrid.extension }
 
-
-
-
-
-#    oro_serialized_fields.form.subscriber.config_subscriber:
-#        class: %oro_serialized_fields.form.subscriber.config_subscriber.class%
-#        arguments:
-#            - @session
-#            - @oro_entity_config.config_manager
-
-    oro_serialized_fields.form.subscriber.field_subscriber:
-        class: %oro_serialized_fields.form.subscriber.field_subscriber.class%
+    oro_serialized_fields.form.extension.field_extension:
+        class: %oro_serialized_fields.form.extension.field_extension.class%
         arguments:
             - @session
             - @form.factory
         tags:
             - { name: form.type_extension, alias: oro_entity_extend_field_type }
+
+    oro_serialized_fields.form.extension.config_extension:
+        class: %oro_serialized_fields.form.extension.config_extension.class%
+        arguments:
+            - @session
+            - @oro_entity_config.config_manager
+        tags:
+            - { name: form.type_extension, alias: oro_entity_config_type }
 
     oro_serialized_fields.form.type.is_serialized_field:
         class: %oro_serialized_fields.form.type.is_serialized_field.class%
