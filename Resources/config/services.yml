@@ -5,6 +5,10 @@ parameters:
     oro_serialized_fields.datagrid.column_options_guesser.class:  Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser
     oro_serialized_fields.datagrid.serialized_fields_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension
 
+    oro_serialized_fields.form.subscriber.field_subscriber.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener\FieldTypeSubscriber
+    oro_serialized_fields.form.subscriber.config_subscriber.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\EventListener\ConfigTypeSubscriber
+    oro_serialized_fields.form.type.is_serialized_field.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType
+    #oro_entity_extend.type.field.class:  Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\FieldType
 services:
     oro_serialized_fields.migration.searilized_data.post_up.listener:
           class: %oro_serialized_fields.migration.searilized_data.post_up.listener.class%
@@ -35,3 +39,22 @@ services:
             - @oro_datagrid.datagrid.guesser
         tags:
             - { name: oro_datagrid.extension }
+
+    oro_serialized_fields.form.subscriber.config_subscriber:
+        class: %oro_serialized_fields.form.subscriber.config_subscriber.class%
+        arguments:
+            - @session
+            - @oro_entity_config.config_manager
+
+    oro_serialized_fields.form.subscriber.field_subscriber:
+        class: %oro_serialized_fields.form.subscriber.field_subscriber.class%
+        arguments:
+            - @session
+            - @form.factory
+
+    oro_serialized_fields.form.type.is_serialized_field:
+        class: %oro_serialized_fields.form.type.is_serialized_field.class%
+        arguments:
+            - @translator
+        tags:
+            - { name: form.type, alias: oro_serialized_fields_is_serialized_type }
