@@ -7,12 +7,12 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModelIndexValue;
 
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntityExtendBundle\Event\AfterFlushFieldEvent;
 use Oro\Bundle\EntityExtendBundle\Event\BeforePersistFieldEvent;
 use Oro\Bundle\EntityExtendBundle\Event\CollectFieldOptionsEvent;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 
-use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\ConfigTypeExtension;
+use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 
 class ExtendFieldListener
 {
@@ -28,7 +28,7 @@ class ExtendFieldListener
      */
     public function __construct(ExtendConfigDumper $dumper, Session $session)
     {
-        $this->dumper = $dumper;
+        $this->dumper  = $dumper;
         $this->session = $session;
     }
 
@@ -42,7 +42,7 @@ class ExtendFieldListener
         $extendScope = $fieldConfigModel->toArray('extend');
         if (isset($extendScope['is_serialized']) && $extendScope['is_serialized']) {
             $extendScope['state'] = ExtendScope::STATE_ACTIVE;
-            $indexes = $fieldConfigModel->getIndexedValues()->toArray();
+            $indexes              = $fieldConfigModel->getIndexedValues()->toArray();
             array_walk(
                 $indexes,
                 function (ConfigModelIndexValue &$index) {
@@ -63,7 +63,7 @@ class ExtendFieldListener
     public function afterFlush(AfterFlushFieldEvent $event)
     {
         $fieldConfigModel = $event->getConfigModel();
-        $extendScope = $fieldConfigModel->toArray('extend');
+        $extendScope      = $fieldConfigModel->toArray('extend');
         if (isset($extendScope['is_serialized']) && $extendScope['is_serialized']) {
             $this->dumper->dump($event->getClassName(), false);
         }
@@ -74,10 +74,10 @@ class ExtendFieldListener
      */
     public function collectOptions(CollectFieldOptionsEvent $event)
     {
-        $options = $event->getOptions();
-        $fieldModel = $event->getFieldConfigModel();
+        $options      = $event->getOptions();
+        $fieldModel   = $event->getFieldConfigModel();
         $isSerialized = $this->session->get(
-            sprintf(ConfigTypeExtension::SESSION_ID_FIELD_SERIALIZED, $fieldModel->getEntity()->getId())
+            sprintf(FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED, $fieldModel->getEntity()->getId())
         );
         if ($isSerialized) {
             $options['extend']['is_serialized'] = true;
