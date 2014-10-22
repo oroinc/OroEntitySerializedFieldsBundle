@@ -65,9 +65,11 @@ services:
             - { name: form.type, alias: oro_serialized_fields_is_serialized_type }
 
     oro_serialized_fields.listener.extend_field:
-          class: %oro_serialized_fields.listener.extend_field.class%
-          arguments:
+        class: %oro_serialized_fields.listener.extend_field.class%
+        arguments:
             - @oro_entity_extend.tools.dumper
-          tags:
-              - { name: kernel.event_listener, event: oro_entity_extend.before_persist_field, method: beforePersist }
-              - { name: kernel.event_listener, event: oro_entity_extend.after_flush_field, method: afterFlush }
+            - @session
+        tags:
+            - { name: kernel.event_listener, event: oro_entity_extend.before_persist_field, method: beforePersist }
+            - { name: kernel.event_listener, event: oro_entity_extend.after_flush_field, method: afterFlush }
+            - { name: kernel.event_listener, event: oro_entity_extend.collect_field_options, method: collectOptions }

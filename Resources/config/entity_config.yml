@@ -3,18 +3,12 @@ oro_entity_config:
         field:
             items:
                 #
-                # TODO: remove it, used for testing
+                # Boolean parameter. If true - field data will be saved in serialized_data column without
+                #  doctrine schema update
                 #
                 is_serialized:
                     options:
                         indexed:            true
-                    form:
-                        type:               choice
-                        options:
-                            required:       false
-                            choices:        ['No', 'Yes']
-                            label:          is Serialized
-                            block:          other
                     grid:
                         type:               boolean
                         label:              DataBase field

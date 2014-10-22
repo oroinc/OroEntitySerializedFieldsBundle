@@ -10,9 +10,12 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 
 class ConfigTypeExtension extends AbstractTypeExtension
 {
+    const SESSION_ID_FIELD_SERIALIZED = '_extendbundle_create_entity_%s_is_serialized';
+
     /** @var Session $session */
     protected $session;
 
@@ -48,8 +51,12 @@ class ConfigTypeExtension extends AbstractTypeExtension
         /** @var FieldConfigModel $configModel */
         $configModel = $form->getConfig()->getOption('config_model');
 
+        if ($configModel instanceof EntityConfigModel) {
+            return false;
+        }
+
         $isSerialized = $this->session->get(
-            sprintf('_extendbundle_create_entity_%s_is_serialized', $configModel->getEntity()->getId())
+            sprintf(self::SESSION_ID_FIELD_SERIALIZED, $configModel->getEntity()->getId())
         );
 
         if (!$isSerialized) {

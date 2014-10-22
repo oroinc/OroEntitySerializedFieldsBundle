@@ -48,7 +48,7 @@ class FieldTypeExtension extends AbstractTypeExtension
 
         if ($form->isValid()) {
             $this->session->set(
-                sprintf('_extendbundle_create_entity_%s_is_serialized', $configModel->getEntity()->getId()),
+                sprintf(ConfigTypeExtension::SESSION_ID_FIELD_SERIALIZED, $configModel->getEntity()->getId()),
                 $isSerialized
             );
         }
