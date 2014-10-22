@@ -32,14 +32,14 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
      */
     public function generate(array &$schema, PhpClass $class)
     {
-        $entityClassName = $class->getName();
+        $entityClassName = $schema['class'];
 
         /**
          * Entity processing
          */
         $class->setProperty(PhpProperty::create('serialized_data')->setVisibility('protected'));
         $schema['property']['serialized_data'] = 'serialized_data';
-        $schema['doctrine'][$entityClassName]['fields']['serialized_data'] = [
+        $schema['doctrine'][$class->getName()]['fields']['serialized_data'] = [
             'column'   => 'serialized_data',
             'type'     => 'array',
             'nullable' => true,
@@ -51,7 +51,7 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
         /** @var FieldConfigId[] $config */
         $fieldConfigs = $this->extendConfigProvider->getConfigs($entityClassName);
         foreach ($fieldConfigs as $fieldConfig) {
-            if ($fieldConfig->get('is_serialized')) {
+            if ($fieldConfig->is('is_serialized')) {
                 $fieldName = $fieldConfig->getId()->getFieldName();
                 unset($schema['doctrine'][$entityClassName]['fields'][$fieldName]);
                 unset($schema['property'][$fieldName]);
@@ -91,6 +91,6 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
         /** @var ConfigInterface $config */
         $config = $this->extendConfigProvider->getConfig($schema['class']);
 
-        return $config->get('owner') == ExtendScope::OWNER_CUSTOM;
+        return $config->get('is_extend')  == true;
     }
 }

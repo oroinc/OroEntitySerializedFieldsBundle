@@ -29,10 +29,7 @@ class IsSerializedFieldType extends AbstractType
             'text',
             'float',
             'money',
-            'percent',
-            'image',
-            'enum',
-            'multiEnum',
+            'percent'
         ]
     ];
 
@@ -46,7 +43,7 @@ class IsSerializedFieldType extends AbstractType
      */
     public function __construct(Translator $translator)
     {
-        $this->translator    = $translator;
+        $this->translator = $translator;
     }
 
     /**
@@ -66,7 +63,7 @@ class IsSerializedFieldType extends AbstractType
         uasort($relationTypes, 'strcasecmp');
 
         $result = [
-            $this->translator->trans(self::GROUP_TYPE_PREFIX . self::GROUP_FIELDS)    => $fieldTypes,
+            $this->translator->trans(self::GROUP_TYPE_PREFIX . self::GROUP_FIELDS) => $fieldTypes,
         ];
 
         return $result;
