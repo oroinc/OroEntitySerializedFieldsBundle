@@ -16,6 +16,8 @@ use Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\AbstractEntityGenera
 
 class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
 {
+    const SERIALIZED_DATA_FIELD = 'serialized_data';
+
     /** @var ConfigProvider */
     protected $extendConfigProvider;
 
@@ -37,13 +39,27 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
         /**
          * Entity processing
          */
-        $class->setProperty(PhpProperty::create('serialized_data')->setVisibility('protected'));
-        $schema['property']['serialized_data'] = 'serialized_data';
-        $schema['doctrine'][$schema['entity']]['fields']['serialized_data'] = [
-            'column'   => 'serialized_data',
+        $class->setProperty(PhpProperty::create(self::SERIALIZED_DATA_FIELD)->setVisibility('protected'));
+        $schema['property'][self::SERIALIZED_DATA_FIELD] = self::SERIALIZED_DATA_FIELD;
+        $schema['doctrine'][$class->getName()]['fields'][self::SERIALIZED_DATA_FIELD] = [
+            'column'   => self::SERIALIZED_DATA_FIELD,
             'type'     => 'array',
             'nullable' => true,
         ];
+        $class
+            ->setMethod(
+                $this->generateClassMethod(
+                    'get' . ucfirst(Inflector::camelize(self::SERIALIZED_DATA_FIELD)),
+                    'return $this->' . self::SERIALIZED_DATA_FIELD .';'
+                )
+            )
+            ->setMethod(
+                $this->generateClassMethod(
+                    'set' . ucfirst(Inflector::camelize(self::SERIALIZED_DATA_FIELD)),
+                    '$this->' . self::SERIALIZED_DATA_FIELD .' = $value; return $this;',
+                    ['value']
+                )
+            );
 
         /**
          * Entity fields processing
@@ -53,12 +69,9 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
         foreach ($fieldConfigs as $fieldConfig) {
             if ($fieldConfig->is('is_serialized')) {
                 $fieldName = $fieldConfig->getId()->getFieldName();
-                unset($schema['doctrine'][$schema['entity']]['fields'][$fieldName]);
+                unset($schema['doctrine'][$entityClassName]['fields'][$fieldName]);
                 unset($schema['property'][$fieldName]);
 
-                if ($class->hasProperty($fieldName)) {
-                    $class->removeProperty($fieldName);
-                }
                 if ($class->hasMethod('get' . ucfirst(Inflector::camelize($fieldName)))) {
                     $class->removeMethod('get' . ucfirst(Inflector::camelize($fieldName)));
                 }
@@ -70,15 +83,15 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
                     ->setMethod(
                         $this->generateClassMethod(
                             'get' . ucfirst(Inflector::camelize($fieldName)),
-                            'return isset($this->serialized_data[\'' . $fieldName . '\']) ' .
-                            '   ? $this->serialized_data[\'' . $fieldName . '\'] ' .
+                            'return isset($this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\']) ' .
+                            '   ? $this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\'] ' .
                             '   : null;'
                         )
                     )
                     ->setMethod(
                         $this->generateClassMethod(
                             'set' . ucfirst(Inflector::camelize($fieldName)),
-                            '$this->serialized_data[\'' . $fieldName . '\'] = $value; return $this;',
+                            '$this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\'] = $value; return $this;',
                             ['value']
                         )
                     );
