@@ -39,7 +39,7 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
          */
         $class->setProperty(PhpProperty::create('serialized_data')->setVisibility('protected'));
         $schema['property']['serialized_data'] = 'serialized_data';
-        $schema['doctrine'][$class->getName()]['fields']['serialized_data'] = [
+        $schema['doctrine'][$schema['entity']]['fields']['serialized_data'] = [
             'column'   => 'serialized_data',
             'type'     => 'array',
             'nullable' => true,
@@ -53,9 +53,12 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
         foreach ($fieldConfigs as $fieldConfig) {
             if ($fieldConfig->is('is_serialized')) {
                 $fieldName = $fieldConfig->getId()->getFieldName();
-                unset($schema['doctrine'][$entityClassName]['fields'][$fieldName]);
+                unset($schema['doctrine'][$schema['entity']]['fields'][$fieldName]);
                 unset($schema['property'][$fieldName]);
 
+                if ($class->hasProperty($fieldName)) {
+                    $class->removeProperty($fieldName);
+                }
                 if ($class->hasMethod('get' . ucfirst(Inflector::camelize($fieldName)))) {
                     $class->removeMethod('get' . ucfirst(Inflector::camelize($fieldName)));
                 }
