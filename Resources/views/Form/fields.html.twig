@@ -1,0 +1,25 @@
+{% block oro_serialized_fields_is_serialized_type_widget %}
+    {% spaceless %}
+        {{ form_widget(form) }}
+        <script type="text/javascript">
+            require(['jquery'], function($){
+                $(document).on('change', 'form select#oro_entity_extend_field_type_is_serialized', function (e) {
+                    var that = this;
+                    var serializableTypes   = {{ form.vars.serializableTypes|json_encode()|raw }};
+                    $("form select#oro_entity_extend_field_type_type optgroup").each(function(index, value){
+                        $.each($(value).find('option'), function(index, value){
+                            if ($(that).val() == 1) {
+                                if (serializableTypes.indexOf($(value).val()) === -1) {
+                                    $(value).attr('disabled', 'disabled');
+                                }
+                            } else {
+                                $(value).removeAttr('disabled');
+                            }
+                        })
+                    });
+                    $("form select#oro_entity_extend_field_type_type").select2("val", "");
+                });
+            });
+        </script>
+    {% endspaceless %}
+{% endblock %}

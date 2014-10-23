@@ -1,0 +1,2 @@
+bundles:
+    - OroEntitySerializedFieldsBundle:Form:fields.html.twig
