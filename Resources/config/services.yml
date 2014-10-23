@@ -66,14 +66,9 @@ services:
             - { name: kernel.event_listener, event: oro_entity_extend.after_flush_field, method: afterFlush }
             - { name: kernel.event_listener, event: oro_entity_extend.collect_field_options, method: collectOptions }
 
-    oro_serialized_fields.exclusion_provider.serialized_field:
+    oro_serialized_fields.exclusion_provider:
         class: %oro_serialized_fields.exclusion_provider.serialized_field.class%
         arguments:
             - @oro_entity_config.provider.extend
-
-    oro_query_designer.exclusion_provider:
-        class: %oro_entity.exclusion_provider.chain.class%
-        calls:
-            - [addProvider, [@oro_entity.exclusion_provider]]
-            - [addProvider, [@oro_entity.exclusion_provider.dictionary]]
-            - [addProvider, [@oro_serialized_fields.exclusion_provider.serialized_field]]
+        tags:
+            -  { name: oro_serialized_fields.exclusion_provider }
