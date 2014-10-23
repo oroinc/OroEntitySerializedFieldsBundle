@@ -71,7 +71,7 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
             $selects = array_filter(
                 $selects,
                 function (Select $select) use ($fields) {
-                    return !array_search($select, $fields);
+                    return !in_array($select->getParts()[0], $fields);
                 }
             );
 
