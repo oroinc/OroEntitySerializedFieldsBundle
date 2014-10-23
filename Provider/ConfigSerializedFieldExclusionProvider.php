@@ -8,7 +8,7 @@ use Oro\Bundle\EntityBundle\Provider\ExclusionProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
 /**
- * The aim of the class is to exclude custom fields with no is_serializable property or if it equals to false
+ * The aim of the class is to exclude custom fields with no is_serialized property or if it equals to false
  */
 class ConfigSerializedFieldExclusionProvider implements ExclusionProviderInterface
 {

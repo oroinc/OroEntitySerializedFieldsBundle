@@ -6,7 +6,6 @@ parameters:
     oro_serialized_fields.datagrid.serialized_fields_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension
     oro_serialized_fields.exclusion_provider.serialized_field.class: Oro\Bundle\EntitySerializedFieldsBundle\Provider\ConfigSerializedFieldExclusionProvider
 
-
     oro_serialized_fields.form.extension.field_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension
     oro_serialized_fields.form.type.is_serialized_field.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType
 

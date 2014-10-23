@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\EntityBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
@@ -34,9 +34,8 @@ class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit_Framework_Test
     /**
      * @dataProvider dataProvider
      *
-     * @param integer $calls              How many times get() was invoked
-     * @param bool    $expected           Expected result
-     * @param Config  $config             Field config config
+     * @param Config  $fieldConfig  Field config config
+     * @param bool    $expected     Expected result
      */
     public function testIsIgnoredField($fieldConfig, $expected)
     {
