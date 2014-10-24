@@ -4,7 +4,5 @@ oro:
             is_serialized:
                 database:     Table column
                 serialized:   Serialized field
-                label: Store as
-        grid:
-            is_serialized:
+                empty_value:  Choose a storage type...
                 label: Storage type

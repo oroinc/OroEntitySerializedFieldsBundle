@@ -1,1 +1,1 @@
-oro.entity_serialized_fields.field.is_serialized.tooltip: Adding field to DataBase schema will allow to use it in reports, segments, grid filters as well as building relations on it. This will require schema update.
+oro.entity_serialized_fields.field.is_serialized.tooltip: Selection of "Table column" will allow to use field in reports, segments, grid filters as well as building relations on it. This will require schema update.

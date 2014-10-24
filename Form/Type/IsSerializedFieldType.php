@@ -38,6 +38,7 @@ class IsSerializedFieldType extends AbstractType
                 'auto_initialize' => false,
                 'required'        => true,
                 'label'           => 'oro.entity_serialized_fields.form.is_serialized.label',
+                'empty_value'     => 'oro.entity_serialized_fields.form.is_serialized.empty_value',
                 'mapped'          => false,
                 'block'           => 'general',
                 'tooltip'         => 'oro.entity_serialized_fields.field.is_serialized.tooltip'
