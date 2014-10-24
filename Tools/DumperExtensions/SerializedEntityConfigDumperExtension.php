@@ -27,13 +27,13 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
      */
     public function supports($actionType)
     {
-        return $actionType === ExtendConfigDumper::ACTION_PRE_UPDATE;
+        return $actionType === ExtendConfigDumper::ACTION_POST_UPDATE;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function preUpdate()
+    public function postUpdate()
     {
         /** @var ConfigProvider $extendConfigProvider */
         $extendConfigProvider = $this->configManager->getProvider('extend');
