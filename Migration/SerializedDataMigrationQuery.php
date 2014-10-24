@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
@@ -55,15 +56,47 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
      */
     protected function runSerializedData(LoggerInterface $logger, $dryRun = false)
     {
-        $entities         = $this->getConfigurableEntitiesData($logger);
-        $hasSchemaChanges = false;
-        $toSchema         = clone $this->schema;
-        foreach ($entities as $entityClass => $config) {
+        $entities            = $this->getConfigurableEntitiesData($logger);
+        $hasSchemaChanges    = false;
+        $toSchema            = clone $this->schema;
+        $updateConfigQueries = [];
+        foreach ($entities as $entityClass => $configData) {
+            $config = $configData['data'];
             if (isset($config['extend']['is_extend']) && $config['extend']['is_extend'] == true) {
                 $table = $toSchema->getTable($this->metadataHelper->getTableNameByEntityClass($entityClass));
                 if (!$table->hasColumn('serialized_data')) {
                     $hasSchemaChanges = true;
-                    $table->addColumn('serialized_data', 'array', ['notnull' => false]);
+                    $table->addColumn(
+                        'serialized_data',
+                        'array',
+                        [
+                            'notnull' => false
+                        ]
+                    );
+                    $time = new \DateTime();
+                    $updateConfigQueries[] =
+                        sprintf(
+                            "INSERT INTO oro_entity_config_field " .
+                               "(entity_id, field_name, type, created, updated, mode, data) " .
+                               "values (%d, '%s', '%s', '%s', '%s', '%s', '%s')",
+                            $configData['id'],
+                            'serialized_data',
+                            'array',
+                            $time->format('Y-m-d'),
+                            $time->format('Y-m-d'),
+                            'hidden',
+                            $this->connection->convertToDatabaseValue(
+                                [
+                                    'entity'    => ['label' => 'data'],
+                                    'extend'    => ['owner' => ExtendScope::OWNER_CUSTOM, 'is_extend' => false],
+                                    'datagrid'  => ['is_visible' => false],
+                                    'merge'     => ['display' => false],
+                                    'dataaudit' => ['auditable' => false]
+                                ],
+                                'array'
+                            )
+                        );
+
                 }
             }
         }
@@ -73,7 +106,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
             $platform   = $this->connection->getDatabasePlatform();
             $schemaDiff = $comparator->compare($this->schema, $toSchema);
             $queries    = $schemaDiff->toSql($platform);
-
+            $queries    = array_merge($queries, $updateConfigQueries);
             foreach ($queries as $query) {
                 $this->logQuery($logger, $query);
                 if (!$dryRun) {
@@ -92,13 +125,16 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
      */
     protected function getConfigurableEntitiesData(LoggerInterface $logger)
     {
-        $sql = 'SELECT class_name, data FROM oro_entity_config';
+        $sql = 'SELECT id, class_name, data FROM oro_entity_config';
         $this->logQuery($logger, $sql);
 
         $result = [];
         $rows   = $this->connection->fetchAll($sql);
         foreach ($rows as $row) {
-            $result[$row['class_name']] = $this->connection->convertToPHPValue($row['data'], 'array');
+            $result[$row['class_name']] = [
+                'id'   => $row['id'],
+                'data' => $this->connection->convertToPHPValue($row['data'], 'array')
+            ];
         }
 
         return $result;
