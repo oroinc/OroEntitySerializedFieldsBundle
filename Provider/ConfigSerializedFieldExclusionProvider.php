@@ -8,7 +8,8 @@ use Oro\Bundle\EntityBundle\Provider\ExclusionProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
 /**
- * The aim of the class is to exclude custom fields with is_serialized property or if it equals to false
+ * The aim of the class is to exclude serialized custom fields.
+ * They can be detected by property "is_serialized" in scope "extend" via entity config provider.
  */
 class ConfigSerializedFieldExclusionProvider implements ExclusionProviderInterface
 {
@@ -16,7 +17,7 @@ class ConfigSerializedFieldExclusionProvider implements ExclusionProviderInterfa
     protected $extendConfigProvider;
 
     /**
-     * @param ConfigProvider $organizationConfigProvider
+     * @param ConfigProvider $extendConfigProvider
      */
     public function __construct(ConfigProvider $extendConfigProvider)
     {
