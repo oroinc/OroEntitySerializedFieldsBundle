@@ -1,30 +1,21 @@
 {% block oro_serialized_fields_is_serialized_type_widget %}
     {% spaceless %}
         {{ form_widget(form) }}
-
-        {% set serializableTypes = form.vars.serializableTypes|json_encode() %}
-        {% set regularTypes = form.vars.regularTypes|json_encode() %}
-
         <script type="text/javascript">
             require(['jquery'], function($){
                 $(document).on('change', 'form select#oro_entity_extend_field_type_is_serialized', function (e) {
-                    $('form select#oro_entity_extend_field_type_type').empty();
-
-                    var regularTypes        = {{ regularTypes|raw }};
-                    var serializableTypes   = {{ serializableTypes|raw }};
-                    var categories          = $(this).val() == 1 ? serializableTypes : regularTypes;
-
-                    $.each(categories, function(group_name, data) {
-                        var optgroup = $('<optgroup>');
-                        optgroup.attr('label', group_name);
-
-                        $.each(data, function (key, value) {
-                            var option = $("<option></option>");
-                            option.val(key);
-                            option.text(value);
-                            optgroup.append(option);
-                        });
-                        $("form select#oro_entity_extend_field_type_type").append(optgroup);
+                    var that = this;
+                    var serializableTypes   = {{ form.vars.serializableTypes|json_encode()|raw }};
+                    $("form select#oro_entity_extend_field_type_type optgroup").each(function(index, value){
+                        $.each($(value).find('option'), function(index, value){
+                            if ($(that).val() == 1) {
+                                if (serializableTypes.indexOf($(value).val()) === -1) {
+                                    $(value).attr('disabled', 'disabled');
+                                }
+                            } else {
+                                $(value).removeAttr('disabled');
+                            }
+                        })
                     });
                     $("form select#oro_entity_extend_field_type_type").select2("val", "");
                 });

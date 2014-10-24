@@ -25,6 +25,14 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
     /**
      * {@inheritdoc}
      */
+    public function getPriority()
+    {
+        return 260;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function visitDatasource(DatagridConfiguration $config, DatasourceInterface $datasource)
     {
         $entityClassName = $this->entityClassResolver->getEntityClass($this->getEntityName($config));
@@ -47,6 +55,9 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
             $qb->from($entityClassName, $alias);
         }
 
+        /**
+         * Exclude serialized fields from query
+         */
         $extendConfigProvider = $this->configManager->getProvider('extend');
         $extendConfig = $extendConfigProvider->getConfig($entityClassName);
         if ($extendConfig->is('is_extend')) {
@@ -71,7 +82,7 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
             $selects = array_filter(
                 $selects,
                 function (Select $select) use ($fields) {
-                    return !array_search($select, $fields);
+                    return !in_array($select->getParts()[0], $fields);
                 }
             );
 

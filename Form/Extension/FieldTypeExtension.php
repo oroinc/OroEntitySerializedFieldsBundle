@@ -15,6 +15,8 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
 class FieldTypeExtension extends AbstractTypeExtension
 {
+    const SESSION_ID_FIELD_SERIALIZED = '_extendbundle_create_entity_%s_is_serialized';
+
     /** @var Session */
     protected $session;
 
@@ -31,6 +33,9 @@ class FieldTypeExtension extends AbstractTypeExtension
         $this->factory = $factory;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSet']);
@@ -50,7 +55,7 @@ class FieldTypeExtension extends AbstractTypeExtension
 
         if ($form->isValid()) {
             $this->session->set(
-                sprintf('_extendbundle_create_entity_%s_is_serialized', $configModel->getEntity()->getId()),
+                sprintf(self::SESSION_ID_FIELD_SERIALIZED, $configModel->getEntity()->getId()),
                 $isSerialized
             );
         }
@@ -64,10 +69,7 @@ class FieldTypeExtension extends AbstractTypeExtension
         $form = $event->getForm();
 
         $form->add(
-            $this->factory->createNamed(
-                'is_serialized',
-                'oro_serialized_fields_is_serialized_type'
-            )
+            $this->factory->createNamed('is_serialized', 'oro_serialized_fields_is_serialized_type')
         );
     }
 
@@ -81,6 +83,7 @@ class FieldTypeExtension extends AbstractTypeExtension
             'is_serialized',
             'type'
         ];
+
         $fields = [];
         foreach ($fieldsOrder as $field) {
             if ($view->offsetExists($field)) {
@@ -95,9 +98,7 @@ class FieldTypeExtension extends AbstractTypeExtension
     }
 
     /**
-     * Returns the name of the type being extended.
-     *
-     * @return string The name of the type being extended
+     * {@inheritdoc}
      */
     public function getExtendedType()
     {
