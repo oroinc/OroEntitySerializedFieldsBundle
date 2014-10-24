@@ -38,6 +38,11 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
         /** @var ConfigProvider $extendConfigProvider */
         $extendConfigProvider = $this->configManager->getProvider('extend');
 
+        /**
+         * Because of serialized field(s) data stored in special table column "serialized_data"
+         * we should not generate doctrine property for such field(s).
+         * Also we can't index such field(s), so they should not pass into "index" configuration.
+         */
         $entityConfigs = $extendConfigProvider->getConfigs();
         foreach ($entityConfigs as $entityConfig) {
             if ($entityConfig->is('is_extend')) {
@@ -48,11 +53,6 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
                     $entityConfig->getId()->getClassName()
                 );
 
-                /**
-                 * Because of serialized field(s) data stored in special table column "serialized_data"
-                 * we should not generate doctrine property for such field(s).
-                 * Also we can't index such field(s), so they should not pass into "index" configuration.
-                 */
                 if ($serializedFields) {
                     $schema = $entityConfig->get('schema');
                     $index  = $entityConfig->get('index');
