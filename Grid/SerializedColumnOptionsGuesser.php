@@ -28,7 +28,7 @@ class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
     public function guessFormatter($class, $property, $type)
     {
         $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
-        if ($extendFieldConfig->is('is_serialized')) {
+        if ($extendFieldConfig && $extendFieldConfig->is('is_serialized')) {
             $options = [
                 'frontend_type' => Property::TYPE_HTML,
                 'type'          => 'twig',
@@ -51,7 +51,7 @@ class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
     public function guessSorter($class, $property, $type)
     {
         $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
-        if ($extendFieldConfig->is('is_serialized')) {
+        if ($extendFieldConfig && $extendFieldConfig->is('is_serialized')) {
             return new ColumnGuess(
                 [
                     Property::DISABLED_KEY => true
@@ -69,7 +69,7 @@ class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
     public function guessFilter($class, $property, $type)
     {
         $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
-        if ($extendFieldConfig->is('is_serialized')) {
+        if ($extendFieldConfig && $extendFieldConfig->is('is_serialized')) {
             return new ColumnGuess(
                 [
                     Property::TYPE_KEY     => Property::TYPE_STRING,

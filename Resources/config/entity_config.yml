@@ -30,3 +30,14 @@ oro_entity_config:
                                   scope:  extend
                                code:      is_serialized
                                value:     false
+    dataaudit:
+        field:
+            items:
+                auditable:
+                    options:
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  extend
+                               code:      is_serialized
+                               value:     false
