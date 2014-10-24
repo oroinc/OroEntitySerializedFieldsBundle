@@ -67,7 +67,6 @@ class FieldTypeExtension extends AbstractTypeExtension
     public function preSet(FormEvent $event)
     {
         $form = $event->getForm();
-
         $form->add(
             $this->factory->createNamed('is_serialized', 'oro_serialized_fields_is_serialized_type')
         );
