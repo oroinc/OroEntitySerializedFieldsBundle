@@ -25,6 +25,14 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
     /**
      * {@inheritdoc}
      */
+    public function getPriority()
+    {
+        return 260;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function visitDatasource(DatagridConfiguration $config, DatasourceInterface $datasource)
     {
         $entityClassName = $this->entityClassResolver->getEntityClass($this->getEntityName($config));
