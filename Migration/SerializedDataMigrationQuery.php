@@ -96,7 +96,6 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                                 'array'
                             )
                         );
-
                 }
             }
         }
