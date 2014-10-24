@@ -9,14 +9,16 @@ oro_entity_config:
                 is_serialized:
                     options:
                         indexed:            true
+                        default_value:      false
                     grid:
-                        type:               boolean
-                        label:              DataBase field
-                        filter_type:        boolean
+                        type:               select
+                        label:              oro.entity_serialized_fields.grid.is_serialized.label
+                        filter_type:        choice
                         required:           true
                         sortable:           true
                         filterable:         true
                         show_filter:        false
+                        choices:            {0: 'oro.entity_serialized_fields.form.is_serialized.database', 1: 'oro.entity_serialized_fields.form.is_serialized.serialized'}
     datagrid:
         field:
             items:

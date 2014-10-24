@@ -55,6 +55,9 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
             $qb->from($entityClassName, $alias);
         }
 
+        /**
+         * Exclude serialized fields from query
+         */
         $extendConfigProvider = $this->configManager->getProvider('extend');
         $extendConfig = $extendConfigProvider->getConfig($entityClassName);
         if ($extendConfig->is('is_extend')) {
