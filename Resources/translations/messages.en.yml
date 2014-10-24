@@ -2,6 +2,9 @@ oro:
     entity_serialized_fields:
         form:
             is_serialized:
-              yes:  Yes
-              no:   No
-            is_serialized.label:    Add to DataBase Schema
+                database:     Table column
+                serialized:   Serialized field
+                label: Store as
+        grid:
+            is_serialized:
+                label: Storage type

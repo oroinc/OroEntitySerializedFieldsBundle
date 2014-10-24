@@ -79,9 +79,8 @@ class ExtendFieldListener
         $isSerialized = $this->session->get(
             sprintf(FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED, $fieldModel->getEntity()->getId())
         );
-        if ($isSerialized) {
-            $options['extend']['is_serialized'] = true;
-        }
+        $options['extend']['is_serialized'] = $isSerialized;
+
         $event->setOptions($options);
     }
 }
