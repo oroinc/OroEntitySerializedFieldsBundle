@@ -12,6 +12,7 @@ parameters:
 
     oro_serialized_fields.listener.extend_field.class: Oro\Bundle\EntitySerializedFieldsBundle\EventListener\ExtendFieldListener
 
+    oro_serialized_fields.exclusion_provider.serialized_field.class:  Oro\Bundle\EntitySerializedFieldsBundle\Provider\ConfigSerializedFieldExclusionProvider
 services:
     oro_serialized_fields.migration.searilized_data.post_up.listener:
           class: %oro_serialized_fields.migration.searilized_data.post_up.listener.class%
@@ -74,3 +75,9 @@ services:
             - { name: kernel.event_listener, event: oro_entity_extend.after_flush_field, method: afterFlush }
             - { name: kernel.event_listener, event: oro_entity_extend.collect_field_options, method: collectOptions }
 
+    oro_serialized_fields.exclusion_provider.serialized_field:
+        class: %oro_serialized_fields.exclusion_provider.serialized_field.class%
+        arguments:
+            - @oro_entity_config.provider.extend
+        tags:
+            - { name: oro_entity.exclusion_provider.default }
