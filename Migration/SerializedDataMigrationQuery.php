@@ -74,28 +74,34 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                         ]
                     );
                     $time = new \DateTime();
-                    $updateConfigQueries[] =
-                        sprintf(
-                            "INSERT INTO oro_entity_config_field " .
-                               "(entity_id, field_name, type, created, updated, mode, data) " .
-                               "values (%d, '%s', '%s', '%s', '%s', '%s', '%s')",
-                            $configData['id'],
-                            'serialized_data',
-                            'array',
-                            $time->format('Y-m-d'),
-                            $time->format('Y-m-d'),
-                            'hidden',
-                            $this->connection->convertToDatabaseValue(
-                                [
-                                    'entity'    => ['label' => 'data'],
-                                    'extend'    => ['owner' => ExtendScope::OWNER_CUSTOM, 'is_extend' => false],
-                                    'datagrid'  => ['is_visible' => false],
-                                    'merge'     => ['display' => false],
-                                    'dataaudit' => ['auditable' => false]
-                                ],
-                                'array'
-                            )
-                        );
+
+                    $updateConfigQueries[] = sprintf(
+                        "DELETE FROM oro_entity_config_field WHERE entity_id = %d AND field_name = '%s'",
+                        $configData['id'],
+                        'serialized_data'
+                    );
+
+                    $updateConfigQueries[] = sprintf(
+                        "INSERT INTO oro_entity_config_field" .
+                        "  (entity_id, field_name, type, created, updated, mode, data)" .
+                        "  values (%d, '%s', '%s', '%s', '%s', '%s', '%s')",
+                        $configData['id'],
+                        'serialized_data',
+                        'array',
+                        $time->format('Y-m-d'),
+                        $time->format('Y-m-d'),
+                        'hidden',
+                        $this->connection->convertToDatabaseValue(
+                            [
+                                'entity'    => ['label' => 'data'],
+                                'extend'    => ['owner' => ExtendScope::OWNER_CUSTOM, 'is_extend' => false],
+                                'datagrid'  => ['is_visible' => false],
+                                'merge'     => ['display' => false],
+                                'dataaudit' => ['auditable' => false]
+                            ],
+                            'array'
+                        )
+                    );
                 }
             }
         }
