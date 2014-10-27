@@ -131,11 +131,9 @@ class ExtendFieldListener implements EventSubscriberInterface
             return;
         }
 
-        $change       = $event->getConfigManager()->getConfigChangeSet($eventConfig);
-        $stateChanged = isset($change['state']);
-        $isCustom     = $eventConfig->is('owner', ExtendScope::OWNER_CUSTOM);
-
-        if ($isCustom && 'extend' == $scope && $stateChanged && $eventConfig->get('is_deleted')) {
+        $change   = $event->getConfigManager()->getConfigChangeSet($eventConfig);
+        $isCustom = $eventConfig->is('owner', ExtendScope::OWNER_CUSTOM);
+        if ($isCustom && 'extend' == $scope && isset($change['state']) && $eventConfig->get('is_deleted')) {
             $configManager = $event->getConfigManager();
             $className     = $eventConfig->getId()->getClassName();
             $entityConfig  = $configManager->getProvider($scope)->getConfig($className);
