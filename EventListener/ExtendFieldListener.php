@@ -5,13 +5,13 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\EventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
-use Oro\Bundle\EntityConfigBundle\Event\PersistConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModelIndexValue;
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityConfigBundle\Event\Events;
+use Oro\Bundle\EntityConfigBundle\Event\PersistConfigEvent;
 
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
-use Oro\Bundle\EntityConfigBundle\Event\Events;
 use Oro\Bundle\EntityExtendBundle\Event\AfterFlushFieldEvent;
 use Oro\Bundle\EntityExtendBundle\Event\BeforePersistFieldEvent;
 use Oro\Bundle\EntityExtendBundle\Event\CollectFieldOptionsEvent;
