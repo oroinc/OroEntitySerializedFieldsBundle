@@ -122,7 +122,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
             foreach ($queries as $query) {
                 $this->logQuery($logger, $query);
                 if (!$dryRun) {
-                    $updateConfigQueries->execute($logger);
+                    $this->connection->executeQuery($query);
                 }
             }
             foreach ($updateConfigQueries as $query) {
