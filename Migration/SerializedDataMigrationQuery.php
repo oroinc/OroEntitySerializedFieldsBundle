@@ -14,7 +14,6 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
-use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
 class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
@@ -63,8 +62,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         $entities            = $this->getConfigurableEntitiesData($logger);
         $hasSchemaChanges    = false;
         $toSchema            = clone $this->schema;
-        $updateConfigQueries = new ParametrizedSqlMigrationQuery();
-        $updateConfigQueries->setConnection($this->connection);
+        $updateConfigQueries = [];
         foreach ($entities as $entityClass => $configData) {
             $config = $configData['data'];
             if (isset($config['extend']['is_extend']) && $config['extend']['is_extend'] == true) {
@@ -78,12 +76,12 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                             'notnull' => false
                         ]
                     );
-                    $updateConfigQueries->addSql(
+                    $updateConfigQueries[] = [
                         "DELETE FROM oro_entity_config_field WHERE entity_id = :entityId AND field_name = :fieldName",
                         ['entityId' => $configData['id'], 'fieldName' => 'serialized_data'],
                         ['entityId' => Type::INTEGER, 'fieldName' => Type::STRING]
-                    );
-                    $updateConfigQueries->addSql(
+                    ];
+                    $updateConfigQueries[] = [
                         "INSERT INTO oro_entity_config_field" .
                         "  (entity_id, field_name, type, created, updated, mode, data)" .
                         "  values (:entity_id, :field_name, :type, :created, :updated, :mode, :data)",
@@ -111,7 +109,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                             'mode'       => Type::STRING,
                             'data'       => Type::TARRAY
                         ]
-                    );
+                    ];
                 }
             }
         }
@@ -124,11 +122,16 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
             foreach ($queries as $query) {
                 $this->logQuery($logger, $query);
                 if (!$dryRun) {
-                    $this->connection->executeQuery($query);
+                    $updateConfigQueries->execute($logger);
+                }
+            }
+            foreach ($updateConfigQueries as $query) {
+                $this->logQuery($logger, $query[0], $query[1], $query[2]);
+                if (!$dryRun) {
+                    $this->connection->executeUpdate($query[0], $query[1], $query[2]);
                 }
             }
 
-            $updateConfigQueries->execute($logger);
         }
     }
 
