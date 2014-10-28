@@ -11,7 +11,6 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
-use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\AbstractEntityGeneratorExtension;
 
 class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
@@ -32,7 +31,7 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
     /**
      * {@inheritdoc}
      */
-    public function generate(array &$schema, PhpClass $class)
+    public function generate(array $schema, PhpClass $class)
     {
         $entityClassName = $schema['class'];
 
@@ -40,12 +39,6 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
          * Entity processing
          */
         $class->setProperty(PhpProperty::create(self::SERIALIZED_DATA_FIELD)->setVisibility('protected'));
-        $schema['property'][self::SERIALIZED_DATA_FIELD] = self::SERIALIZED_DATA_FIELD;
-        $schema['doctrine'][$class->getName()]['fields'][self::SERIALIZED_DATA_FIELD] = [
-            'column'   => self::SERIALIZED_DATA_FIELD,
-            'type'     => 'array',
-            'nullable' => true,
-        ];
         $class
             ->setMethod(
                 $this->generateClassMethod(
@@ -69,8 +62,6 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
         foreach ($fieldConfigs as $fieldConfig) {
             if ($fieldConfig->is('is_serialized')) {
                 $fieldName = $fieldConfig->getId()->getFieldName();
-                unset($schema['doctrine'][$entityClassName]['fields'][$fieldName]);
-                unset($schema['property'][$fieldName]);
 
                 if ($class->hasMethod('get' . ucfirst(Inflector::camelize($fieldName)))) {
                     $class->removeMethod('get' . ucfirst(Inflector::camelize($fieldName)));
@@ -107,6 +98,6 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
         /** @var ConfigInterface $config */
         $config = $this->extendConfigProvider->getConfig($schema['class']);
 
-        return $config->get('is_extend')  == true;
+        return $config->is('is_extend');
     }
 }
