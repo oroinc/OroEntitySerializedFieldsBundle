@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 
-use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
 use Psr\Log\LoggerInterface;
 
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
+
+use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
 
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
