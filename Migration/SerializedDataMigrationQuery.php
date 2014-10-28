@@ -88,28 +88,28 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                         "  (entity_id, field_name, type, created, updated, mode, data)" .
                         "  values (:entity_id, :field_name, :type, :created, :updated, :mode, :data)",
                         [
-                            'entity_id' => $configData['id'],
+                            'entity_id'  => $configData['id'],
                             'field_name' => 'serialized_data',
-                            'type' => 'array',
-                            'created' => new \DateTime('now', new \DateTimeZone('UTC')),
-                            'updated' => new \DateTime('now', new \DateTimeZone('UTC')),
-                            'mode' => 'hidden',
-                            'data' => [
-                                'entity' => ['label' => 'data'],
-                                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'is_extend' => false],
-                                'datagrid' => ['is_visible' => false],
-                                'merge' => ['display' => false],
+                            'type'       => 'array',
+                            'created'    => new \DateTime('now', new \DateTimeZone('UTC')),
+                            'updated'    => new \DateTime('now', new \DateTimeZone('UTC')),
+                            'mode'       => 'hidden',
+                            'data'       => [
+                                'entity'    => ['label' => 'data'],
+                                'extend'    => ['owner' => ExtendScope::OWNER_CUSTOM, 'is_extend' => false],
+                                'datagrid'  => ['is_visible' => false],
+                                'merge'     => ['display' => false],
                                 'dataaudit' => ['auditable' => false]
                             ]
                         ],
                         [
-                            'entity_id' => Type::INTEGER,
+                            'entity_id'  => Type::INTEGER,
                             'field_name' => Type::STRING,
-                            'type' => Type::STRING,
-                            'created' => Type::DATETIME,
-                            'updated' => Type::DATETIME,
-                            'mode' => Type::STRING,
-                            'data' => Type::TARRAY
+                            'type'       => Type::STRING,
+                            'created'    => Type::DATETIME,
+                            'updated'    => Type::DATETIME,
+                            'mode'       => Type::STRING,
+                            'data'       => Type::TARRAY
                         ]
                     );
                 }
@@ -151,7 +151,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         $rows = $this->connection->fetchAll($sql);
         foreach ($rows as $row) {
             $result[$row['class_name']] = [
-                'id' => $row['id'],
+                'id'   => $row['id'],
                 'data' => $this->connection->convertToPHPValue($row['data'], 'array')
             ];
         }
