@@ -7,6 +7,8 @@ use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
+
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 
@@ -130,7 +132,10 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
      */
     protected function getConfigurableEntitiesData(LoggerInterface $logger)
     {
-        $sql = 'SELECT id, class_name, data FROM oro_entity_config';
+        $sql = sprintf(
+            "SELECT id, class_name, data FROM oro_entity_config WHERE mode = '%s'",
+            ConfigModelManager::MODE_DEFAULT
+        );
         $this->logQuery($logger, $sql);
 
         $result = [];
