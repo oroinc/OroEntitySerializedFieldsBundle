@@ -7,12 +7,14 @@ parameters:
     oro_serialized_fields.datagrid.column_options_guesser.class:      Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser
     oro_serialized_fields.datagrid.serialized_fields_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension
 
-    oro_serialized_fields.form.extension.field_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension
-    oro_serialized_fields.form.type.is_serialized_field.class:  Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType
+    oro_serialized_fields.form.extension.field_extension.class:  Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension
+    oro_serialized_fields.form.extension.config_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\ConfigTypeExtension
+    oro_serialized_fields.form.type.is_serialized_field.class:   Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType
 
-    oro_serialized_fields.listener.extend_field.class: Oro\Bundle\EntitySerializedFieldsBundle\EventListener\ExtendFieldListener
+    oro_serialized_fields.listener.entity_config.class: Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener
 
-    oro_serialized_fields.exclusion_provider.serialized_field.class:  Oro\Bundle\EntitySerializedFieldsBundle\Provider\ConfigSerializedFieldExclusionProvider
+    oro_serialized_fields.exclusion_provider.serialized_field.class: Oro\Bundle\EntitySerializedFieldsBundle\Provider\ConfigSerializedFieldExclusionProvider
+
 services:
     oro_serialized_fields.migration.searilized_data.post_up.listener:
           class: %oro_serialized_fields.migration.searilized_data.post_up.listener.class%
@@ -45,10 +47,7 @@ services:
 
     oro_serialized_fields.datagrid.serialized_fields_extension:
         class: %oro_serialized_fields.datagrid.serialized_fields_extension.class%
-        arguments:
-            - @oro_entity_config.config_manager
-            - @oro_entity.orm.entity_class_resolver
-            - @oro_datagrid.datagrid.guesser
+        parent: oro_entity_extend.datagrid.extension.dynamic_fields
         tags:
             - { name: oro_datagrid.extension }
 
@@ -56,26 +55,32 @@ services:
         class: %oro_serialized_fields.form.extension.field_extension.class%
         arguments:
             - @session
-            - @form.factory
+            - ['fieldName', 'is_serialized', 'type']
         tags:
             - { name: form.type_extension, alias: oro_entity_extend_field_type }
+
+    oro_serialized_fields.form.extension.config_extension:
+        class: %oro_serialized_fields.form.extension.config_extension.class%
+        arguments:
+            - ['fieldName', 'is_serialized', 'type']
+        tags:
+            - { name: form.type_extension, alias: oro_entity_config_type }
 
     oro_serialized_fields.form.type.is_serialized_field:
         class: %oro_serialized_fields.form.type.is_serialized_field.class%
         tags:
             - { name: form.type, alias: oro_serialized_fields_is_serialized_type }
 
-    oro_serialized_fields.listener.extend_field:
-        class: %oro_serialized_fields.listener.extend_field.class%
+    oro_serialized_fields.listener.entity_config:
+        class: %oro_serialized_fields.listener.entity_config.class%
         arguments:
-            - @oro_entity_extend.tools.dumper
+            - @oro_entity_extend.entity_generator
             - @session
         tags:
-            - { name: kernel.event_listener, event: oro_entity_extend.before_persist_field, method: beforePersist }
-            - { name: kernel.event_listener, event: oro_entity_extend.after_flush_field, method: afterFlush }
-            - { name: kernel.event_listener, event: oro_entity_extend.collect_field_options, method: collectOptions }
-            - { name: kernel.event_listener, event: oro_entity_extend.before_delete_persist_field, method: beforeDeletePersist }
-            - { name: kernel.event_subscriber}
+            - { name: kernel.event_listener, event: entity_config.new.field.config, method: newFieldConfig, priority: -255 }
+            - { name: kernel.event_listener, event: entity_config.persist.config, method: persistConfig, priority: -255 }
+            - { name: kernel.event_listener, event: entity_config.persist.config, method: updateEntityConfig, priority: 255 }
+            - { name: kernel.event_listener, event: entity_config.flush.config, method: flushConfig }
 
     oro_serialized_fields.exclusion_provider.serialized_field:
         class: %oro_serialized_fields.exclusion_provider.serialized_field.class%
