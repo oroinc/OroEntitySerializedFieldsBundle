@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\EventListener;
 
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityConfigBundle\Event\FlushConfigEvent;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
@@ -12,6 +10,8 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Event\FieldConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PersistConfigEvent;
+use Oro\Bundle\EntityConfigBundle\Event\FlushConfigEvent;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
