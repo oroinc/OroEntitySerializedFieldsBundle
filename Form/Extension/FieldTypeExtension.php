@@ -20,11 +20,20 @@ class FieldTypeExtension extends AbstractTypeExtension
     protected $session;
 
     /**
-     * @param Session $session
+     * Array of field's names in preferred order
+     *
+     * @var array
      */
-    public function __construct(Session $session)
+    protected $fieldOrder;
+
+    /**
+     * @param Session $session
+     * @param array   $fieldOrder
+     */
+    public function __construct(Session $session, $fieldOrder = [])
     {
-        $this->session = $session;
+        $this->session    = $session;
+        $this->fieldOrder = $fieldOrder;
     }
 
     /**
@@ -64,8 +73,8 @@ class FieldTypeExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $fieldsOrder = ['fieldName', 'is_serialized', 'type'];
-        $fields = [];
+        $fields      = [];
+        $fieldsOrder = $this->fieldOrder;
         foreach ($fieldsOrder as $field) {
             if ($view->offsetExists($field)) {
                 $fields[$field] = $view->offsetGet($field);

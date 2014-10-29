@@ -12,6 +12,21 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 class ConfigTypeExtension extends AbstractTypeExtension
 {
     /**
+     * Array of field's names in preferred order
+     *
+     * @var array
+     */
+    protected $fieldOrder;
+
+    /**
+     * @param array $fieldOrder
+     */
+    public function __construct($fieldOrder = [])
+    {
+        $this->fieldOrder = $fieldOrder;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -37,18 +52,16 @@ class ConfigTypeExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if ($view->offsetExists('is_serialized')) {
-            $fieldsOrder = ['fieldName', 'is_serialized', 'type'];
-            $fields = [];
-            foreach ($fieldsOrder as $field) {
-                if ($view->offsetExists($field)) {
-                    $fields[$field] = $view->offsetGet($field);
-                    $view->offsetUnset($field);
-                }
+        $fields      = [];
+        $fieldsOrder = $this->fieldOrder;
+        foreach ($fieldsOrder as $field) {
+            if ($view->offsetExists($field)) {
+                $fields[$field] = $view->offsetGet($field);
+                $view->offsetUnset($field);
             }
-
-            $view->children = $fields + $view->children;
         }
+
+        $view->children = $fields + $view->children;
     }
 
     /**

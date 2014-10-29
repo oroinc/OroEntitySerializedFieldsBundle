@@ -92,6 +92,7 @@ class EntityConfigListener
          */
         if ($eventConfigId instanceof EntityConfigId
             && $this->originalEntityConfig !== null
+            && $this->originalFieldConfig !== null
             && $this->originalFieldConfig->is('is_serialized')
         ) {
             $this->revertEntityState($event);
@@ -146,7 +147,7 @@ class EntityConfigListener
         $entityClassName = $event->getConfigId()->getClassName();
         $entityConfig    = $configProvider->getConfig($entityClassName);
 
-        if ($this->originalEntityConfig === null) {
+        if ($this->originalEntityConfig == null) {
             $this->originalEntityConfig = clone $entityConfig;
         }
     }
