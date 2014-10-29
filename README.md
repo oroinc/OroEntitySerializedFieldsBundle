@@ -27,8 +27,7 @@ Not supported features:
 - segments and reports
 - charts
 - search
-- enums
-- relations and option set field types
+- relations, enums and option set field types
 - data audit
 - usage of such fields in Doctrine query builder
 
