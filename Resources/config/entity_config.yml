@@ -21,6 +21,30 @@ oro_entity_config:
                         choices:
                             0: 'oro.entity_serialized_fields.form.is_serialized.database'
                             1: 'oro.entity_serialized_fields.form.is_serialized.serialized'
+                length:
+                    options:
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  extend
+                               code:      is_serialized
+                               value:     false
+                precision:
+                    options:
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  extend
+                               code:      is_serialized
+                               value:     false
+                scale:
+                    options:
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  extend
+                               code:      is_serialized
+                               value:     false
     datagrid:
         field:
             items:
@@ -43,3 +67,16 @@ oro_entity_config:
                                   scope:  extend
                                code:      is_serialized
                                value:     false
+    importexport:
+        field:
+            items:
+                identity:
+                    options:
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  extend
+                               code:      is_serialized
+                               value:     false
+
+

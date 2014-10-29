@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -20,17 +19,21 @@ class FieldTypeExtension extends AbstractTypeExtension
     /** @var Session */
     protected $session;
 
-    /** @var FormFactoryInterface */
-    protected $factory;
+    /**
+     * Array of field's names in preferred order
+     *
+     * @var array
+     */
+    protected $fieldOrder;
 
     /**
-     * @param Session              $session
-     * @param FormFactoryInterface $factory
+     * @param Session $session
+     * @param array   $fieldOrder
      */
-    public function __construct(Session $session, FormFactoryInterface $factory)
+    public function __construct(Session $session, $fieldOrder = [])
     {
-        $this->session = $session;
-        $this->factory = $factory;
+        $this->session    = $session;
+        $this->fieldOrder = $fieldOrder;
     }
 
     /**
@@ -38,7 +41,11 @@ class FieldTypeExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSet']);
+        $builder->add(
+            'is_serialized',
+            'oro_serialized_fields_is_serialized_type'
+        );
+
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
@@ -47,7 +54,7 @@ class FieldTypeExtension extends AbstractTypeExtension
      */
     public function postSubmit(FormEvent $event)
     {
-        $form = $event->getForm();
+        $form         = $event->getForm();
         $isSerialized = $form->get('is_serialized')->getData();
 
         /** @var FieldConfigModel $configModel */
@@ -62,28 +69,12 @@ class FieldTypeExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param FormEvent $event
-     */
-    public function preSet(FormEvent $event)
-    {
-        $form = $event->getForm();
-        $form->add(
-            $this->factory->createNamed('is_serialized', 'oro_serialized_fields_is_serialized_type')
-        );
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $fieldsOrder = [
-            'fieldName',
-            'is_serialized',
-            'type'
-        ];
-
-        $fields = [];
+        $fields      = [];
+        $fieldsOrder = $this->fieldOrder;
         foreach ($fieldsOrder as $field) {
             if ($view->offsetExists($field)) {
                 $fields[$field] = $view->offsetGet($field);
@@ -92,8 +83,6 @@ class FieldTypeExtension extends AbstractTypeExtension
         }
 
         $view->children = $fields + $view->children;
-
-        parent::finishView($view, $form, $options);
     }
 
     /**
