@@ -65,8 +65,14 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         $updateConfigQueries = [];
         foreach ($entities as $entityClass => $configData) {
             $config = $configData['data'];
-            if (isset($config['extend']['is_extend']) && $config['extend']['is_extend'] == true) {
-                $table = $toSchema->getTable($this->metadataHelper->getTableNameByEntityClass($entityClass));
+            if (isset($config['extend']['is_extend'])
+                && $config['extend']['is_extend'] == true
+                && $config['extend']['state'] == ExtendScope::STATE_ACTIVE
+            ) {
+                $tableName = isset($config['extend']['schema']['doctrine'][$entityClass]['table'])
+                    ? $config['extend']['schema']['doctrine'][$entityClass]['table']
+                    : $this->metadataHelper->getTableNameByEntityClass($entityClass);
+                $table = $toSchema->getTable($tableName);
                 if (!$table->hasColumn('serialized_data')) {
                     $hasSchemaChanges = true;
                     $table->addColumn(
