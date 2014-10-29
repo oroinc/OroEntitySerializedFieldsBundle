@@ -73,7 +73,6 @@ class EntityConfigListener
 
     /**
      * @param PersistConfigEvent $event
-     *
      */
     public function persistConfig(PersistConfigEvent $event)
     {
