@@ -4,13 +4,18 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tools\DumperExtensions;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntityExtendBundle\Tools\DumperExtensions\AbstractEntityConfigDumperExtension;
 
+use Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions\SerializedDataGeneratorExtension;
+
 class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperExtension
 {
+    const SERIALIZED_DATA_FIELD = SerializedDataGeneratorExtension::SERIALIZED_DATA_FIELD;
+
     /** @var ConfigManager */
     protected $configManager;
 
@@ -40,12 +45,23 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
 
         /**
          * Because of serialized field(s) data stored in special table column "serialized_data"
-         * we should not generate doctrine property for such field(s).
+         * we should:
+         *  -- add doctrine property 'serialized_field' into entity class.
+         *  -- not generate doctrine property for serialized field(s).
          * Also we can't index such field(s), so they should not pass into "index" configuration.
          */
         $entityConfigs = $extendConfigProvider->getConfigs();
         foreach ($entityConfigs as $entityConfig) {
             if ($entityConfig->is('is_extend')) {
+                $schema = $entityConfig->get('schema');
+
+                $schema['property'][self::SERIALIZED_DATA_FIELD] = self::SERIALIZED_DATA_FIELD;
+                $schema['doctrine'][$schema['entity']]['fields'][self::SERIALIZED_DATA_FIELD] = [
+                    'column'   => self::SERIALIZED_DATA_FIELD,
+                    'type'     => 'array',
+                    'nullable' => true,
+                ];
+
                 $serializedFields = $extendConfigProvider->filter(
                     function (ConfigInterface $field) {
                         return $field->is('is_serialized');
@@ -54,7 +70,6 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
                 );
 
                 if ($serializedFields) {
-                    $schema = $entityConfig->get('schema');
                     $index  = $entityConfig->get('index');
                     foreach ($serializedFields as $serializedField) {
                         $fieldName = $serializedField->getId()->getFieldName();
@@ -63,12 +78,12 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
                         unset($schema['doctrine'][$schema['entity']]['fields'][$fieldName]);
                         unset($index[$fieldName]);
                     }
-
-                    $entityConfig->set('schema', $schema);
                     $entityConfig->set('index', $index ? : []);
-
-                    $this->configManager->persist($entityConfig);
                 }
+
+                $entityConfig->set('schema', $schema);
+
+                $this->configManager->persist($entityConfig);
             }
         }
     }
