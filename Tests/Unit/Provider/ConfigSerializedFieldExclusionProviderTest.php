@@ -31,6 +31,16 @@ class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit_Framework_Test
         $this->provider = new ConfigSerializedFieldExclusionProvider($this->configProvider);
     }
 
+    public function testIsIgnoredEntity()
+    {
+        $this->assertEquals(false, $this->provider->isIgnoredEntity('field'));
+    }
+
+    public function testIsIgnoredRelation()
+    {
+        $this->assertEquals(false, $this->provider->isIgnoredRelation($this->metadata, 'field'));
+    }
+
     /**
      * @dataProvider dataProvider
      *
