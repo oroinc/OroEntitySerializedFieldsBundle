@@ -73,6 +73,8 @@ class EntityConfigListener
 
     /**
      * @param PersistConfigEvent $event
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function persistConfig(PersistConfigEvent $event)
     {
