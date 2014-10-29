@@ -82,7 +82,7 @@ class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
               'class'     => '%oro_serialized_fields.form.extension.field_extension.class%',
               'arguments' => [
                   new Reference('session'),
-                  new Reference('form.factory')
+                  ['fieldName', 'is_serialized', 'type']
               ],
               'tags'      => [
                   'form.type_extension' => array(

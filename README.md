@@ -16,7 +16,6 @@ Table of content
 Fundamentals
 ------------
 ORO Platform provides ability to have custom entities or extend entities with new custom fields.
-Schema update process is required to changes affected.
 
 The package allows to avoid schema update when you create custom field. Although this field come with some restrictions.
 
@@ -26,14 +25,12 @@ Not supported features:
 
 - grid filtering and sorting
 - segments and reports
-- grid filtering and sorting
 - charts
 - search
-- form validation
+- enums
 - relations and option set field types
-- custom form types for not scalar fields
 - data audit
-- use this fields in Doctrine query builder
+- usage of such fields in Doctrine query builder
 
 After installation (described below) a new field called **Storage Type** appears within **New field** creation page where you will be offered to choose between two storage types:
 
@@ -70,7 +67,7 @@ git submodule init
 git submodule update
 ```
 
-Upate your composer.json with 
+Update your composer.json with 
 
 ```
    "autoload": {
