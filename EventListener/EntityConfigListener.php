@@ -145,6 +145,12 @@ class EntityConfigListener
         }
     }
 
+    /**
+     * Starts before all events.
+     * The main aim of method to store original entity state for future events.
+     *
+     * @param PersistConfigEvent $event
+     */
     public function updateEntityConfig(PersistConfigEvent $event)
     {
         /** @var ConfigProvider $configProvider */
@@ -159,6 +165,8 @@ class EntityConfigListener
     }
 
     /**
+     * In case of flushing new serialized field, proxies for owning entity should be regenerated.
+     *
      * @param FlushConfigEvent $event
      */
     public function flushConfig(FlushConfigEvent $event)
