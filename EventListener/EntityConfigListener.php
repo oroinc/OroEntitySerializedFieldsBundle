@@ -74,8 +74,6 @@ class EntityConfigListener
     /**
      * @param PersistConfigEvent $event
      *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function persistConfig(PersistConfigEvent $event)
     {
@@ -97,12 +95,7 @@ class EntityConfigListener
             && $this->originalEntityConfig !== null
             && $this->originalFieldConfig->is('is_serialized')
         ) {
-            $entityConfig = $this->getEntityConfig($event);
-            if ($entityConfig->get('state') != $this->originalEntityConfig->get('state')) {
-                $entityConfig->set('state', $this->originalEntityConfig->get('state'));
-
-                $event->getConfigManager()->persist($entityConfig);
-            }
+            $this->revertEntityState($event);
         }
 
         /**
@@ -115,12 +108,7 @@ class EntityConfigListener
             && $eventConfig->is('is_serialized')
             && !$eventConfig->is('state', ExtendScope::STATE_DELETE)
         ) {
-            $entityConfig = $this->getEntityConfig($event);
-            if ($entityConfig->get('state') != $this->originalEntityConfig->get('state')) {
-                $entityConfig->set('state', $this->originalEntityConfig->get('state'));
-
-                $event->getConfigManager()->persist($entityConfig);
-            }
+            $this->revertEntityState($event);
             if (!$eventConfig->is('state', ExtendScope::STATE_ACTIVE)) {
                 $eventConfig->set('state', ExtendScope::STATE_ACTIVE);
 
@@ -189,6 +177,21 @@ class EntityConfigListener
                 $entityConfig = $configManager->getProvider('extend')->getConfig($configId->getClassName());
                 $this->entityGenerator->generateSchemaFiles($entityConfig->get('schema'));
             }
+        }
+    }
+
+    /**
+     * Reverts entity state to it's original value
+     *
+     * @param PersistConfigEvent $event
+     */
+    protected function revertEntityState(PersistConfigEvent $event)
+    {
+        $entityConfig = $this->getEntityConfig($event);
+        if ($entityConfig->get('state') != $this->originalEntityConfig->get('state')) {
+            $entityConfig->set('state', $this->originalEntityConfig->get('state'));
+
+            $event->getConfigManager()->persist($entityConfig);
         }
     }
 
