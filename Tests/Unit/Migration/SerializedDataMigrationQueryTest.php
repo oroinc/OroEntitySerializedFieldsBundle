@@ -86,7 +86,6 @@ class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-
     public function dataProvider()
     {
         return [
