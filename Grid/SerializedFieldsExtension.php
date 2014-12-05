@@ -17,14 +17,6 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
     /**
      * {@inheritdoc}
      */
-    public function isApplicable(DatagridConfiguration $config)
-    {
-        return parent::isApplicable($config);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getPriority()
     {
         return 260;
@@ -93,5 +85,13 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
 
             $qb->addSelect(sprintf('%s.%s', $alias, 'serialized_data'));
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processConfigs(DatagridConfiguration $config)
+    {
+        //leave empty. we do not need any processing for serialized fields
     }
 }
