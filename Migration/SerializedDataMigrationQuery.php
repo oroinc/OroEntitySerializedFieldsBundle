@@ -78,6 +78,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                 }
 
                 $table = $toSchema->getTable($tableName);
+
                 if (!$table->hasColumn('serialized_data')) {
                     $hasSchemaChanges = true;
                     $table->addColumn(
@@ -130,6 +131,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
             $platform = $this->connection->getDatabasePlatform();
             $schemaDiff = $comparator->compare($this->schema, $toSchema);
             $queries = $schemaDiff->toSql($platform);
+
             foreach ($queries as $query) {
                 $this->logQuery($logger, $query);
                 if (!$dryRun) {
