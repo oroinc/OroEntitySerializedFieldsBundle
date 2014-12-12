@@ -4,7 +4,6 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tools\DumperExtensions;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
