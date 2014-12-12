@@ -4,9 +4,9 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tools\DumperExtensions;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntityExtendBundle\Tools\DumperExtensions\AbstractEntityConfigDumperExtension;
 
@@ -52,7 +52,9 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
          */
         $entityConfigs = $extendConfigProvider->getConfigs();
         foreach ($entityConfigs as $entityConfig) {
-            if ($entityConfig->is('is_extend')) {
+            if ($entityConfig->is('is_extend')
+                //&& $entityConfig->is('state', ExtendScope::STATE_ACTIVE)
+            ) {
                 $schema = $entityConfig->get('schema');
 
                 $schema['property'][self::SERIALIZED_DATA_FIELD] = self::SERIALIZED_DATA_FIELD;
