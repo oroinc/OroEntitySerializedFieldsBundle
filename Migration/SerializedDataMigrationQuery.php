@@ -78,7 +78,6 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                 }
 
                 $table = $toSchema->getTable($tableName);
-
                 if (!$table->hasColumn('serialized_data')) {
                     $hasSchemaChanges = true;
                     $table->addColumn(
