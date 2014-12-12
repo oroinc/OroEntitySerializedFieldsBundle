@@ -179,11 +179,6 @@ class EntityConfigListener
             if ($fieldConfig->is('is_serialized')) {
                 $entityConfig = $configManager->getProvider('extend')->getConfig($configId->getClassName());
                 $this->entityGenerator->generateSchemaFiles($entityConfig->get('schema'));
-
-//                $schema = $entityConfig->get('schema');
-//                if ($schema) {
-//                    $this->entityGenerator->generateSchemaFiles($schema);
-//                }
             }
         }
     }

@@ -52,9 +52,7 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
          */
         $entityConfigs = $extendConfigProvider->getConfigs();
         foreach ($entityConfigs as $entityConfig) {
-            if ($entityConfig->is('is_extend')
-                //&& $entityConfig->is('state', ExtendScope::STATE_ACTIVE)
-            ) {
+            if ($entityConfig->is('is_extend')) {
                 $schema = $entityConfig->get('schema');
 
                 $schema['property'][self::SERIALIZED_DATA_FIELD] = self::SERIALIZED_DATA_FIELD;
