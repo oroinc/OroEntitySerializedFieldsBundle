@@ -85,6 +85,8 @@ class EntityConfigListener
 
         $change = $event->getConfigManager()->getConfigChangeSet($eventConfig);
         if (empty($change)) {
+            $event->stopPropagation();
+
             return;
         }
 
@@ -169,7 +171,7 @@ class EntityConfigListener
             }
 
             /** @var FieldConfigId $configId */
-            $configId = $configManager->getConfigIdByModel($model, 'extend');
+            $configId    = $configManager->getConfigIdByModel($model, 'extend');
             $fieldConfig = $configManager->getProvider('extend')->getConfig(
                 $configId->getClassName(),
                 $configId->getFieldName()
@@ -177,7 +179,10 @@ class EntityConfigListener
 
             if ($fieldConfig->is('is_serialized')) {
                 $entityConfig = $configManager->getProvider('extend')->getConfig($configId->getClassName());
-                $this->entityGenerator->generateSchemaFiles($entityConfig->get('schema'));
+                $schema       = $entityConfig->get('schema');
+                if ($schema) {
+                    $this->entityGenerator->generateSchemaFiles($schema);
+                }
             }
         }
     }

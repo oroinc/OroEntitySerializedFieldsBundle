@@ -72,6 +72,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                 $tableName = isset($config['extend']['schema']['doctrine'][$entityClass]['table'])
                     ? $config['extend']['schema']['doctrine'][$entityClass]['table']
                     : $this->metadataHelper->getTableNameByEntityClass($entityClass);
+
                 $table = $toSchema->getTable($tableName);
                 if (!$table->hasColumn('serialized_data')) {
                     $hasSchemaChanges = true;
@@ -122,9 +123,9 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
 
         if ($hasSchemaChanges) {
             $comparator = new Comparator();
-            $platform = $this->connection->getDatabasePlatform();
+            $platform   = $this->connection->getDatabasePlatform();
             $schemaDiff = $comparator->compare($this->schema, $toSchema);
-            $queries = $schemaDiff->toSql($platform);
+            $queries    = $schemaDiff->toSql($platform);
             foreach ($queries as $query) {
                 $this->logQuery($logger, $query);
                 if (!$dryRun) {
@@ -157,7 +158,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         $this->logQuery($logger, $sql);
 
         $result = [];
-        $rows = $this->connection->fetchAll($sql);
+        $rows   = $this->connection->fetchAll($sql);
         foreach ($rows as $row) {
             $result[$row['class_name']] = [
                 'id'   => $row['id'],
