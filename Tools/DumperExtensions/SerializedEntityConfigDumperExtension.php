@@ -54,6 +54,9 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
             if ($entityConfig->is('is_extend')) {
                 $schema = $entityConfig->get('schema');
 
+                if (empty($schema['entity'])) {
+                    continue;
+                }
                 $schema['property'][self::SERIALIZED_DATA_FIELD] = self::SERIALIZED_DATA_FIELD;
                 $schema['doctrine'][$schema['entity']]['fields'][self::SERIALIZED_DATA_FIELD] = [
                     'column'   => self::SERIALIZED_DATA_FIELD,
