@@ -1,5 +1,5 @@
 {
-    "name": "oro/bap-serialised-fields",
+    "name": "oro/platform-serialised-fields",
     "description": "Oro Platform Serialized Fields",
     "homepage": "https://github.com/orocrm/OroEntitySerializedFieldsBundle",
     "license": "OSL-3.0",
