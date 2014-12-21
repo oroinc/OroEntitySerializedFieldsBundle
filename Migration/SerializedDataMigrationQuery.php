@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Psr\Log\LoggerInterface;
 
 use Doctrine\DBAL\Schema\Comparator;
@@ -86,43 +87,16 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                         'serialized_data',
                         'array',
                         [
-                            'notnull' => false
-                        ]
-                    );
-                    $updateConfigQueries[] = [
-                        "DELETE FROM oro_entity_config_field WHERE entity_id = :entityId AND field_name = :fieldName",
-                        ['entityId' => $configData['id'], 'fieldName' => 'serialized_data'],
-                        ['entityId' => Type::INTEGER, 'fieldName' => Type::STRING]
-                    ];
-                    $updateConfigQueries[] = [
-                        "INSERT INTO oro_entity_config_field" .
-                        "  (entity_id, field_name, type, created, updated, mode, data)" .
-                        "  values (:entity_id, :field_name, :type, :created, :updated, :mode, :data)",
-                        [
-                            'entity_id'  => $configData['id'],
-                            'field_name' => 'serialized_data',
-                            'type'       => 'array',
-                            'created'    => new \DateTime('now', new \DateTimeZone('UTC')),
-                            'updated'    => new \DateTime('now', new \DateTimeZone('UTC')),
-                            'mode'       => 'hidden',
-                            'data'       => [
+                            'notnull'       => false,
+                            OroOptions::KEY => [
                                 'entity'    => ['label' => 'data'],
-                                'extend'    => ['owner' => ExtendScope::OWNER_CUSTOM, 'is_extend' => false],
+                                'extend'    => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
                                 'datagrid'  => ['is_visible' => false],
                                 'merge'     => ['display' => false],
                                 'dataaudit' => ['auditable' => false]
                             ]
-                        ],
-                        [
-                            'entity_id'  => Type::INTEGER,
-                            'field_name' => Type::STRING,
-                            'type'       => Type::STRING,
-                            'created'    => Type::DATETIME,
-                            'updated'    => Type::DATETIME,
-                            'mode'       => Type::STRING,
-                            'data'       => Type::TARRAY
                         ]
-                    ];
+                    );
                 }
             }
         }
