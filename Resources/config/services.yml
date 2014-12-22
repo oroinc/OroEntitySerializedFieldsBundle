@@ -26,7 +26,7 @@ services:
           arguments:
               - @oro_entity_extend.migration.entity_metadata_helper
           tags:
-              - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -100 }
+              - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -95 }
 
     oro_serialized_fields.entity_generator.extension:
         class: %oro_serialized_fields.entity_generator.extension.class%
