@@ -53,7 +53,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testExecute($row, $data, $expectedLoggerData)
+    public function testExecute($row, $data, $expectedLoggerMessages)
     {
         $logger = new ArrayLogger();
         $this->query->setConnection($this->connection);
@@ -76,36 +76,19 @@ class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
 
         $this->query->execute($logger);
 
-        foreach ($expectedLoggerData as $id => $expectedMessage) {
-            $message = $logger->getMessages()[$id];
-            if (!$expectedMessage[1]) {
-                $this->assertSame($expectedMessage[0], $message);
-            } else {
-                $this->assertSame(0, strpos($message, $expectedMessage[0]));
-            }
-        }
+        $messages = implode(' ', $logger->getMessages());
+        $this->assertSame($expectedLoggerMessages, $messages);
     }
 
     public function dataProvider()
     {
         return [
             [
-                'rows' => [
-                    [
-                        'id'         => 1,
-                        'class_name' => 'Test\Entity\Entity1',
-                        'data'       => []
-                    ]
-                ],
-                'data' => [
-                    'extend' => [
-                        'is_extend' => true,
-                        'state'     => 'Active'
-                    ]
-                ],
-                [
-                    ["SELECT class_name, data FROM oro_entity_config WHERE mode = ?", false],
-                ]
+                '$rows'                   => [['class_name' => 'Test\Entity\Entity1', 'data' => []]],
+                '$data'                   => ['extend' => ['is_extend' => true, 'state' => 'Active']],
+                '$expectedLoggerMessages' => "SELECT class_name, data FROM oro_entity_config WHERE mode = ? "
+                    . "Parameters: [1] = default "
+                    . "ALTER TABLE test_table ADD serialized_data LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'"
             ]
         ];
     }
