@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 
-use Doctrine\DBAL\Types\Type;
 use Psr\Log\LoggerInterface;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Comparator;
 
