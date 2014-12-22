@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 
-use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Psr\Log\LoggerInterface;
-
-use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
-
-use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
-
-use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
+use Doctrine\DBAL\Schema\Comparator;
 
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
+use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
 class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
@@ -89,11 +86,17 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                         [
                             'notnull'       => false,
                             OroOptions::KEY => [
-                                'entity'    => ['label' => 'data'],
-                                'extend'    => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
-                                'datagrid'  => ['is_visible' => false],
-                                'merge'     => ['display' => false],
-                                'dataaudit' => ['auditable' => false]
+                                ExtendOptionsManager::MODE_OPTION => ConfigModelManager::MODE_HIDDEN,
+                                'entity'                          => ['label' => 'data'],
+                                'extend'                          => [
+                                    'is_extend' => false,
+                                    'owner'     => ExtendScope::OWNER_CUSTOM
+                                ],
+                                'datagrid'                        => ['is_visible' => false],
+                                'form'                            => ['is_enabled' => false],
+                                'view'                            => ['is_displayable' => false],
+                                'merge'                           => ['display' => false],
+                                'dataaudit'                       => ['auditable' => false]
                             ]
                         ]
                     );
