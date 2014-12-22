@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 
+use Doctrine\DBAL\Types\Type;
 use Psr\Log\LoggerInterface;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -130,12 +131,12 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
 
         $sql    = 'SELECT class_name, data FROM oro_entity_config WHERE mode = ?';
         $params = [ConfigModelManager::MODE_DEFAULT];
-        $types  = [\PDO::PARAM_STR];
+        $types  = [Type::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);
         $rows = $this->connection->fetchAll($sql, $params, $types);
         foreach ($rows as $row) {
-            $result[$row['class_name']] = $this->connection->convertToPHPValue($row['data'], 'array');
+            $result[$row['class_name']] = $this->connection->convertToPHPValue($row['data'], Type::TARRAY);
         }
 
         return $result;
