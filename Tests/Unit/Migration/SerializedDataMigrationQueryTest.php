@@ -53,7 +53,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testExecute($row, $data, $expectedLoggerData)
+    public function testExecute($row, $data, $expectedLoggerMessages)
     {
         $logger = new ArrayLogger();
         $this->query->setConnection($this->connection);
@@ -76,65 +76,19 @@ class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
 
         $this->query->execute($logger);
 
-        foreach ($expectedLoggerData as $id => $expectedMessage) {
-            $message = $logger->getMessages()[$id];
-            if (!$expectedMessage[1]) {
-                $this->assertSame($expectedMessage[0], $message);
-            } else {
-                $this->assertSame(0, strpos($message, $expectedMessage[0]));
-            }
-        }
+        $messages = implode(' ', $logger->getMessages());
+        $this->assertSame($expectedLoggerMessages, $messages);
     }
 
     public function dataProvider()
     {
         return [
             [
-                'rows' => [
-                    [
-                        'id'         => 1,
-                        'class_name' => 'Test\Entity\Entity1',
-                        'data'       => []
-                    ]
-                ],
-                'data' => [
-                    'extend' => [
-                        'is_extend' => true,
-                        'state'     => 'Active'
-                    ]
-                ],
-                [
-                    ["SELECT id, class_name, data FROM oro_entity_config WHERE mode = 'default'", false],
-                    [
-                        "ALTER TABLE test_table ADD serialized_data LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'",
-                        false
-                    ],
-                    [
-                        "DELETE FROM oro_entity_config_field WHERE entity_id = :entityId AND field_name = :fieldName",
-                        false
-                    ],
-                    ["Parameters:", false],
-                    ["[entityId] = 1", false],
-                    ["[fieldName] = serialized_data", false],
-                    [
-                        "INSERT INTO oro_entity_config_field  (entity_id, field_name, type, created, updated, mode" .
-                        ", data)  values (:entity_id, :field_name, :type, :created, :updated, :mode, :data)",
-                        false
-                    ],
-                    ["Parameters:", false],
-                    ["[entity_id] = 1", false],
-                    ["[field_name] = serialized_data", false],
-                    ["[type] = array", false],
-                    ["[created] = ", true],
-                    ["[updated] = ", true],
-                    ["[mode] = hidden", false],
-                    [
-                        "[data] = a:5:{s:6:\"entity\";a:1:{s:5:\"label\";s:4:\"data\";}s:6:\"extend\";a:2:{s:5:" .
-                        "\"owner\";s:6:\"Custom\";s:9:\"is_extend\";b:0;}s:8:\"datagrid\";a:1:{s:10:\"is_visible\";" .
-                        "b:0;}s:5:\"merge\";a:1:{s:7:\"display\";b:0;}s:9:\"dataaudit\";a:1:{s:9:\"auditable\";b:0;}}",
-                        true
-                    ],
-                ]
+                '$rows'                   => [['class_name' => 'Test\Entity\Entity1', 'data' => []]],
+                '$data'                   => ['extend' => ['is_extend' => true, 'state' => 'Active']],
+                '$expectedLoggerMessages' => "SELECT class_name, data FROM oro_entity_config WHERE mode = ? "
+                    . "Parameters: [1] = default "
+                    . "ALTER TABLE test_table ADD serialized_data LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'"
             ]
         ];
     }
