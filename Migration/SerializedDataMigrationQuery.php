@@ -87,7 +87,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                             'notnull'       => false,
                             OroOptions::KEY => [
                                 ExtendOptionsManager::MODE_OPTION => ConfigModelManager::MODE_HIDDEN,
-                                'entity'                          => ['label' => 'data'],
+                                'entity'                          => ['label' => 'oro.entity_serialized_fields.data.label'],
                                 'extend'                          => [
                                     'is_extend' => false,
                                     'owner'     => ExtendScope::OWNER_CUSTOM
