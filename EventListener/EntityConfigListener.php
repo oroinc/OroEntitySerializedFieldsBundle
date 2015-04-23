@@ -57,7 +57,10 @@ class EntityConfigListener
             FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
             $entityModelId
         );
-        $isSerialized    = $this->session->get($sessionKey, false);
+        $isSerialized = false;
+        if ($this->session->isStarted()) {
+            $isSerialized = $this->session->get($sessionKey, false);
+        }
 
         $fieldConfig = $configProvider->getConfig($event->getClassName(), $event->getFieldName());
 
