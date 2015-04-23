@@ -48,10 +48,6 @@ class EntityConfigListener
      */
     public function newFieldConfig(FieldConfigEvent $event)
     {
-        if (!$this->session->isStarted()) {
-            return;
-        }
-
         /** @var ConfigProvider $configProvider */
         $configProvider = $event->getConfigManager()->getProvider('extend');
 
@@ -61,7 +57,10 @@ class EntityConfigListener
             FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
             $entityModelId
         );
-        $isSerialized    = $this->session->get($sessionKey, false);
+        $isSerialized = false;
+        if ($this->session->isStarted()) {
+            $isSerialized = $this->session->get($sessionKey, false);
+        }
 
         $fieldConfig = $configProvider->getConfig($event->getClassName(), $event->getFieldName());
 
@@ -82,10 +81,6 @@ class EntityConfigListener
      */
     public function persistConfig(PersistConfigEvent $event)
     {
-        if (!$this->session->isStarted()) {
-            return;
-        }
-
         $eventConfig   = $event->getConfig();
         $eventConfigId = $event->getConfigId();
 
@@ -153,10 +148,6 @@ class EntityConfigListener
      */
     public function updateEntityConfig(PersistConfigEvent $event)
     {
-        if (!$this->session->isStarted()) {
-            return;
-        }
-
         /** @var ConfigProvider $configProvider */
         $configProvider = $event->getConfigManager()->getProvider('extend');
 
@@ -175,10 +166,6 @@ class EntityConfigListener
      */
     public function flushConfig(FlushConfigEvent $event)
     {
-        if (!$this->session->isStarted()) {
-            return;
-        }
-
         $models        = $event->getModels();
         $configManager = $event->getConfigManager();
         foreach ($models as $model) {
