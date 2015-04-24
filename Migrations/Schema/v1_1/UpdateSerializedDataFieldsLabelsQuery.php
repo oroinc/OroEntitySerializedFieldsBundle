@@ -44,11 +44,11 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
 
     /**
      * @param LoggerInterface $logger
-     * @param bool $dryRun
+     * @param bool            $dryRun
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $entities = $this->getConfigurableEntitiesData($logger);
+        $entities       = $this->getConfigurableEntitiesData($logger);
         $fieldsToUpdate = [];
         foreach ($entities as $entity => $configData) {
             $config = $configData['data'];
@@ -59,7 +59,7 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
                         && isset($fieldConfig['data']['entity']['label'])
                         && $fieldConfig['data']['entity']['label'] === 'data'
                     ) {
-                        $fieldsToUpdate[] = $fieldId;
+                        $fieldsToUpdate[$fieldId] = $fieldConfig['data'];
                     }
                 }
             }
@@ -78,10 +78,10 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
         $this->logQuery($logger, $sql);
 
         $result = [];
-        $rows = $this->connection->fetchAll($sql);
+        $rows   = $this->connection->fetchAll($sql);
         foreach ($rows as $row) {
             $result[$row['class_name']] = [
-                'id' => $row['id'],
+                'id'   => $row['id'],
                 'data' => $this->connection->convertToPHPValue($row['data'], 'array')
             ];
         }
@@ -91,7 +91,7 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
 
     /**
      * @param LoggerInterface $logger
-     * @param $entityId
+     * @param                 $entityId
      *
      * @return array
      */
@@ -108,7 +108,7 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
             $rows = $this->connection->fetchAll($sql);
             foreach ($rows as $row) {
                 $result[$row['id']] = [
-                    'data' => $this->connection->convertToPHPValue($row['data'], 'array'),
+                    'data'       => $this->connection->convertToPHPValue($row['data'], 'array'),
                     'field_name' => $row['field_name']
                 ];
             }
@@ -118,33 +118,24 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @param array $fieldsToUpdate
+     * @param array           $fieldsToUpdate
      * @param LoggerInterface $logger
-     * @param $dryRun
+     * @param                 $dryRun
      * @throws \Doctrine\DBAL\DBALException
      */
     private function executeUpdates(array $fieldsToUpdate, LoggerInterface $logger, $dryRun)
     {
         $scope = 'entity';
-        $code = 'label';
+        $code  = 'label';
         $label = 'oro.entity_serialized_fields.data.label';
-        foreach ($fieldsToUpdate as $fieldId) {
-            $sql = 'SELECT data
-                    FROM oro_entity_config_field
-                    WHERE id = ?
-                    LIMIT 1';
-            $parameters = [$fieldId];
-            $row = $this->connection->fetchAssoc($sql, $parameters);
-            if ($row) {
-                $data = $row['data'];
-                $data = $data ? $this->connection->convertToPHPValue($data, Type::TARRAY) : [];
-                $data[$scope][$code] = $label;
-                $data = $this->connection->convertToDatabaseValue($data, Type::TARRAY);
+        foreach ($fieldsToUpdate as $fieldId => $fieldData) {
+            $fieldData[$scope][$code] = $label;
+            $data                     = $this->connection->convertToDatabaseValue($fieldData, Type::TARRAY);
 
-                $fieldSql = 'UPDATE oro_entity_config_field SET data = ? WHERE id = ?';
-                $fieldParams = [$data, $fieldId];
+            $fieldSql    = 'UPDATE oro_entity_config_field SET data = ? WHERE id = ?';
+            $fieldParams = [$data, $fieldId];
 
-                $indexSql = "UPDATE oro_entity_config_index_value
+            $indexSql    = "UPDATE oro_entity_config_index_value
                         SET value = ?
                         WHERE
                             field_id = ? AND
@@ -152,15 +143,14 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
                             scope = ? AND
                             code = ?
                         ";
-                $indexParams = [$label, $fieldId, $scope, $code];
+            $indexParams = [$label, $fieldId, $scope, $code];
 
-                $this->logQuery($logger, $fieldSql, $fieldParams);
-                $this->logQuery($logger, $indexSql, $indexParams);
+            $this->logQuery($logger, $fieldSql, $fieldParams);
+            $this->logQuery($logger, $indexSql, $indexParams);
 
-                if (!$dryRun) {
-                    $this->connection->prepare($fieldSql)->execute($fieldParams);
-                    $this->connection->prepare($indexSql)->execute($indexParams);
-                }
+            if (!$dryRun) {
+                $this->connection->prepare($fieldSql)->execute($fieldParams);
+                $this->connection->prepare($indexSql)->execute($indexParams);
             }
         }
     }
