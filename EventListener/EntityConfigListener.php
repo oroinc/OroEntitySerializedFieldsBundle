@@ -53,13 +53,16 @@ class EntityConfigListener
 
         $entityClassName = $event->getClassName();
         $entityModelId   = $event->getConfigManager()->getConfigEntityModel($entityClassName)->getId();
-        $sessionKey      = sprintf(
-            FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
-            $entityModelId
-        );
-        $isSerialized = false;
+
         if ($this->session->isStarted()) {
+            $sessionKey      = sprintf(
+                FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
+                $entityModelId
+            );
+
             $isSerialized = $this->session->get($sessionKey, false);
+        } else {
+            $isSerialized = false;
         }
 
         $fieldConfig = $configProvider->getConfig($event->getClassName(), $event->getFieldName());
