@@ -6,3 +6,4 @@ oro:
                 serialized:   Serialized field
                 empty_value:  Choose a storage type...
                 label: Storage type
+        data.label: Serilized data
