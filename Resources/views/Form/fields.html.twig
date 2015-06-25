@@ -2,23 +2,33 @@
     {% spaceless %}
         {{ form_widget(form) }}
         <script type="text/javascript">
-            require(['jquery'], function($){
-                $(document).on('change', 'form select[id*="oro_entity_extend_field_type_is_serialized"]', function (e) {
-                    var that = this;
-                    var serializableTypes   = {{ form.vars.serializableTypes|json_encode()|raw }};
-                    $('form select[id*="oro_entity_extend_field_type_type"] optgroup').each(function(index, value){
-                        $.each($(value).find('option'), function(index, value){
-                            if ($(that).val() == 1) {
-                                if (serializableTypes.indexOf($(value).val()) === -1) {
-                                    $(value).attr('disabled', 'disabled');
+            require(['jquery', 'oroui/js/mediator'], function ($, mediator) {
+                $(function () {
+                    var storageTypeSelector  = 'form[name=oro_entity_extend_field_type] select[data-ftid=oro_entity_extend_field_type_is_serialized]';
+                    var fieldTypeSelector    = 'form[name=oro_entity_extend_field_type] select[data-ftid=oro_entity_extend_field_type_type]';
+                    var _onChangeStorageType = function () {
+                        var that = this;
+                        var serializableTypes = {{ form.vars.serializableTypes|json_encode()|raw }};
+                        $(fieldTypeSelector + ' optgroup').each(function (index, value) {
+                            $.each($(value).find('option'), function (index, value) {
+                                if ($(that).val() == 1) {
+                                    if (serializableTypes.indexOf($(value).val()) === -1) {
+                                        $(value).attr('disabled', 'disabled');
+                                    }
+                                } else {
+                                    $(value).removeAttr('disabled');
                                 }
-                            } else {
-                                $(value).removeAttr('disabled');
-                            }
-                        })
+                            })
+                        });
+                        $(fieldTypeSelector).select2('val', '');
+                    };
+
+                    $(storageTypeSelector).on('change.changeStorageType', _onChangeStorageType);
+
+                    mediator.once('page:beforeChange', function () {
+                        $(storageTypeSelector).off('change.changeStorageType', _onChangeStorageType);
                     });
-                    $('form select[id*="oro_entity_extend_field_type_type"]').select2('val', '');
-                });
+                })
             });
         </script>
     {% endspaceless %}
