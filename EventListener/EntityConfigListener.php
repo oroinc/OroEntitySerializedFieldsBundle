@@ -87,8 +87,6 @@ class EntityConfigListener
         $eventConfig   = $event->getConfig();
         $eventConfigId = $event->getConfigId();
 
-        $event->getConfigManager()->calculateConfigChangeSet($eventConfig);
-
         $change = $event->getConfigManager()->getConfigChangeSet($eventConfig);
         if (empty($change)) {
             $event->stopPropagation();
