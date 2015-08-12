@@ -75,6 +75,7 @@ class EntityConfigListener
         }
 
         $configProvider->persist($fieldConfig);
+        $configProvider->getConfigManager()->calculateConfigChangeSet($fieldConfig);
     }
 
     /**
@@ -121,6 +122,7 @@ class EntityConfigListener
                 $eventConfig->set('state', ExtendScope::STATE_ACTIVE);
 
                 $event->getConfigManager()->persist($eventConfig);
+                $event->getConfigManager()->calculateConfigChangeSet($eventConfig);
             }
         }
 
@@ -138,6 +140,7 @@ class EntityConfigListener
             $this->originalFieldConfig = clone $eventConfig;
 
             $event->getConfigManager()->persist($eventConfig);
+            $event->getConfigManager()->calculateConfigChangeSet($eventConfig);
         }
     }
 
@@ -203,6 +206,7 @@ class EntityConfigListener
             $entityConfig->set('state', $this->originalEntityConfig->get('state'));
 
             $event->getConfigManager()->persist($entityConfig);
+            $event->getConfigManager()->calculateConfigChangeSet($entityConfig);
         }
     }
 
