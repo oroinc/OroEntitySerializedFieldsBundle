@@ -143,6 +143,42 @@ class EntityConfigListener
             $event->getConfigManager()->persist($eventConfig);
             $event->getConfigManager()->calculateConfigChangeSet($eventConfig);
         }
+
+        if ($eventConfigId instanceof FieldConfigId
+            && $eventConfig->is('is_serialized')
+        ) {
+            $entityConfig = $event->getConfigManager()
+                ->getProvider('extend')
+                ->getConfig($eventConfigId->getClassName());
+            $fieldName    = $eventConfigId->getFieldName();
+            $schema       = $entityConfig->get('schema', false, []);
+            if (!empty($schema)) {
+                $hasChanges   = false;
+                if (isset($schema['serialized_property'][$fieldName])) {
+                    if ($eventConfig->is('is_deleted')) {
+                        if (!isset($schema['serialized_property'][$fieldName]['private'])
+                            || !$schema['serialized_property'][$fieldName]['private']) {
+                            $schema['serialized_property'][$fieldName]['private'] = true;
+                            $hasChanges                                           = true;
+                        }
+                    } elseif (isset($schema['serialized_property'][$fieldName]['private'])) {
+                        unset($schema['serialized_property'][$fieldName]['private']);
+                        $hasChanges = true;
+                    }
+                } else {
+                    $schema['serialized_property'][$fieldName] = [];
+                    if ($eventConfig->is('is_deleted')) {
+                        $schema['serialized_property'][$fieldName]['private'] = true;
+                    }
+                    $hasChanges = true;
+                }
+                if ($hasChanges) {
+                    $entityConfig->set('schema', $schema);
+                    $event->getConfigManager()->persist($entityConfig);
+                    $event->getConfigManager()->calculateConfigChangeSet($entityConfig);
+                }
+            }
+        }
     }
 
     /**
