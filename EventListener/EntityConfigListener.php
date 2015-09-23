@@ -4,13 +4,12 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 
-use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Event\FieldConfigEvent;
-use Oro\Bundle\EntityConfigBundle\Event\PersistConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\FlushConfigEvent;
+use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
@@ -28,10 +27,10 @@ class EntityConfigListener
     protected $session;
 
     /** @var Config|null */
-    private $originalEntityConfig = null;
+    private $originalEntityConfig;
 
     /** @var Config|null */
-    private $originalFieldConfig = null;
+    private $originalFieldConfig;
 
     /**
      * @param EntityGenerator $entityGenerator
@@ -48,16 +47,12 @@ class EntityConfigListener
      */
     public function newFieldConfig(FieldConfigEvent $event)
     {
-        /** @var ConfigProvider $configProvider */
-        $configProvider = $event->getConfigManager()->getProvider('extend');
-
-        $entityClassName = $event->getClassName();
-        $entityModelId   = $event->getConfigManager()->getConfigEntityModel($entityClassName)->getId();
+        $className = $event->getClassName();
 
         if ($this->session->isStarted()) {
-            $sessionKey      = sprintf(
+            $sessionKey = sprintf(
                 FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
-                $entityModelId
+                $event->getConfigManager()->getConfigEntityModel($className)->getId()
             );
 
             $isSerialized = $this->session->get($sessionKey, false);
@@ -65,7 +60,9 @@ class EntityConfigListener
             $isSerialized = false;
         }
 
-        $fieldConfig = $configProvider->getConfig($event->getClassName(), $event->getFieldName());
+        $configManager = $event->getConfigManager();
+
+        $fieldConfig = $configManager->getProvider('extend')->getConfig($className, $event->getFieldName());
 
         $this->originalFieldConfig = clone $fieldConfig;
 
@@ -74,26 +71,30 @@ class EntityConfigListener
             $fieldConfig->set('state', ExtendScope::STATE_ACTIVE);
         }
 
-        $configProvider->persist($fieldConfig);
-        $configProvider->getConfigManager()->calculateConfigChangeSet($fieldConfig);
+        $configManager->persist($fieldConfig);
     }
 
     /**
-     * @param PersistConfigEvent $event
+     * @param PreFlushConfigEvent $event
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function persistConfig(PersistConfigEvent $event)
+    public function persistConfig(PreFlushConfigEvent $event)
     {
-        $eventConfig   = $event->getConfig();
-        $eventConfigId = $event->getConfigId();
+        $eventConfig = $event->getConfig('extend');
+        if (null === $eventConfig) {
+            return;
+        }
 
-        $change = $event->getConfigManager()->getConfigChangeSet($eventConfig);
-        if (empty($change)) {
+        $changeSet = $event->getConfigManager()->getConfigChangeSet($eventConfig);
+        if (empty($changeSet)) {
             $event->stopPropagation();
 
             return;
         }
+
+        $eventConfigId = $eventConfig->getId();
 
         /**
          * Case with creating new serialized field (fired from entity persist):
@@ -148,17 +149,14 @@ class EntityConfigListener
      * Starts before all events.
      * The main aim of method to store original entity state for future events.
      *
-     * @param PersistConfigEvent $event
+     * @param PreFlushConfigEvent $event
      */
-    public function updateEntityConfig(PersistConfigEvent $event)
+    public function updateEntityConfig(PreFlushConfigEvent $event)
     {
-        /** @var ConfigProvider $configProvider */
-        $configProvider = $event->getConfigManager()->getProvider('extend');
+        $className = $event->getClassName();
+        if ($this->originalEntityConfig === null) {
+            $entityConfig = $event->getConfigManager()->getProvider('extend')->getConfig($className);
 
-        $entityClassName = $event->getConfigId()->getClassName();
-        $entityConfig    = $configProvider->getConfig($entityClassName);
-
-        if ($this->originalEntityConfig == null) {
             $this->originalEntityConfig = clone $entityConfig;
         }
     }
@@ -197,29 +195,18 @@ class EntityConfigListener
     /**
      * Reverts entity state to it's original value
      *
-     * @param PersistConfigEvent $event
+     * @param PreFlushConfigEvent $event
      */
-    protected function revertEntityState(PersistConfigEvent $event)
+    protected function revertEntityState(PreFlushConfigEvent $event)
     {
-        $entityConfig = $this->getEntityConfig($event);
-        if ($entityConfig->get('state') != $this->originalEntityConfig->get('state')) {
+        $className     = $event->getClassName();
+        $configManager = $event->getConfigManager();
+        $entityConfig  = $configManager->getProvider('extend')->getConfig($className);
+        if ($entityConfig->get('state') !== $this->originalEntityConfig->get('state')) {
             $entityConfig->set('state', $this->originalEntityConfig->get('state'));
 
-            $event->getConfigManager()->persist($entityConfig);
-            $event->getConfigManager()->calculateConfigChangeSet($entityConfig);
+            $configManager->persist($entityConfig);
+            $configManager->calculateConfigChangeSet($entityConfig);
         }
-    }
-
-    /**
-     * @param PersistConfigEvent $event
-     *
-     * @return ConfigInterface
-     */
-    protected function getEntityConfig(PersistConfigEvent $event)
-    {
-        $className    = $event->getConfigId()->getClassName();
-        $entityConfig = $event->getConfigManager()->getProvider('extend')->getConfig($className);
-
-        return $entityConfig;
     }
 }

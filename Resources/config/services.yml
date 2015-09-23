@@ -11,8 +11,6 @@ parameters:
     oro_serialized_fields.form.extension.config_extension.class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\ConfigTypeExtension
     oro_serialized_fields.form.type.is_serialized_field.class:   Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType
 
-    oro_serialized_fields.listener.entity_config.class: Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener
-
     oro_serialized_fields.exclusion_provider.serialized_field.class: Oro\Bundle\EntitySerializedFieldsBundle\Provider\ConfigSerializedFieldExclusionProvider
 
     ##
@@ -77,14 +75,14 @@ services:
             - { name: form.type, alias: oro_serialized_fields_is_serialized_type }
 
     oro_serialized_fields.listener.entity_config:
-        class: %oro_serialized_fields.listener.entity_config.class%
+        class: Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener
         arguments:
             - @oro_entity_extend.entity_generator
             - @session
         tags:
             - { name: kernel.event_listener, event: entity_config.new.field.config, method: newFieldConfig, priority: -255 }
-            - { name: kernel.event_listener, event: entity_config.persist.config, method: persistConfig, priority: -255 }
-            - { name: kernel.event_listener, event: entity_config.persist.config, method: updateEntityConfig, priority: 255 }
+            - { name: kernel.event_listener, event: entity_config.pre_flush.config, method: persistConfig, priority: -255 }
+            - { name: kernel.event_listener, event: entity_config.pre_flush.config, method: updateEntityConfig, priority: 255 }
             - { name: kernel.event_listener, event: entity_config.flush.config, method: flushConfig }
 
     oro_serialized_fields.exclusion_provider.serialized_field:
