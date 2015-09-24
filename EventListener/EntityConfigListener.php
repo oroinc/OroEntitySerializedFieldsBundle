@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Event\FieldConfigEvent;
-use Oro\Bundle\EntityConfigBundle\Event\FlushConfigEvent;
+use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
@@ -44,7 +44,7 @@ class EntityConfigListener
     /**
      * @param FieldConfigEvent $event
      */
-    public function newFieldConfig(FieldConfigEvent $event)
+    public function createField(FieldConfigEvent $event)
     {
         $className     = $event->getClassName();
         $configManager = $event->getConfigManager();
@@ -78,7 +78,7 @@ class EntityConfigListener
      *
      * @param PreFlushConfigEvent $event
      */
-    public function updateEntityConfig(PreFlushConfigEvent $event)
+    public function initializeEntity(PreFlushConfigEvent $event)
     {
         $className = $event->getClassName();
         if ($this->originalEntityConfig === null) {
@@ -166,9 +166,9 @@ class EntityConfigListener
     /**
      * In case of flushing new serialized field, proxies for owning entity should be regenerated.
      *
-     * @param FlushConfigEvent $event
+     * @param PostFlushConfigEvent $event
      */
-    public function flushConfig(FlushConfigEvent $event)
+    public function postFlush(PostFlushConfigEvent $event)
     {
         if (null === $this->originalFieldConfig) {
             return;
