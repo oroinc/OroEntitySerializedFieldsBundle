@@ -37,10 +37,16 @@ class ConfigSerializedFieldExclusionProvider implements ExclusionProviderInterfa
      */
     public function isIgnoredField(ClassMetadata $metadata, $fieldName)
     {
+        if (!$metadata->hasField($fieldName)) {
+            // skip virtual fields
+            return false;
+        }
+
         $className = $metadata->getName();
         if ($this->extendConfigProvider->hasConfig($className, $fieldName)) {
-            $config = $this->extendConfigProvider->getConfig($className, $fieldName);
-            return $config->get('is_serialized', false, false);
+            return $this->extendConfigProvider
+                ->getConfig($className, $fieldName)
+                ->get('is_serialized', false, false);
         }
 
         return false;
