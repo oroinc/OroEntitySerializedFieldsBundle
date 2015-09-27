@@ -53,6 +53,10 @@ class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit_Framework_Test
         $fieldName = $fieldConfig->getId()->getFieldName();
 
         $this->metadata->expects($this->once())
+            ->method('hasField')
+            ->willReturn(true);
+
+        $this->metadata->expects($this->once())
             ->method('getName')
             ->will($this->returnValue($className));
 
