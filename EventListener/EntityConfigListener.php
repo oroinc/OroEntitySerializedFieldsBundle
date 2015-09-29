@@ -106,7 +106,7 @@ class EntityConfigListener
             return;
         }
 
-        if (!$event->isFieldConfig()) { // entity config
+        if ($event->isEntityConfig()) { // entity config
             /**
              * Case with creating new serialized field (fired from entity persist):
              *  - owning entity "state" attribute should NOT be changed
