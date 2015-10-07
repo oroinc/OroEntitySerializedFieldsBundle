@@ -58,8 +58,9 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
             $fields = array_filter(
                 $fields,
                 function (FieldConfigId $field) use ($extendConfigProvider, $entityClassName) {
-                    $fieldConfig = $extendConfigProvider->getConfig($entityClassName, $field->getFieldName());
-                    return $fieldConfig->has('is_serialized') && $fieldConfig->is('is_serialized');
+                    return $extendConfigProvider
+                        ->getConfig($entityClassName, $field->getFieldName())
+                        ->is('is_serialized');
                 }
             );
             array_walk(

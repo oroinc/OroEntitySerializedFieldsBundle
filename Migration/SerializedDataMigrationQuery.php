@@ -10,7 +10,7 @@ use Doctrine\DBAL\Schema\Comparator;
 
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -86,7 +86,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                         [
                             'notnull'       => false,
                             OroOptions::KEY => [
-                                ExtendOptionsManager::MODE_OPTION => ConfigModelManager::MODE_HIDDEN,
+                                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
                                 'entity'                          => [
                                     'label' => 'oro.entity_serialized_fields.data.label'
                                 ],
@@ -132,7 +132,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         $result = [];
 
         $sql    = 'SELECT class_name, data FROM oro_entity_config WHERE mode = ?';
-        $params = [ConfigModelManager::MODE_DEFAULT];
+        $params = [ConfigModel::MODE_DEFAULT];
         $types  = [Type::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);
