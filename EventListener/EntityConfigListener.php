@@ -52,7 +52,7 @@ class EntityConfigListener
         if ($this->session->isStarted()) {
             $sessionKey = sprintf(
                 FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
-                $configManager->getConfigEntityModel($className)->getId()
+                $configManager->getConfigModelId($className)
             );
 
             $isSerialized = $this->session->get($sessionKey, false);
