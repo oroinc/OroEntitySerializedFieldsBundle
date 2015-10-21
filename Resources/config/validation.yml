@@ -1,0 +1,7 @@
+namespaces:
+    oro_serialized_fields: Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\
+
+Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel:
+    constraints:
+        - oro_serialized_fields:UniqueExtendEntityField:
+            groups: [fieldName]
