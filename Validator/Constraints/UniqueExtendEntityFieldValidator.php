@@ -6,7 +6,6 @@ use Doctrine\Common\Inflector\Inflector;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
@@ -41,10 +40,6 @@ class UniqueExtendEntityFieldValidator extends ConstraintValidator
      */
     protected function addViolation(Constraint $constraint)
     {
-        /** @var ExecutionContextInterface $context */
-        $context = $this->context;
-        $context->buildViolation($constraint->message)
-            ->atPath($constraint->path)
-            ->addViolation();
+        $this->context->addViolationAt($constraint->path, $constraint->message);
     }
 }
