@@ -62,6 +62,11 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_entity_extend_field_type }
 
+    oro_serialized_fields.validator.unique_extend_entity_field_validator:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\UniqueExtendEntityFieldValidator
+        tags:
+            - { name: validator.constraint_validator, alias: oro_serialized_fields.validator.unique_extend_entity_field }
+
     oro_serialized_fields.form.extension.config_extension:
         class: %oro_serialized_fields.form.extension.config_extension.class%
         arguments:
