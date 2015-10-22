@@ -9,6 +9,10 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
+/**
+ * Validates field name uniqueness.
+ * @see \Oro\Bundle\EntityExtendBundle\Validator\Constraints\UniqueExtendEntityFieldValidator
+ */
 class UniqueExtendEntityFieldValidator extends ConstraintValidator
 {
     /**
