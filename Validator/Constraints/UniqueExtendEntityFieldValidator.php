@@ -16,6 +16,8 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
  */
 class UniqueExtendEntityFieldValidator extends ConstraintValidator
 {
+    const ALIAS = 'oro_serialized_fields.validator.unique_extend_entity_field';
+
     /**
      * {@inheritdoc}
      */
@@ -30,25 +32,44 @@ class UniqueExtendEntityFieldValidator extends ConstraintValidator
             );
         }
 
-        $newFieldName = strtolower(Inflector::classify(($value->getFieldName())));
+        $fieldName = $value->getFieldName();
 
-        // Need hardcoded check for `serialized_data` field.
-        if ($newFieldName === strtolower(Inflector::classify('serialized_data'))) {
-            $this->addViolation($constraint);
+        // A special case for `serialized_data` field.
+        if ($this->normalizeFieldName($fieldName) === $this->normalizeFieldName('serialized_data')) {
+            $this->addViolation($constraint->message, $fieldName, 'serialized_data');
 
             return;
         }
     }
 
     /**
-     * @param Constraint $constraint
+     * @param string $message
+     * @param string $newFieldName
+     * @param string $existingFieldName
      */
-    protected function addViolation(Constraint $constraint)
+    protected function addViolation($message, $newFieldName, $existingFieldName)
     {
         /** @var ExecutionContextInterface $context */
         $context = $this->context;
-        $context->buildViolation($constraint->message)
-            ->atPath($constraint->path)
+        $context
+            ->buildViolation(
+                $message,
+                ['{{ value }}' => $newFieldName, '{{ field }}' => $existingFieldName]
+            )
+            ->atPath('fieldName')
             ->addViolation();
+    }
+
+    /**
+     * Normalizes a field name.
+     * The normalized name is lower cased and unessential symbols, like _, are removed.
+     *
+     * @param string $fieldName
+     *
+     * @return string
+     */
+    public function normalizeFieldName($fieldName)
+    {
+        return strtolower(Inflector::classify($fieldName));
     }
 }

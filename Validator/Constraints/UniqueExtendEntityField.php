@@ -2,15 +2,26 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints;
 
-use Oro\Bundle\EntityExtendBundle\Validator\Constraints\UniqueExtendEntityField as BaseUniqueExtendEntityField;
+use Symfony\Component\Validator\Constraint;
 
-class UniqueExtendEntityField extends BaseUniqueExtendEntityField
+class UniqueExtendEntityField extends Constraint
 {
+    /** @var string */
+    public $message = 'This name is reserved to store values of serialized fields.';
+
     /**
      * {@inheritdoc}
      */
     public function validatedBy()
     {
-        return 'oro_serialized_fields.validator.unique_extend_entity_field';
+        return UniqueExtendEntityFieldValidator::ALIAS;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTargets()
+    {
+        return self::CLASS_CONSTRAINT;
     }
 }
