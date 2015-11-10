@@ -7,3 +7,5 @@ oro:
                 empty_value:  Choose a storage type...
                 label: Storage type
         data.label: Serilized data
+        field:
+            is_serialized.tooltip: Selection of "Table column" will allow to use field in reports, segments, grid filters as well as building relations on it. This will require schema update.
