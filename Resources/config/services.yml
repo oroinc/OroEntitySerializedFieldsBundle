@@ -94,3 +94,17 @@ services:
             - @oro_entity_config.provider.extend
         tags:
             - { name: oro_entity.exclusion_provider.default }
+
+    oro_serialized_fields.api.add_serialized_fields:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Api\AddSerializedFields
+        arguments:
+            - @oro_entity_config.provider.extend
+        tags:
+            - { name: oro.api.processor, action: get_config, priority: -60 }
+            - { name: oro.api.processor, action: get_relation_config, priority: -60 }
+
+    oro_serialized_fields.api.remove_serialized_data_field:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Api\RemoveSerializedDataField
+        tags:
+            - { name: oro.api.processor, action: get, group: finalize, priority: 200 }
+            - { name: oro.api.processor, action: get_list, group: finalize, priority: 200 }
