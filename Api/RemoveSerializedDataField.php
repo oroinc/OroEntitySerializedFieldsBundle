@@ -29,7 +29,6 @@ class RemoveSerializedDataField implements ProcessorInterface
             return;
         }
 
-
         $this->removeSerializedDataField($data);
         $context->setResult($data);
     }
