@@ -8,12 +8,13 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Comparator;
 
-use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
-use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
+use Oro\Bundle\EntityExtendBundle\Migration\Schema\ExtendSchema;
+use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
 class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
@@ -59,50 +60,39 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
      */
     protected function runSerializedData(LoggerInterface $logger, $dryRun = false)
     {
-        $entities         = $this->getConfigurableEntitiesData($logger);
+        $entities         = $this->getEntities($logger);
         $hasSchemaChanges = false;
         $toSchema         = clone $this->schema;
-        foreach ($entities as $entityClass => $config) {
-            if (isset($config['extend']['is_extend'])
-                && $config['extend']['is_extend'] == true
-                && $config['extend']['state'] == ExtendScope::STATE_ACTIVE
-            ) {
-                if (isset($config['extend']['schema']['doctrine'][$entityClass]['table'])) {
-                    $tableName = $config['extend']['schema']['doctrine'][$entityClass]['table'];
-                } else {
-                    $tableName = $this->metadataHelper->getTableNameByEntityClass($entityClass);
-                }
-
-                // Process only existing tables
-                if (!$toSchema->hasTable($tableName)) {
-                    continue;
-                }
-                $table = $toSchema->getTable($tableName);
-                if (!$table->hasColumn('serialized_data')) {
-                    $hasSchemaChanges = true;
-                    $table->addColumn(
-                        'serialized_data',
-                        'array',
-                        [
-                            'notnull'       => false,
-                            OroOptions::KEY => [
-                                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                                'entity'                          => [
-                                    'label' => 'oro.entity_serialized_fields.data.label'
-                                ],
-                                'extend'                          => [
-                                    'is_extend' => false,
-                                    'owner'     => ExtendScope::OWNER_CUSTOM
-                                ],
-                                'datagrid'                        => ['is_visible' => false],
-                                'form'                            => ['is_enabled' => false],
-                                'view'                            => ['is_displayable' => false],
-                                'merge'                           => ['display' => false],
-                                'dataaudit'                       => ['auditable' => false]
-                            ]
+        foreach ($entities as $entityClass => $tableName) {
+            // Process only existing tables
+            if (!$toSchema->hasTable($tableName)) {
+                continue;
+            }
+            $table = $toSchema->getTable($tableName);
+            if (!$table->hasColumn('serialized_data')) {
+                $hasSchemaChanges = true;
+                $table->addColumn(
+                    'serialized_data',
+                    'array',
+                    [
+                        'notnull'       => false,
+                        OroOptions::KEY => [
+                            ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                            'entity'                          => [
+                                'label' => 'oro.entity_serialized_fields.data.label'
+                            ],
+                            'extend'                          => [
+                                'is_extend' => false,
+                                'owner'     => ExtendScope::OWNER_CUSTOM
+                            ],
+                            'datagrid'                        => ['is_visible' => false],
+                            'form'                            => ['is_enabled' => false],
+                            'view'                            => ['is_displayable' => false],
+                            'merge'                           => ['display' => false],
+                            'dataaudit'                       => ['auditable' => false]
                         ]
-                    );
-                }
+                    ]
+                );
             }
         }
 
@@ -121,13 +111,15 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
     }
 
     /**
+     * Returns entities that should be checked for 'serialized_data' field
+     *
      * @param LoggerInterface $logger
      *
-     * @return array
-     *  key - class name
-     *  value - entity config array data
+     * @return array [class name => table name]
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function getConfigurableEntitiesData(LoggerInterface $logger)
+    protected function getEntities(LoggerInterface $logger)
     {
         $result = [];
 
@@ -138,9 +130,60 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         $this->logQuery($logger, $sql, $params, $types);
         $rows = $this->connection->fetchAll($sql, $params, $types);
         foreach ($rows as $row) {
-            $result[$row['class_name']] = $this->connection->convertToPHPValue($row['data'], Type::TARRAY);
+            $entityClass = $row['class_name'];
+            $config      = $this->connection->convertToPHPValue($row['data'], Type::TARRAY);
+            if (isset($config['extend']['is_extend'])
+                && $config['extend']['is_extend']
+                && $config['extend']['state'] === ExtendScope::STATE_ACTIVE
+            ) {
+                $tableName = isset($config['extend']['schema']['doctrine'][$entityClass]['table'])
+                    ? $config['extend']['schema']['doctrine'][$entityClass]['table']
+                    : $this->metadataHelper->getTableNameByEntityClass($entityClass);
+
+                $result[$entityClass] = $tableName;
+            }
+        }
+
+        // add entities that are being created in migrations, for example custom entities
+        if ($this->schema instanceof ExtendSchema) {
+            $options = $this->schema->getExtendOptions();
+            foreach ($options as $key => $value) {
+                if ($this->isTableOptions($key)
+                    && isset($value['extend']['is_extend'])
+                    && $value['extend']['is_extend']
+                    && isset($value[ExtendOptionsManager::ENTITY_CLASS_OPTION])
+                    && (
+                        !isset($value[ExtendOptionsManager::MODE_OPTION])
+                        || ConfigModel::MODE_DEFAULT === $value[ExtendOptionsManager::MODE_OPTION]
+                    )
+                ) {
+                    $entityClass = $value[ExtendOptionsManager::ENTITY_CLASS_OPTION];
+                    if (!isset($result[$entityClass])) {
+                        $result[$entityClass] = $key;
+                    }
+                }
+            }
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    protected function isTableOptions($key)
+    {
+        if (false !== strpos($key, '!')) {
+            // it is a column options
+            return false;
+        }
+        if (0 === strpos($key, '_')) {
+            // it is an auxiliary section, for example '_append'
+            return false;
+        }
+
+        return true;
     }
 }
