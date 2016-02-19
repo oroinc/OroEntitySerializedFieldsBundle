@@ -7,7 +7,6 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
 use Oro\Bundle\ApiBundle\Metadata\FieldMetadata;
 use Oro\Bundle\ApiBundle\Processor\GetMetadata\MetadataContext;
-use Oro\Bundle\ApiBundle\Util\ConfigUtil;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -41,16 +40,14 @@ class AddSerializedFieldsMetadata implements ProcessorInterface
         }
 
         $config = $context->getConfig();
-        if (empty($config)) {
+        if (null === $config) {
             // a configuration does not exist
             return;
         }
 
-        if (isset($config[ConfigUtil::FIELDS])
-            && is_array($config[ConfigUtil::FIELDS])
+        if ($config->hasFields()
             && $this->extendConfigProvider->hasConfig($context->getClassName())
         ) {
-            $fields = $config[ConfigUtil::FIELDS];
             /** @var EntityMetadata $entityMetadata */
             $entityMetadata = $context->getResult();
             $fieldConfigs   = $this->extendConfigProvider->getConfigs($context->getClassName());
@@ -58,7 +55,7 @@ class AddSerializedFieldsMetadata implements ProcessorInterface
                 /** @var FieldConfigId $fieldId */
                 $fieldId   = $fieldConfig->getId();
                 $fieldName = $fieldId->getFieldName();
-                if (array_key_exists($fieldName, $fields)
+                if ($config->hasField($fieldName)
                     && !$entityMetadata->hasField($fieldName)
                     && $fieldConfig->is('is_serialized')
                     && ExtendHelper::isFieldAccessible($fieldConfig)
