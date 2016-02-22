@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api;
 
+use Oro\Bundle\ApiBundle\Config\ConfigLoaderFactory;
+use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\Config\ConfigContext;
 use Oro\Bundle\ApiBundle\Util\ConfigUtil;
 use Oro\Bundle\EntityConfigBundle\Tests\Unit\ConfigProviderMock;
@@ -11,38 +13,38 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_ENTITY_CLASS = 'Test\Class';
 
-    public function testNoConfig()
+    public function testForNotCompletedDefinition()
     {
         $context = new ConfigContext();
         $context->setClassName(self::TEST_ENTITY_CLASS);
+        $context->setResult($this->createConfigObject([]));
 
         $extendConfigProvider = $this->getConfigProviderMock();
 
         $processor = new AddSerializedFields($extendConfigProvider);
         $processor->process($context);
 
-        $this->assertNull($context->getResult());
+        $this->assertEquals(
+            [],
+            $context->getResult()->toArray()
+        );
     }
 
     public function testForNonConfigurableEntity()
     {
         $config = [
-            ConfigUtil::EXCLUSION_POLICY => ConfigUtil::EXCLUSION_POLICY_ALL,
-            ConfigUtil::FIELDS           => [
-                'field1'          => [
-                    ConfigUtil::DEFINITION => null
-                ],
+            'exclusion_policy' => 'all',
+            'fields'           => [
+                'field1'          => null,
                 'serialized_data' => [
-                    ConfigUtil::DEFINITION => [
-                        ConfigUtil::EXCLUDE => true
-                    ]
+                    'exclude' => true
                 ],
             ]
         ];
 
         $context = new ConfigContext();
         $context->setClassName(self::TEST_ENTITY_CLASS);
-        $context->setResult($config);
+        $context->setResult($this->createConfigObject($config));
 
         $extendConfigProvider = $this->getConfigProviderMock();
 
@@ -51,34 +53,28 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $config,
-            $context->getResult()
+            $context->getResult()->toArray()
         );
     }
 
     public function testForConfigurableEntity()
     {
         $config = [
-            ConfigUtil::EXCLUSION_POLICY => ConfigUtil::EXCLUSION_POLICY_ALL,
-            ConfigUtil::FIELDS           => [
-                'field1'           => [
-                    ConfigUtil::DEFINITION => null
-                ],
+            'exclusion_policy' => 'all',
+            'fields'           => [
+                'field1'           => null,
                 'serialized_data'  => [
-                    ConfigUtil::DEFINITION => [
-                        ConfigUtil::EXCLUDE => true
-                    ]
+                    'exclude' => true
                 ],
                 'serializedField1' => [
-                    ConfigUtil::DEFINITION => [
-                        ConfigUtil::EXCLUDE => true
-                    ]
+                    'exclude' => true
                 ]
             ]
         ];
 
         $context = new ConfigContext();
         $context->setClassName(self::TEST_ENTITY_CLASS);
-        $context->setResult($config);
+        $context->setResult($this->createConfigObject($config));
 
         $extendConfigProvider = $this->getConfigProviderMock();
         $extendConfigProvider->addEntityConfig(self::TEST_ENTITY_CLASS);
@@ -100,25 +96,17 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                ConfigUtil::EXCLUSION_POLICY => ConfigUtil::EXCLUSION_POLICY_ALL,
-                ConfigUtil::FIELDS           => [
-                    'field1'           => [
-                        ConfigUtil::DEFINITION => null
-                    ],
-                    'serialized_data'  => [
-                        ConfigUtil::DEFINITION => null
-                    ],
+                'exclusion_policy' => 'all',
+                'fields'           => [
+                    'field1'           => null,
+                    'serialized_data'  => null,
                     'serializedField1' => [
-                        ConfigUtil::DEFINITION => [
-                            ConfigUtil::EXCLUDE => true
-                        ]
+                        'exclude' => true
                     ],
-                    'serializedField2' => [
-                        ConfigUtil::DEFINITION => null
-                    ]
+                    'serializedField2' => null
                 ]
             ],
-            $context->getResult()
+            $context->getResult()->toArray()
         );
     }
 
@@ -132,5 +120,17 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         return new ConfigProviderMock($configManager, 'extend');
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return EntityDefinitionConfig
+     */
+    protected function createConfigObject(array $config)
+    {
+        $loaderFactory = new ConfigLoaderFactory();
+
+        return $loaderFactory->getLoader(ConfigUtil::DEFINITION)->load($config);
     }
 }
