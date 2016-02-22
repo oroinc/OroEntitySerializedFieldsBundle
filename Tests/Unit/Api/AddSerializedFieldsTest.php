@@ -33,11 +33,11 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
     public function testForNonConfigurableEntity()
     {
         $config = [
-            ConfigUtil::EXCLUSION_POLICY => ConfigUtil::EXCLUSION_POLICY_ALL,
-            ConfigUtil::FIELDS           => [
+            'exclusion_policy' => 'all',
+            'fields'           => [
                 'field1'          => null,
                 'serialized_data' => [
-                    ConfigUtil::EXCLUDE => true
+                    'exclude' => true
                 ],
             ]
         ];
@@ -60,14 +60,14 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
     public function testForConfigurableEntity()
     {
         $config = [
-            ConfigUtil::EXCLUSION_POLICY => ConfigUtil::EXCLUSION_POLICY_ALL,
-            ConfigUtil::FIELDS           => [
+            'exclusion_policy' => 'all',
+            'fields'           => [
                 'field1'           => null,
                 'serialized_data'  => [
-                    ConfigUtil::EXCLUDE => true
+                    'exclude' => true
                 ],
                 'serializedField1' => [
-                    ConfigUtil::EXCLUDE => true
+                    'exclude' => true
                 ]
             ]
         ];
@@ -96,12 +96,12 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                ConfigUtil::EXCLUSION_POLICY => ConfigUtil::EXCLUSION_POLICY_ALL,
-                ConfigUtil::FIELDS           => [
+                'exclusion_policy' => 'all',
+                'fields'           => [
                     'field1'           => null,
                     'serialized_data'  => null,
                     'serializedField1' => [
-                        ConfigUtil::EXCLUDE => true
+                        'exclude' => true
                     ],
                     'serializedField2' => null
                 ]
