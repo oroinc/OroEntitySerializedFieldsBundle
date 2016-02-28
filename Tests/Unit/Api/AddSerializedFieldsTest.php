@@ -2,31 +2,39 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api;
 
-use Oro\Bundle\ApiBundle\Config\ConfigLoaderFactory;
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Processor\Config\ConfigContext;
-use Oro\Bundle\ApiBundle\Util\ConfigUtil;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Config\ConfigProcessorTestCase;
 use Oro\Bundle\EntityConfigBundle\Tests\Unit\ConfigProviderMock;
 use Oro\Bundle\EntitySerializedFieldsBundle\Api\AddSerializedFields;
 
-class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
+class AddSerializedFieldsTest extends ConfigProcessorTestCase
 {
-    const TEST_ENTITY_CLASS = 'Test\Class';
+    /** @var ConfigProviderMock */
+    protected $extendConfigProvider;
+
+    /** @var AddSerializedFields */
+    protected $processor;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $configManager = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->extendConfigProvider = new ConfigProviderMock($configManager, 'extend');
+
+        $this->processor = new AddSerializedFields($this->extendConfigProvider);
+    }
 
     public function testForNotCompletedDefinition()
     {
-        $context = new ConfigContext();
-        $context->setClassName(self::TEST_ENTITY_CLASS);
-        $context->setResult($this->createConfigObject([]));
+        $this->context->setResult($this->createConfigObject([]));
+        $this->processor->process($this->context);
 
-        $extendConfigProvider = $this->getConfigProviderMock();
-
-        $processor = new AddSerializedFields($extendConfigProvider);
-        $processor->process($context);
-
-        $this->assertEquals(
+        $this->assertConfig(
             [],
-            $context->getResult()->toArray()
+            $this->context->getResult()
         );
     }
 
@@ -42,18 +50,12 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $context = new ConfigContext();
-        $context->setClassName(self::TEST_ENTITY_CLASS);
-        $context->setResult($this->createConfigObject($config));
+        $this->context->setResult($this->createConfigObject($config));
+        $this->processor->process($this->context);
 
-        $extendConfigProvider = $this->getConfigProviderMock();
-
-        $processor = new AddSerializedFields($extendConfigProvider);
-        $processor->process($context);
-
-        $this->assertEquals(
+        $this->assertConfig(
             $config,
-            $context->getResult()->toArray()
+            $this->context->getResult()
         );
     }
 
@@ -72,29 +74,24 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $context = new ConfigContext();
-        $context->setClassName(self::TEST_ENTITY_CLASS);
-        $context->setResult($this->createConfigObject($config));
-
-        $extendConfigProvider = $this->getConfigProviderMock();
-        $extendConfigProvider->addEntityConfig(self::TEST_ENTITY_CLASS);
-        $extendConfigProvider->addFieldConfig(
-            self::TEST_ENTITY_CLASS,
+        $this->extendConfigProvider->addEntityConfig(self::TEST_CLASS_NAME);
+        $this->extendConfigProvider->addFieldConfig(
+            self::TEST_CLASS_NAME,
             'serializedField1',
             'int',
             ['is_serialized' => true]
         );
-        $extendConfigProvider->addFieldConfig(
-            self::TEST_ENTITY_CLASS,
+        $this->extendConfigProvider->addFieldConfig(
+            self::TEST_CLASS_NAME,
             'serializedField2',
             'int',
             ['is_serialized' => true]
         );
 
-        $processor = new AddSerializedFields($extendConfigProvider);
-        $processor->process($context);
+        $this->context->setResult($this->createConfigObject($config));
+        $this->processor->process($this->context);
 
-        $this->assertEquals(
+        $this->assertConfig(
             [
                 'exclusion_policy' => 'all',
                 'fields'           => [
@@ -106,31 +103,7 @@ class AddSerializedFieldsTest extends \PHPUnit_Framework_TestCase
                     'serializedField2' => null
                 ]
             ],
-            $context->getResult()->toArray()
+            $this->context->getResult()
         );
-    }
-
-    /**
-     * @return ConfigProviderMock
-     */
-    protected function getConfigProviderMock()
-    {
-        $configManager = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return new ConfigProviderMock($configManager, 'extend');
-    }
-
-    /**
-     * @param array $config
-     *
-     * @return EntityDefinitionConfig
-     */
-    protected function createConfigObject(array $config)
-    {
-        $loaderFactory = new ConfigLoaderFactory();
-
-        return $loaderFactory->getLoader(ConfigUtil::DEFINITION)->load($config);
     }
 }
