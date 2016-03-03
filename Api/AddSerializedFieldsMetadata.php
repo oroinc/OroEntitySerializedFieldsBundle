@@ -50,13 +50,13 @@ class AddSerializedFieldsMetadata implements ProcessorInterface
         ) {
             /** @var EntityMetadata $entityMetadata */
             $entityMetadata = $context->getResult();
-            $fieldConfigs   = $this->extendConfigProvider->getConfigs($context->getClassName());
-            foreach ($fieldConfigs as $fieldConfig) {
+            $className = $context->getClassName();
+            foreach ($config as $contextFieldConfig) {
+                $fieldConfig = $this->extendConfigProvider->getConfig($className, $contextFieldConfig->getName());
                 /** @var FieldConfigId $fieldId */
                 $fieldId   = $fieldConfig->getId();
                 $fieldName = $fieldId->getFieldName();
-                if ($config->hasField($fieldName)
-                    && !$entityMetadata->hasField($fieldName)
+                if (!$entityMetadata->hasField($fieldName)
                     && $fieldConfig->is('is_serialized')
                     && ExtendHelper::isFieldAccessible($fieldConfig)
                 ) {
