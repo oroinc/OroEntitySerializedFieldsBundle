@@ -51,22 +51,22 @@ class AddSerializedFieldsMetadata implements ProcessorInterface
             /** @var EntityMetadata $entityMetadata */
             $entityMetadata = $context->getResult();
             $className = $context->getClassName();
-            $fieldNames = array_keys($config->getFields());
-            foreach ($fieldNames as $fieldName) {
-                if ($this->extendConfigProvider->hasConfig($className, $fieldName)) {
-                    $fieldConfig = $this->extendConfigProvider->getConfig($className, $fieldName);
-                    /** @var FieldConfigId $fieldId */
-                    $fieldId   = $fieldConfig->getId();
-                    if (!$entityMetadata->hasField($fieldName)
-                        && $fieldConfig->is('is_serialized')
-                        && ExtendHelper::isFieldAccessible($fieldConfig)
-                    ) {
-                        $fieldMetadata = new FieldMetadata();
-                        $fieldMetadata->setName($fieldName);
-                        $fieldMetadata->setDataType($fieldId->getFieldType());
+            foreach ($config->getFields() as $fieldName => $field) {
+                if (!$this->extendConfigProvider->hasConfig($className, $fieldName)) {
+                    continue;
+                }
+                $fieldConfig = $this->extendConfigProvider->getConfig($className, $fieldName);
+                /** @var FieldConfigId $fieldId */
+                $fieldId   = $fieldConfig->getId();
+                if (!$entityMetadata->hasField($fieldName)
+                    && $fieldConfig->is('is_serialized')
+                    && ExtendHelper::isFieldAccessible($fieldConfig)
+                ) {
+                    $fieldMetadata = new FieldMetadata();
+                    $fieldMetadata->setName($fieldName);
+                    $fieldMetadata->setDataType($fieldId->getFieldType());
 
-                        $entityMetadata->addField($fieldMetadata);
-                    }
+                    $entityMetadata->addField($fieldMetadata);
                 }
             }
         }
