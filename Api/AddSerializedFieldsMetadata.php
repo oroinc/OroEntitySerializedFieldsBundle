@@ -7,7 +7,6 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ApiBundle\Metadata\EntityMetadata;
 use Oro\Bundle\ApiBundle\Metadata\FieldMetadata;
 use Oro\Bundle\ApiBundle\Processor\GetMetadata\MetadataContext;
-use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
@@ -50,19 +49,19 @@ class AddSerializedFieldsMetadata implements ProcessorInterface
         ) {
             /** @var EntityMetadata $entityMetadata */
             $entityMetadata = $context->getResult();
-            $fieldConfigs   = $this->extendConfigProvider->getConfigs($context->getClassName());
-            foreach ($fieldConfigs as $fieldConfig) {
-                /** @var FieldConfigId $fieldId */
-                $fieldId   = $fieldConfig->getId();
-                $fieldName = $fieldId->getFieldName();
-                if ($config->hasField($fieldName)
-                    && !$entityMetadata->hasField($fieldName)
+            $className = $context->getClassName();
+            foreach ($config->getFields() as $fieldName => $field) {
+                if (!$this->extendConfigProvider->hasConfig($className, $fieldName)) {
+                    continue;
+                }
+                $fieldConfig = $this->extendConfigProvider->getConfig($className, $fieldName);
+                if (!$entityMetadata->hasField($fieldName)
                     && $fieldConfig->is('is_serialized')
                     && ExtendHelper::isFieldAccessible($fieldConfig)
                 ) {
                     $fieldMetadata = new FieldMetadata();
                     $fieldMetadata->setName($fieldName);
-                    $fieldMetadata->setDataType($fieldId->getFieldType());
+                    $fieldMetadata->setDataType($fieldConfig->getId()->getFieldType());
 
                     $entityMetadata->addField($fieldMetadata);
                 }
