@@ -100,8 +100,8 @@ services:
         arguments:
             - @oro_entity_config.provider.extend
         tags:
-            - { name: oro.api.processor, action: get_config, priority: -90 }
-            - { name: oro.api.processor, action: get_relation_config, priority: -90 }
+            - { name: oro.api.processor, action: get_config, extra: definition, priority: -90 }
+            - { name: oro.api.processor, action: get_relation_config, extra: definition, priority: -90 }
 
     oro_serialized_fields.api.remove_serialized_data_field:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Api\RemoveSerializedDataField
