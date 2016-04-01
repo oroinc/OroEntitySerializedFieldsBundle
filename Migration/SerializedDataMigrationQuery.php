@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Comparator;
 
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
@@ -85,7 +86,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                                 'is_extend' => false,
                                 'owner'     => ExtendScope::OWNER_CUSTOM
                             ],
-                            'datagrid'                        => ['is_visible' => false],
+                            'datagrid'                        => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                             'form'                            => ['is_enabled' => false],
                             'view'                            => ['is_displayable' => false],
                             'merge'                           => ['display' => false],
