@@ -103,6 +103,14 @@ services:
             - { name: oro.api.processor, action: get_config, extra: definition, priority: -90 }
             - { name: oro.api.processor, action: get_relation_config, extra: definition, priority: -90 }
 
+    oro_serialized_fields.api.get_config.exclude_serialized_data_field:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Api\ExcludeSerializedDataField
+        arguments:
+            - @oro_api.doctrine_helper
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: definition, targetAction: create, priority: -91 }
+            - { name: oro.api.processor, action: get_config, extra: definition, targetAction: update, priority: -91 }
+
     oro_serialized_fields.api.remove_serialized_data_field:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Api\RemoveSerializedDataField
         tags:
