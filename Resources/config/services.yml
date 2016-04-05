@@ -22,7 +22,7 @@ services:
     oro_serialized_fields.migration.searilized_data.post_up.listener:
           class: %oro_serialized_fields.migration.searilized_data.post_up.listener.class%
           arguments:
-              - @oro_entity_extend.migration.entity_metadata_helper
+              - "@oro_entity_extend.migration.entity_metadata_helper"
           tags:
               - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -95 }
 
@@ -34,15 +34,15 @@ services:
     oro_serialized_fields.entity_config_dumper.extension:
         class: %oro_serialized_fields.entity_config_dumper.extension.class%
         arguments:
-            - @oro_entity_config.config_manager
-            - @oro_entity_extend.extend.field_type_helper
+            - "@oro_entity_config.config_manager"
+            - "@oro_entity_extend.extend.field_type_helper"
         tags:
             - { name: oro_entity_extend.entity_config_dumper_extension, priority: -256 }
 
     oro_serialized_fields.datagrid.column_options_guesser:
         class: %oro_serialized_fields.datagrid.column_options_guesser.class%
         arguments:
-            - @oro_entity_config.config_manager
+            - "@oro_entity_config.config_manager"
         tags:
             - { name: oro_datagrid.column_options_guesser }
 
@@ -55,7 +55,7 @@ services:
     oro_serialized_fields.form.extension.field_extension:
         class: %oro_serialized_fields.form.extension.field_extension.class%
         arguments:
-            - @session
+            - "@session"
             - ['fieldName', 'is_serialized', 'type']
         tags:
             - { name: form.type_extension, alias: oro_entity_extend_field_type }
@@ -80,8 +80,8 @@ services:
     oro_serialized_fields.listener.entity_config:
         class: Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener
         arguments:
-            - @oro_entity_extend.entity_generator
-            - @session
+            - "@oro_entity_extend.entity_generator"
+            - "@session"
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.field.create, method: createField, priority: -255 }
             - { name: kernel.event_listener, event: oro.entity_config.pre_flush, method: initializeEntity, priority: 255 }
@@ -91,14 +91,14 @@ services:
     oro_serialized_fields.exclusion_provider.serialized_field:
         class: %oro_serialized_fields.exclusion_provider.serialized_field.class%
         arguments:
-            - @oro_entity_config.provider.extend
+            - "@oro_entity_config.provider.extend"
         tags:
             - { name: oro_entity.exclusion_provider.default }
 
     oro_serialized_fields.api.add_serialized_fields:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Api\AddSerializedFields
         arguments:
-            - @oro_entity_config.provider.extend
+            - "@oro_entity_config.provider.extend"
         tags:
             - { name: oro.api.processor, action: get_config, extra: definition, priority: -90 }
             - { name: oro.api.processor, action: get_relation_config, extra: definition, priority: -90 }
@@ -112,6 +112,6 @@ services:
     oro_serialized_fields.api.add_serialized_fields_metadata:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Api\AddSerializedFieldsMetadata
         arguments:
-            - @oro_entity_config.provider.extend
+            - "@oro_entity_config.provider.extend"
         tags:
             - { name: oro.api.processor, action: get_metadata, priority: -40 }
