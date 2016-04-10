@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Api;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config;
 
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;

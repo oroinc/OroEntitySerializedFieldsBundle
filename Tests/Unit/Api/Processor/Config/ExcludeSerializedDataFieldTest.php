@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api\Processor\Config;
 
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Config\ConfigProcessorTestCase;
-use Oro\Bundle\EntitySerializedFieldsBundle\Api\ExcludeSerializedDataField;
+use Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config\ExcludeSerializedDataField;
 
 class ExcludeSerializedDataFieldTest extends ConfigProcessorTestCase
 {
