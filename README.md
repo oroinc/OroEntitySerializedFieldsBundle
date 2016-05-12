@@ -51,7 +51,7 @@ After installation (described below) a new field called **Storage Type** appears
 Requirements
 ------------
 
-OroEntitySerializedFieldsBundle requires OROPlatform(BAP) and PHP 5.5.9 or above.
+OroEntitySerializedFieldsBundle requires OROPlatform(BAP) and PHP 5.5.0 or above.
 
 
 Installation
