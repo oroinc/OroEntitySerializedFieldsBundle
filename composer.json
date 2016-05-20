@@ -18,7 +18,7 @@
     "target-dir": "src/Oro/Bundle/EntitySerializedFieldsBundle",
     "require": {
         "php": ">=5.4.9",
-        "oro/platform": ">=1.5"
+        "oro/platform": "self.version"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
