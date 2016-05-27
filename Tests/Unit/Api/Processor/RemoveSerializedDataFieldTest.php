@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Context;
-use Oro\Bundle\EntitySerializedFieldsBundle\Api\RemoveSerializedDataField;
+use Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\RemoveSerializedDataField;
 
 class RemoveSerializedDataFieldTest extends \PHPUnit_Framework_TestCase
 {

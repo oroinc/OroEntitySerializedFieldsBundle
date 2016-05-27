@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api\Processor\Config;
 
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Config\ConfigProcessorTestCase;
 use Oro\Bundle\EntityConfigBundle\Tests\Unit\ConfigProviderMock;
-use Oro\Bundle\EntitySerializedFieldsBundle\Api\AddSerializedFields;
+use Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config\AddSerializedFields;
 
 class AddSerializedFieldsTest extends ConfigProcessorTestCase
 {

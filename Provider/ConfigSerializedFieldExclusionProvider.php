@@ -4,14 +4,14 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Provider;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
 
-use Oro\Bundle\EntityBundle\Provider\ExclusionProviderInterface;
+use Oro\Bundle\EntityBundle\Provider\AbstractExclusionProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
 /**
  * The aim of the class is to exclude serialized custom fields.
  * They can be detected by property "is_serialized" in scope "extend" via config provider.
  */
-class ConfigSerializedFieldExclusionProvider implements ExclusionProviderInterface
+class ConfigSerializedFieldExclusionProvider extends AbstractExclusionProvider
 {
     /** @var ConfigProvider */
     protected $extendConfigProvider;
@@ -22,14 +22,6 @@ class ConfigSerializedFieldExclusionProvider implements ExclusionProviderInterfa
     public function __construct(ConfigProvider $extendConfigProvider)
     {
         $this->extendConfigProvider = $extendConfigProvider;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isIgnoredEntity($className)
-    {
-        return false;
     }
 
     /**
@@ -49,14 +41,6 @@ class ConfigSerializedFieldExclusionProvider implements ExclusionProviderInterfa
                 ->get('is_serialized', false, false);
         }
 
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isIgnoredRelation(ClassMetadata $metadata, $associationName)
-    {
         return false;
     }
 }
