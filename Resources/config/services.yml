@@ -106,7 +106,7 @@ services:
     oro_serialized_fields.api.get_config.exclude_serialized_data_field:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config\ExcludeSerializedDataField
         arguments:
-            - @oro_api.doctrine_helper
+            - "@oro_api.doctrine_helper"
         tags:
             - { name: oro.api.processor, action: get_config, extra: definition, targetAction: create, priority: -91 }
             - { name: oro.api.processor, action: get_config, extra: definition, targetAction: update, priority: -91 }
