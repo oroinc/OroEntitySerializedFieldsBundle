@@ -54,17 +54,14 @@ class AddSerializedFields implements ProcessorInterface
             return;
         }
 
-        $fields = $definition->getFields();
-        foreach ($fields as $fieldName => $fieldConfig) {
-            if ('serialized_data' === $fieldName) {
-                // remove 'exclude' attribute if set
-                if ($fieldConfig->isExcluded()) {
-                    $fieldConfig->setExcluded(false);
-                }
-                // add serialized fields
-                $this->addSerializedFields($definition, $entityClass);
-                break;
+        $serializedDataField = $definition->getField('serialized_data');
+        if ($serializedDataField) {
+            // remove 'exclude' attribute if set
+            if ($serializedDataField->isExcluded()) {
+                $serializedDataField->setExcluded(false);
             }
+            // add serialized fields
+            $this->addSerializedFields($definition, $context->getClassName());
         }
     }
 
