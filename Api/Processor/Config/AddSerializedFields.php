@@ -6,6 +6,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\Config\ConfigContext;
+use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
@@ -14,14 +15,19 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
  */
 class AddSerializedFields implements ProcessorInterface
 {
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
     /** @var ConfigProvider */
     protected $extendConfigProvider;
 
     /**
+     * @param DoctrineHelper $doctrineHelper
      * @param ConfigProvider $extendConfigProvider
      */
-    public function __construct(ConfigProvider $extendConfigProvider)
+    public function __construct(DoctrineHelper $doctrineHelper, ConfigProvider $extendConfigProvider)
     {
+        $this->doctrineHelper = $doctrineHelper;
         $this->extendConfigProvider = $extendConfigProvider;
     }
 
@@ -33,20 +39,31 @@ class AddSerializedFields implements ProcessorInterface
         /** @var ConfigContext $context */
 
         $definition = $context->getResult();
-        if ($definition->isExcludeAll()
-            && $this->extendConfigProvider->hasConfig($context->getClassName())
-        ) {
-            $fields = $definition->getFields();
-            foreach ($fields as $fieldName => $fieldConfig) {
-                if ('serialized_data' === $fieldName) {
-                    // remove 'exclude' attribute if set
-                    if ($fieldConfig->isExcluded()) {
-                        $fieldConfig->setExcluded(false);
-                    }
-                    // add serialized fields
-                    $this->addSerializedFields($definition, $context->getClassName());
-                    break;
+        if (!$definition->isExcludeAll()) {
+            // expected completed config
+            return;
+        }
+
+        $entityClass = $context->getClassName();
+        if (!$this->doctrineHelper->isManageableEntityClass($entityClass)) {
+            // only manageable entities are supported
+            return;
+        }
+        if (!$this->extendConfigProvider->hasConfig($entityClass)) {
+            // only configurable entities are supported
+            return;
+        }
+
+        $fields = $definition->getFields();
+        foreach ($fields as $fieldName => $fieldConfig) {
+            if ('serialized_data' === $fieldName) {
+                // remove 'exclude' attribute if set
+                if ($fieldConfig->isExcluded()) {
+                    $fieldConfig->setExcluded(false);
                 }
+                // add serialized fields
+                $this->addSerializedFields($definition, $entityClass);
+                break;
             }
         }
     }

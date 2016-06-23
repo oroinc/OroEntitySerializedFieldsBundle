@@ -8,6 +8,9 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config\AddSerializedFi
 
 class AddSerializedFieldsTest extends ConfigProcessorTestCase
 {
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $doctrineHelper;
+
     /** @var ConfigProviderMock */
     protected $extendConfigProvider;
 
@@ -18,13 +21,16 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
     {
         parent::setUp();
 
+        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\ApiBundle\Util\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
         $configManager = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->extendConfigProvider = new ConfigProviderMock($configManager, 'extend');
 
-        $this->processor = new AddSerializedFields($this->extendConfigProvider);
+        $this->processor = new AddSerializedFields($this->doctrineHelper, $this->extendConfigProvider);
     }
 
     public function testForNotCompletedDefinition()
@@ -34,6 +40,32 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
 
         $this->assertConfig(
             [],
+            $this->context->getResult()
+        );
+    }
+
+    public function testForNotManageableEntity()
+    {
+        $config = [
+            'exclusion_policy' => 'all',
+            'fields'           => [
+                'field1'          => null,
+                'serialized_data' => [
+                    'exclude' => true
+                ],
+            ]
+        ];
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('isManageableEntityClass')
+            ->with(self::TEST_CLASS_NAME)
+            ->willReturn(false);
+
+        $this->context->setResult($this->createConfigObject($config));
+        $this->processor->process($this->context);
+
+        $this->assertConfig(
+            $config,
             $this->context->getResult()
         );
     }
@@ -49,6 +81,11 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
                 ],
             ]
         ];
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('isManageableEntityClass')
+            ->with(self::TEST_CLASS_NAME)
+            ->willReturn(true);
 
         $this->context->setResult($this->createConfigObject($config));
         $this->processor->process($this->context);
@@ -73,6 +110,11 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
                 ]
             ]
         ];
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('isManageableEntityClass')
+            ->with(self::TEST_CLASS_NAME)
+            ->willReturn(true);
 
         $this->extendConfigProvider->addEntityConfig(self::TEST_CLASS_NAME);
         $this->extendConfigProvider->addFieldConfig(
