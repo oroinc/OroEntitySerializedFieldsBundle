@@ -109,8 +109,7 @@ services:
         arguments:
             - "@oro_api.doctrine_helper"
         tags:
-            - { name: oro.api.processor, action: get_config, extra: !identifier_fields_only&definition, targetAction: create, priority: -91 }
-            - { name: oro.api.processor, action: get_config, extra: !identifier_fields_only&definition, targetAction: update, priority: -91 }
+            - { name: oro.api.processor, action: get_config, extra: !identifier_fields_only&definition, targetAction: update|create, priority: -91 }
 
     oro_serialized_fields.api.remove_serialized_data_field:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\RemoveSerializedDataField
