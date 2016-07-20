@@ -50,9 +50,7 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
             'exclusion_policy' => 'all',
             'fields'           => [
                 'field1'          => null,
-                'serialized_data' => [
-                    'exclude' => true
-                ],
+                'serialized_data' => null
             ]
         ];
 
@@ -76,9 +74,7 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
             'exclusion_policy' => 'all',
             'fields'           => [
                 'field1'          => null,
-                'serialized_data' => [
-                    'exclude' => true
-                ],
+                'serialized_data' => null
             ]
         ];
 
@@ -101,13 +97,19 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
         $config = [
             'exclusion_policy' => 'all',
             'fields'           => [
-                'field1'           => null,
-                'serialized_data'  => [
+                'field1'                  => null,
+                'serialized_data'         => null,
+                'serializedField1'        => [
                     'exclude' => true
                 ],
-                'serializedField1' => [
-                    'exclude' => true
-                ]
+                'renamedSerializedField3' => [
+                    'property_path' => 'serializedField3'
+                ],
+                'renamedSerializedField4' => [
+                    'property_path' => 'serializedField4',
+                    'data_type'     => 'int',
+                    'depends_on'    => ['serialized_data', 'another_field']
+                ],
             ]
         ];
 
@@ -129,6 +131,18 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
             'int',
             ['is_serialized' => true]
         );
+        $this->extendConfigProvider->addFieldConfig(
+            self::TEST_CLASS_NAME,
+            'serializedField3',
+            'string',
+            ['is_serialized' => true]
+        );
+        $this->extendConfigProvider->addFieldConfig(
+            self::TEST_CLASS_NAME,
+            'serializedField4',
+            'string',
+            ['is_serialized' => true]
+        );
 
         $this->context->setResult($this->createConfigObject($config));
         $this->processor->process($this->context);
@@ -137,12 +151,29 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
             [
                 'exclusion_policy' => 'all',
                 'fields'           => [
-                    'field1'           => null,
-                    'serialized_data'  => null,
-                    'serializedField1' => [
+                    'field1'                  => null,
+                    'serialized_data'         => [
                         'exclude' => true
                     ],
-                    'serializedField2' => null
+                    'serializedField1'        => [
+                        'exclude'    => true,
+                        'data_type'  => 'int',
+                        'depends_on' => ['serialized_data']
+                    ],
+                    'serializedField2'        => [
+                        'data_type'  => 'int',
+                        'depends_on' => ['serialized_data']
+                    ],
+                    'renamedSerializedField3' => [
+                        'property_path' => 'serializedField3',
+                        'data_type'     => 'string',
+                        'depends_on'    => ['serialized_data']
+                    ],
+                    'renamedSerializedField4' => [
+                        'property_path' => 'serializedField4',
+                        'data_type'     => 'int',
+                        'depends_on'    => ['serialized_data', 'another_field']
+                    ],
                 ]
             ],
             $this->context->getResult()
