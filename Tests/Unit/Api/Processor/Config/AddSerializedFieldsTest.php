@@ -92,6 +92,46 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
         );
     }
 
+    public function testSerializedFieldsShouldNotBeAddedIfSerialisedDataFieldIsExcluded()
+    {
+        $config = [
+            'exclusion_policy' => 'all',
+            'fields'           => [
+                'serialized_data'         => [
+                    'exclude' => true
+                ]
+            ]
+        ];
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('isManageableEntityClass')
+            ->with(self::TEST_CLASS_NAME)
+            ->willReturn(true);
+
+        $this->extendConfigProvider->addEntityConfig(self::TEST_CLASS_NAME);
+        $this->extendConfigProvider->addFieldConfig(
+            self::TEST_CLASS_NAME,
+            'serializedField1',
+            'int',
+            ['is_serialized' => true]
+        );
+
+        $this->context->setResult($this->createConfigObject($config));
+        $this->processor->process($this->context);
+
+        $this->assertConfig(
+            [
+                'exclusion_policy' => 'all',
+                'fields'           => [
+                    'serialized_data' => [
+                        'exclude' => true
+                    ],
+                ]
+            ],
+            $this->context->getResult()
+        );
+    }
+
     public function testForConfigurableEntity()
     {
         $config = [
