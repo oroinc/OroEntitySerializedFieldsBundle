@@ -58,12 +58,10 @@ class AddSerializedFields implements ProcessorInterface
         }
 
         $serializedDataField = $definition->getField(self::SERIALIZED_DATA_FIELD);
-        if ($serializedDataField) {
+        if ($serializedDataField && !$serializedDataField->isExcluded()) {
             // exclude 'serialized_data' field as it should not be used directly,
-            // but it will be loaded from the database only if at least field depends on it
-            if (!$serializedDataField->isExcluded()) {
-                $serializedDataField->setExcluded();
-            }
+            // but it will be loaded from the database only if at least one field depends on it
+            $serializedDataField->setExcluded();
             // add serialized fields
             $this->addSerializedFields($definition, $context->getClassName());
         }
