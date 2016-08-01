@@ -1,8 +1,8 @@
-{% if field_name is defined and field_type is defined and record.getValue('serialized_data') is defined and record.getValue('serialized_data')[field_name] is defined %}
+{% if field_name is defined and field_type is defined and record.getValue(field_name) is not null%}
     {% import 'OroEntityConfigBundle::macros.html.twig' as ui %}
 
     {{ ui.formatDynamicFieldValue(null, null, field_name, {
-        value: record.getValue('serialized_data')[field_name],
+        value: record.getValue(field_name),
         type: field_type
     }) }}
 {% endif %}
