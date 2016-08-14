@@ -6,6 +6,8 @@ use Doctrine\ORM\Query\Expr\From;
 use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 
@@ -20,6 +22,33 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
     public function getPriority()
     {
         return 260;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function visitResult(DatagridConfiguration $config, ResultsObject $result)
+    {
+        $entityClassName = $this->entityClassResolver->getEntityClass($this->getEntityName($config));
+        $fields = $this->getSerializedFields($config, $entityClassName);
+
+        if (count($fields) === 0) {
+            return;
+        }
+
+        // copy serialized fields data from storage to columns
+        /** @var ResultRecord $record */
+        foreach ($result->getData() as $record) {
+            $serializedData = $record->getValue('serialized_data');
+            /** @var FieldConfigId $serializedField */
+            foreach ($fields as $serializedField) {
+                $fieldName = $serializedField->getFieldName();
+                $value = $serializedData && array_key_exists($fieldName, $serializedData)
+                    ? $serializedData[$fieldName]
+                    : null;
+                $record->setValue($fieldName, $value);
+            }
+        }
     }
 
     /**
@@ -54,15 +83,7 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
         $extendConfig = $extendConfigProvider->getConfig($entityClassName);
         if ($extendConfig->is('is_extend')) {
             /** @var FieldConfigId[] $fields */
-            $fields = $this->getFields($config);
-            $fields = array_filter(
-                $fields,
-                function (FieldConfigId $field) use ($extendConfigProvider, $entityClassName) {
-                    return $extendConfigProvider
-                        ->getConfig($entityClassName, $field->getFieldName())
-                        ->is('is_serialized');
-                }
-            );
+            $fields = $this->getSerializedFields($config, $entityClassName);
             array_walk(
                 $fields,
                 function (&$value) use ($alias) {
@@ -94,5 +115,27 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
     public function processConfigs(DatagridConfiguration $config)
     {
         //leave empty. we do not need any processing for serialized fields
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param string                $entityClassName
+     *
+     * @return FieldConfigId[]
+     */
+    protected function getSerializedFields(DatagridConfiguration $config, $entityClassName)
+    {
+        $extendConfigProvider = $this->configManager->getProvider('extend');
+        $fields = $this->getFields($config);
+        $fields = array_filter(
+            $fields,
+            function (FieldConfigId $field) use ($extendConfigProvider, $entityClassName) {
+                return $extendConfigProvider
+                    ->getConfig($entityClassName, $field->getFieldName())
+                    ->is('is_serialized');
+            }
+        );
+
+        return $fields;
     }
 }
