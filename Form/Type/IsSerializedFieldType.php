@@ -38,7 +38,7 @@ class IsSerializedFieldType extends AbstractType
                 ],
                 'auto_initialize' => false,
                 'required'        => true,
-                'constraints' => [new Assert\NotNull()],
+                'constraints'     => [new Assert\NotNull()],
                 'label'           => 'oro.entity_serialized_fields.form.is_serialized.label',
                 'data'            => 0,
                 'mapped'          => false,
