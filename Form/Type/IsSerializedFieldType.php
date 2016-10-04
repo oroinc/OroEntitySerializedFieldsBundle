@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class IsSerializedFieldType extends AbstractType
 {
@@ -37,8 +38,9 @@ class IsSerializedFieldType extends AbstractType
                 ],
                 'auto_initialize' => false,
                 'required'        => true,
+                'constraints' => [new Assert\NotNull()],
                 'label'           => 'oro.entity_serialized_fields.form.is_serialized.label',
-                'empty_value'     => 'oro.entity_serialized_fields.form.is_serialized.empty_value',
+                'data'            => 0,
                 'mapped'          => false,
                 'block'           => 'general',
                 'tooltip'         => 'oro.entity_serialized_fields.field.is_serialized.tooltip'
