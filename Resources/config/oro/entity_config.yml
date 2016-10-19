@@ -74,5 +74,3 @@ entity_config:
                                   scope:  extend
                                code:      is_serialized
                                value:     false
-
-
