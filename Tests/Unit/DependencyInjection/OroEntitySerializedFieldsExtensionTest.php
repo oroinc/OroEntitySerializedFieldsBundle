@@ -94,7 +94,9 @@ class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
           'form.type.is_serialized_field' => [
               'service'   => 'oro_serialized_fields.form.type.is_serialized_field',
               'class'     => '%oro_serialized_fields.form.type.is_serialized_field.class%',
-              'arguments' => [],
+              'arguments' => [
+                  new Reference('oro_entity_config.provider.serialized_field_provider'),
+              ],
               'tags'      => [
                   'form.type' => array(
                       ['alias' => 'oro_serialized_fields_is_serialized_type']

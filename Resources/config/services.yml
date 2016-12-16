@@ -49,8 +49,7 @@ services:
     oro_serialized_fields.datagrid.serialized_fields_extension:
         class: %oro_serialized_fields.datagrid.serialized_fields_extension.class%
         parent: oro_entity_extend.datagrid.extension.dynamic_fields
-        tags:
-            - { name: oro_datagrid.extension }
+        decorates: oro_entity_extend.datagrid.extension.dynamic_fields
 
     oro_serialized_fields.form.extension.field_extension:
         class: %oro_serialized_fields.form.extension.field_extension.class%
@@ -74,6 +73,8 @@ services:
 
     oro_serialized_fields.form.type.is_serialized_field:
         class: %oro_serialized_fields.form.type.is_serialized_field.class%
+        arguments:
+            - '@oro_entity_config.provider.serialized_field_provider'
         tags:
             - { name: form.type, alias: oro_serialized_fields_is_serialized_type }
 

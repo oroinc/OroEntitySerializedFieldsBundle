@@ -54,7 +54,10 @@ class FieldTypeExtension extends AbstractTypeExtension
      */
     public function postSubmit(FormEvent $event)
     {
-        $form         = $event->getForm();
+        $form = $event->getForm();
+        if (!$form->has('is_serialized')) {
+            return;
+        }
         $isSerialized = $form->get('is_serialized')->getData();
 
         /** @var FieldConfigModel $configModel */

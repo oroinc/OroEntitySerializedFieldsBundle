@@ -2,17 +2,26 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\EntityConfigBundle\Provider\SerializedFieldProvider;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
 use Symfony\Component\Form\FormView;
 
 class IsSerializedFieldTypeTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var SerializedFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $seriliazedFieldProvider;
+
     /** @var IsSerializedFieldType */
     protected $type;
 
     public function setUp()
     {
-        $this->type = new IsSerializedFieldType();
+        $this->seriliazedFieldProvider = $this->getMockBuilder(SerializedFieldProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->type = new IsSerializedFieldType($this->seriliazedFieldProvider);
     }
 
     public function tearDown()
@@ -52,6 +61,11 @@ class IsSerializedFieldTypeTest extends \PHPUnit_Framework_TestCase
             'money',
             'percent'
         ];
+
+        $this->seriliazedFieldProvider
+            ->expects($this->once())
+            ->method('getSerializableTypes')
+            ->willReturn($expectedElements);
 
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
