@@ -9,6 +9,37 @@ entity_config:
                 is_serialized:
                     options:
                         default_value:      false
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  attribute
+                               code:      is_system
+                               value:     false
+                            -
+                               config_id:
+                                  scope:  attribute
+                               code:      filterable
+                               value:     false
+                            -
+                               config_id:
+                                  scope:  attribute
+                               code:      sortable
+                               value:     false
+                            -
+                               config_id:
+                                  scope:  datagrid
+                               code:      show_filter
+                               value:     false
+                            -
+                               config_id:
+                                  scope:  dataaudit
+                               code:      auditable
+                               value:     false
+                            -
+                               config_id:
+                                  scope:  importexport
+                               code:      identity
+                               value:     false
                     grid:
                         type:               select
                         label:              oro.entity_serialized_fields.form.is_serialized.label

@@ -88,6 +88,11 @@ class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
+        $form
+            ->expects($this->once())
+            ->method('has')
+            ->with('is_serialized')
+            ->willReturn(true);
 
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
             ->disableOriginalConstructor()

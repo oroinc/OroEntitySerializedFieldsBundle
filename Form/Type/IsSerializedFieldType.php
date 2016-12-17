@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\Type;
 
+use Oro\Bundle\EntityConfigBundle\Provider\SerializedFieldProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -10,20 +11,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class IsSerializedFieldType extends AbstractType
 {
-    protected $serializableTypes = [
-        'string',
-        'integer',
-        'smallint',
-        'bigint',
-        'boolean',
-        'decimal',
-        'date',
-        'datetime',
-        'text',
-        'float',
-        'money',
-        'percent'
-    ];
+    /**
+     * @var SerializedFieldProvider
+     */
+    private $serializedFieldProvider;
+
+    public function __construct(SerializedFieldProvider $serializedFieldProvider)
+    {
+        $this->serializedFieldProvider = $serializedFieldProvider;
+    }
 
     /**
      * {@inheritdoc}
@@ -77,6 +73,6 @@ class IsSerializedFieldType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['serializableTypes'] = $this->serializableTypes;
+        $view->vars['serializableTypes'] = $this->serializedFieldProvider->getSerializableTypes();
     }
 }

@@ -70,31 +70,32 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                 continue;
             }
             $table = $toSchema->getTable($tableName);
+            $options =  [
+                'notnull'       => false,
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                    'entity'                          => [
+                        'label' => 'oro.entity_serialized_fields.data.label'
+                    ],
+                    'extend'                          => [
+                        'is_extend' => false,
+                        'owner'     => ExtendScope::OWNER_CUSTOM
+                    ],
+                    'datagrid'                        => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                    'form'                            => ['is_enabled' => false],
+                    'view'                            => ['is_displayable' => false],
+                    'merge'                           => ['display' => false],
+                    'dataaudit'                       => ['auditable' => false]
+                ]
+            ];
+
             if (!$table->hasColumn('serialized_data')) {
-                $hasSchemaChanges = true;
-                $table->addColumn(
-                    'serialized_data',
-                    'array',
-                    [
-                        'notnull'       => false,
-                        OroOptions::KEY => [
-                            ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                            'entity'                          => [
-                                'label' => 'oro.entity_serialized_fields.data.label'
-                            ],
-                            'extend'                          => [
-                                'is_extend' => false,
-                                'owner'     => ExtendScope::OWNER_CUSTOM
-                            ],
-                            'datagrid'                        => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
-                            'form'                            => ['is_enabled' => false],
-                            'view'                            => ['is_displayable' => false],
-                            'merge'                           => ['display' => false],
-                            'dataaudit'                       => ['auditable' => false]
-                        ]
-                    ]
-                );
+                $table->addColumn('serialized_data', 'array', $options);
+            } else { //Forcibly set options to existing field
+                $serializedColumn = $table->getColumn('serialized_data');
+                $serializedColumn->setOptions($options);
             }
+            $hasSchemaChanges = true;
         }
 
         if ($hasSchemaChanges) {
