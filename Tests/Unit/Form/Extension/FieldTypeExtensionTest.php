@@ -41,7 +41,7 @@ class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
     public function testBuildForm()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject */
-        $builder = $this->getMock('Symfony\Component\Form\Test\FormBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Form\Test\FormBuilderInterface');
 
         $builder->expects($this->at(0))
             ->method('add')
@@ -70,7 +70,7 @@ class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function getFormEventMock()
     {
-        $form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\Test\FormInterface');
 
         $formConfig = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
@@ -101,7 +101,7 @@ class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getForm')
             ->will($this->returnValue($form));
 
-        $entityConfigModel = $this->getMock('Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel');
+        $entityConfigModel = $this->createMock('Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel');
         $entityConfigModel
             ->expects($this->once())
             ->method('getId')
