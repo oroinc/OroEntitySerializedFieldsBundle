@@ -2,12 +2,9 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 
-use Psr\Log\LoggerInterface;
-
-use Doctrine\DBAL\Types\Type;
-use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Comparator;
-
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
@@ -17,9 +14,15 @@ use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\EntityExtendBundle\Migration\Schema\ExtendSchema;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
 {
+    /**
+     * @internal
+     */
+    const COLUMN_NAME = 'serialized_data';
+
     /** @var Schema */
     protected $schema;
 
@@ -89,10 +92,11 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
                 ]
             ];
 
-            if (!$table->hasColumn('serialized_data')) {
-                $table->addColumn('serialized_data', 'array', $options);
+            if (!$table->hasColumn(static::COLUMN_NAME)) {
+                $table->addColumn(static::COLUMN_NAME, Type::TARRAY, $options);
             } else { //Forcibly set options to existing field
-                $serializedColumn = $table->getColumn('serialized_data');
+                $serializedColumn = $table->getColumn(static::COLUMN_NAME);
+                $serializedColumn->setType(Type::getType(Type::TARRAY));
                 $serializedColumn->setOptions($options);
             }
             $hasSchemaChanges = true;
