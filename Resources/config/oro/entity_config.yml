@@ -13,11 +13,6 @@ entity_config:
                             -
                                config_id:
                                   scope:  attribute
-                               code:      is_system
-                               value:     false
-                            -
-                               config_id:
-                                  scope:  attribute
                                code:      filterable
                                value:     false
                             -
