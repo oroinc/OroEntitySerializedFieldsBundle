@@ -2,23 +2,20 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Migration;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
-
+use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\SerializedDataMigrationQuery;
-
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 
 class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var Connection|\PHPUnit_Framework_MockObject_MockObject */
     protected $connection;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityMetadataHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $helper;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $table;
 
     /** @var Schema */
     protected $schema;
@@ -28,7 +25,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->connection = $this->getMockBuilder('Doctrine\DBAL\Connection')
+        $this->connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -36,24 +33,22 @@ class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
             ->method('getDatabasePlatform')
             ->will($this->returnValue(new MySqlPlatform()));
 
-        $this->helper = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->table = $this->getMockBuilder('Doctrine\DBAL\Schema\Table')
+        $this->helper = $this->getMockBuilder(EntityMetadataHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->schema = new Schema();
-        $this->schema->createTable('test_table');
 
         $this->query = new SerializedDataMigrationQuery($this->schema, $this->helper);
     }
 
     /**
      * @dataProvider dataProvider
+     * @param array $row
+     * @param array $data
+     * @param string $expectedLoggerMessages
      */
-    public function testExecute($row, $data, $expectedLoggerMessages)
+    public function testExecute(array $row, array $data, $expectedLoggerMessages)
     {
         $logger = new ArrayLogger();
         $this->query->setConnection($this->connection);
@@ -66,13 +61,11 @@ class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
             ->method('getTableNameByEntityClass')
             ->will($this->returnValue('test_table'));
 
-        $this->table->expects($this->any())
-            ->method('hasColumn')
-            ->will($this->returnValue(false));
-
         $this->connection->expects($this->any())
             ->method('convertToPHPValue')
             ->will($this->returnValue($data));
+
+        $this->schema->createTable('test_table');
 
         $this->query->execute($logger);
 
@@ -80,16 +73,87 @@ class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedLoggerMessages, $messages);
     }
 
+    /**
+     * @return array
+     */
     public function dataProvider()
     {
         return [
             [
-                '$rows'                   => [['class_name' => 'Test\Entity\Entity1', 'data' => []]],
-                '$data'                   => ['extend' => ['is_extend' => true, 'state' => 'Active']],
+                '$rows' => [['class_name' => 'Test\Entity\Entity1', 'data' => []]],
+                '$data' => ['extend' => ['is_extend' => true, 'state' => 'Active']],
                 '$expectedLoggerMessages' => "SELECT class_name, data FROM oro_entity_config WHERE mode = ? "
-                    . "Parameters: [1] = default "
-                    . "ALTER TABLE test_table ADD serialized_data LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'"
-            ]
+                    ."Parameters: [1] = default "
+                    ."ALTER TABLE test_table ADD serialized_data LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'",
+            ],
         ];
+    }
+
+    public function testExecuteCheckColumnNotExists()
+    {
+        $logger = new ArrayLogger();
+        $this->query->setConnection($this->connection);
+
+        $tableName = 'entity_1';
+        $entityClass = 'Test\Entity\Entity1';
+
+        $this->connection->expects(static::once())
+            ->method('fetchAll')
+            ->willReturn([['class_name' => $entityClass, 'data' => []]]);
+
+        $this->schema->createTable($tableName);
+
+        $this->connection->expects(static::once())
+            ->method('convertToPHPValue')
+            ->willReturn([
+                'extend' => [
+                    'schema' => ['doctrine' => [$entityClass => ['table' => $tableName]]],
+                    'is_extend' => true,
+                    'state' => 'Active',
+                ],
+            ]);
+
+        $expectedQuery = "ALTER TABLE entity_1 ADD serialized_data LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'";
+        $this->connection->expects(static::once())
+            ->method('query')
+            ->with($expectedQuery);
+
+        $this->query->execute($logger);
+    }
+
+    public function testExecuteCheckColumnExists()
+    {
+        $logger = new ArrayLogger();
+        $this->query->setConnection($this->connection);
+
+        $tableName = 'entity_1';
+        $entityClass = 'Test\Entity\Entity1';
+
+        $this->connection->expects(static::once())
+            ->method('fetchAll')
+            ->willReturn([['class_name' => $entityClass, 'data' => []]]);
+
+        $this->schema->createTable($tableName);
+        $table = $this->schema->getTable($tableName);
+        $table->addColumn('serialized_data', 'array');
+
+        $this->connection->expects(static::once())
+            ->method('convertToPHPValue')
+            ->willReturn([
+                'extend' => [
+                    'schema' => ['doctrine' => [$entityClass => ['table' => $tableName]]],
+                    'is_extend' => true,
+                    'state' => 'Active',
+                ],
+            ]);
+
+        $expectedQuery = "ALTER TABLE entity_1 CHANGE serialized_data serialized_data "
+            ."LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'";
+
+        $this->connection->expects(static::once())
+            ->method('query')
+            ->with($expectedQuery);
+
+        $this->query->execute($logger);
     }
 }
