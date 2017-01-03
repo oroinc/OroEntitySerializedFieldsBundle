@@ -14,7 +14,6 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension;
 class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
 {
     const ENTITY_CLASS_NAME = 'SomeEntityClassName';
-    const SOURCE_QUERY_SELECT_PATH = '[source][query][select]';
     const ENTITY_ALIAS = 'entityAlias';
 
     /**
