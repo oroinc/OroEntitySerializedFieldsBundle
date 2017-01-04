@@ -42,7 +42,7 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
      */
     public function buildExpression(array $fields, DatagridConfiguration $config, $alias)
     {
-        $config->offsetAddToArrayByPath('[source][query][select]', [sprintf('%s.%s', $alias, 'serialized_data')]);
+        $config->getOrmQuery()->addSelect(sprintf('%s.%s', $alias, 'serialized_data'));
 
         $fields = array_filter($fields, function (FieldConfigId $field) use ($config) {
             return !$this->isSerializedField($field, $config);
