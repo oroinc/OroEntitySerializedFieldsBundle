@@ -11,11 +11,9 @@
         }
     ],
     "autoload": {
-        "psr-0": {
-            "Oro\\Bundle\\EntitySerializedFieldsBundle": "src/"
-        }
+        "psr-4": {"Oro\\Bundle\\EntitySerializedFieldsBundle\\": ""},
+        "exclude-from-classmap": ["/Tests/"]
     },
-    "target-dir": "src/Oro/Bundle/EntitySerializedFieldsBundle",
     "require": {
         "php": ">=5.6",
         "oro/platform": "1.x-dev"
