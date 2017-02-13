@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 
 class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,6 +37,11 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
      */
     private $extension;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker
+     */
+    private $featureChecker;
+
     protected function setUp()
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
@@ -50,10 +56,19 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->featureChecker->expects($this->any())
+            ->method('isResourceEnabled')
+            ->willReturn(true);
+
         $this->extension = new SerializedFieldsExtension(
             $this->configManager,
             $this->entityClassResolver,
-            $this->datagridGuesser
+            $this->datagridGuesser,
+            $this->featureChecker
         );
     }
 
