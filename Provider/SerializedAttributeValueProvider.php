@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Provider;
 
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Provider\AttributeValueProviderInterface;
@@ -39,7 +39,7 @@ class SerializedAttributeValueProvider implements AttributeValueProviderInterfac
             ->where($queryBuilder->expr()->eq('entity.attributeFamily', ':attributeFamily'))
             ->setParameter('attributeFamily', $attributeFamily);
 
-        $iterator = new BufferedQueryResultIterator($queryBuilder);
+        $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
         $iterator->setBufferSize(self::BATCH_SIZE);
 
         $itemsCount = 0;

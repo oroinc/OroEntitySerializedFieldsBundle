@@ -9,12 +9,19 @@ use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityExtendBundle\Grid\FieldsHelper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 
 class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
 {
     const ENTITY_CLASS_NAME = 'SomeEntityClassName';
     const ENTITY_ALIAS = 'entityAlias';
+
+    /**
+     * @var FieldsHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $fieldsHelper;
 
     /**
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
@@ -36,12 +43,20 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
      */
     private $extension;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker
+     */
+    private $featureChecker;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $this->entityClassResolver = $this->getMockBuilder(EntityClassResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -50,10 +65,39 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->fieldsHelper = $this->getMockBuilder(FieldsHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->featureChecker->expects($this->any())
+            ->method('isResourceEnabled')
+            ->willReturn(true);
+
         $this->extension = new SerializedFieldsExtension(
             $this->configManager,
             $this->entityClassResolver,
-            $this->datagridGuesser
+            $this->datagridGuesser,
+            $this->fieldsHelper,
+            $this->featureChecker
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        unset(
+            $this->configManager,
+            $this->entityClassResolver,
+            $this->datagridGuesser,
+            $this->fieldsHelper,
+            $this->featureChecker,
+            $this->extension
         );
     }
 
@@ -134,20 +178,23 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getFieldsDataProvider
-     * @param $fields
+     * @param array $fields
+     * @param array $fieldsData
+     * @param array $configs
+     * @param array $expectedData
      */
-    public function testBuildExpression($fields, $fieldsData, $configs, $expectedData)
+    public function testBuildExpression(array $fields, array $fieldsData, array $configs, array $expectedData)
     {
         $datagridConfig = DatagridConfiguration::create([]);
 
         $extendConfigProvider = $this->getMockBuilder(ConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $extendConfigProviderMock = $extendConfigProvider
             ->expects($this->exactly(count($fields)))
             ->method('getConfig');
-        
+
         $this->configManager
             ->expects($this->any())
             ->method('getProvider')
@@ -158,10 +205,10 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getEntityClass')
             ->willReturn(self::ENTITY_CLASS_NAME);
-        
+
         call_user_func_array([$extendConfigProviderMock, 'withConsecutive'], $fieldsData);
         call_user_func_array([$extendConfigProviderMock, 'willReturnOnConsecutiveCalls'], $configs);
-        
+
         $this->extension->buildExpression($fields, $datagridConfig, self::ENTITY_ALIAS);
 
         $this->assertEquals($expectedData, $datagridConfig->offsetGetByPath('[source][query][select]'));
