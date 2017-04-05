@@ -100,3 +100,22 @@ entity_config:
                                   scope:  extend
                                code:      is_serialized
                                value:     false
+    attribute:
+        field:
+            items:
+                filterable:
+                    options:
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  extend
+                               code:      is_serialized
+                               value:     false
+                sortable:
+                    options:
+                        required_properties:
+                            -
+                               config_id:
+                                  scope:  extend
+                               code:      is_serialized
+                               value:     false
