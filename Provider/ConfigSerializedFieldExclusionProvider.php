@@ -29,8 +29,8 @@ class ConfigSerializedFieldExclusionProvider extends AbstractExclusionProvider
      */
     public function isIgnoredField(ClassMetadata $metadata, $fieldName)
     {
-        if (!$metadata->hasField($fieldName)) {
-            // skip virtual fields
+        if ($metadata->hasField($fieldName)) {
+            // skip existing fields check, as them are not serialized
             return false;
         }
 
