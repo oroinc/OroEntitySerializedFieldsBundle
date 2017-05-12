@@ -45,16 +45,37 @@ class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit_Framework_Test
      * @dataProvider dataProvider
      *
      * @param Config  $fieldConfig  Field config config
-     * @param bool    $expected     Expected result
      */
-    public function testIsIgnoredField($fieldConfig, $expected)
+    public function testIsIgnoredField($fieldConfig)
     {
-        $className = $fieldConfig->getId()->getClassName();
         $fieldName = $fieldConfig->getId()->getFieldName();
 
         $this->metadata->expects($this->once())
             ->method('hasField')
             ->willReturn(true);
+
+        $this->metadata->expects($this->never())
+            ->method('getName');
+
+        $this->configProvider->expects($this->never())
+            ->method($this->anything());
+
+        $this->assertFalse($this->provider->isIgnoredField($this->metadata, $fieldName));
+    }
+
+    public function testIsIgnoredSerializedField()
+    {
+        $fieldConfig  = $this->getFieldConfig(
+            'Test\Entity\Entity2',
+            'custom_name',
+            [ 'is_serialized' => true ]
+        );
+        $className = $fieldConfig->getId()->getClassName();
+        $fieldName = $fieldConfig->getId()->getFieldName();
+
+        $this->metadata->expects($this->once())
+            ->method('hasField')
+            ->willReturn(false);
 
         $this->metadata->expects($this->once())
             ->method('getName')
@@ -70,34 +91,28 @@ class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit_Framework_Test
             ->with($className)
             ->will($this->returnValue(true));
 
-        $this->assertEquals($expected, $this->provider->isIgnoredField($this->metadata, $fieldName));
+        $this->assertTrue($this->provider->isIgnoredField($this->metadata, $fieldName));
     }
 
+    /**
+     * @return array
+     */
     public function dataProvider()
     {
-        // Field config without is_serializable property
-        $config1 = $this->getFieldConfig(
-            'Test\Entity\Entity1',
-            'custom_description'
-        );
-
-        // With is_serializable = true
-        $config2  = $this->getFieldConfig(
-            'Test\Entity\Entity2',
-            'custom_name',
-            [ 'is_serialized' => true ]
-        );
-
-        // With is_serializable = false
-        $config3  = $this->getFieldConfig(
-            'Test\Entity\Entity3',
-            'custom_address',
-            [ 'is_serialized' => false ]
-        );
         return [
-            [$config1, false],
-            [$config2, true],
-            [$config3, false],
+            'Field config without is_serializable property' => [
+                $this->getFieldConfig(
+                    'Test\Entity\Entity1',
+                    'custom_description'
+                )
+            ],
+            'With is_serializable = false' => [
+                $this->getFieldConfig(
+                    'Test\Entity\Entity3',
+                    'custom_address',
+                    [ 'is_serialized' => false ]
+                )
+            ]
         ];
     }
 
