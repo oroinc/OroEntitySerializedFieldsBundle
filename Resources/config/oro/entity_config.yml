@@ -12,16 +12,6 @@ entity_config:
                         required_properties:
                             -
                                config_id:
-                                  scope:  attribute
-                               code:      filterable
-                               value:     false
-                            -
-                               config_id:
-                                  scope:  attribute
-                               code:      sortable
-                               value:     false
-                            -
-                               config_id:
                                   scope:  datagrid
                                code:      show_filter
                                value:     false
@@ -93,25 +83,6 @@ entity_config:
         field:
             items:
                 identity:
-                    options:
-                        required_properties:
-                            -
-                               config_id:
-                                  scope:  extend
-                               code:      is_serialized
-                               value:     false
-    attribute:
-        field:
-            items:
-                filterable:
-                    options:
-                        required_properties:
-                            -
-                               config_id:
-                                  scope:  extend
-                               code:      is_serialized
-                               value:     false
-                sortable:
                     options:
                         required_properties:
                             -
