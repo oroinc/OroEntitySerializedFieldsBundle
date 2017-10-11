@@ -21,6 +21,7 @@ class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->container = new ContainerBuilder();
+        $this->container->setParameter('kernel.environment', 'prod');
         $this->extension = new OroEntitySerializedFieldsExtension();
     }
 

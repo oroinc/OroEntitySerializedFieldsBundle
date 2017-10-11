@@ -11,7 +11,6 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\FieldConfigModelRepository;
 use Oro\Bundle\EntityConfigBundle\Provider\AttributeValueProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
-use Oro\Bundle\EntitySerializedFieldsBundle\Tests\Functional\DataFixtures\LoadSerializedAttributeData;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestActivityTarget;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadActivityTargets;
@@ -40,7 +39,6 @@ class SerializedAttributeValueProviderTest extends WebTestCase
         $this->loadFixtures([
             LoadAttributeFamilyData::class,
             LoadActivityTargets::class,
-            LoadSerializedAttributeData::class,
         ]);
         $this->provider = $this->getContainer()->get('oro_serialized_fields.provider.serialized_attribute_value');
         $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
@@ -98,11 +96,6 @@ class SerializedAttributeValueProviderTest extends WebTestCase
      */
     protected function getSerializedAttributeName()
     {
-        /** @var FieldConfigModel $serializedAttribute */
-        $serializedAttribute = $this->repository->find(LoadSerializedAttributeData::getAttributeIdByName(
-            LoadSerializedAttributeData::SERIALIZED_ATTRIBUTE
-        ));
-
-        return ucfirst(Inflector::camelize($serializedAttribute->getFieldName()));
+        return ucfirst(Inflector::camelize('serialized_attribute'));
     }
 }
