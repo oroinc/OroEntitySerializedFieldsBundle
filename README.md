@@ -48,6 +48,55 @@ After installation (described below) a new field called **Storage Type** appears
   - money
   - percent
 
+To create a serialized field via migration the [SerializedFieldsExtension](./Migration/Extension/SerializedFieldsExtension.php) can be used. Here is an example:
+
+```php
+<?php
+
+namespace Acme\Bundle\AppBundle\Migrations\Schema\v1_1;
+
+use Doctrine\DBAL\Schema\Schema;
+
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtension;
+use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+
+class AddSerializedFieldMigration implements
+    Migration,
+    SerializedFieldsExtensionAwareInterface
+{
+    /** @var SerializedFieldsExtension */
+    protected $serializedFieldsExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSerializedFieldsExtension(SerializedFieldsExtension $serializedFieldsExtension)
+    {
+        $this->serializedFieldsExtension = $serializedFieldsExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function up(Schema $schema, QueryBag $queries)
+    {
+        $this->serializedFieldsExtension->addSerializedField(
+            $schema->getTable('my_table'),
+            'my_serialized_field',
+            'string',
+            [
+                'extend'    => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                ]
+            ]
+        );
+    }
+}
+```
+
 Requirements
 ------------
 

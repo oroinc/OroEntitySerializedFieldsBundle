@@ -26,6 +26,13 @@ services:
           tags:
               - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -95 }
 
+    oro_serialized_fields.migration.extension.serialized_fields:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtension
+        arguments:
+            - '@oro_entity_extend.migration.options_manager'
+        tags:
+            - { name: oro_migration.extension, extension_name: serialized_fields }
+
     oro_serialized_fields.entity_generator.extension:
         class: %oro_serialized_fields.entity_generator.extension.class%
         tags:
