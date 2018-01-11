@@ -100,7 +100,7 @@ class AddSerializedFieldMigration implements
 Requirements
 ------------
 
-OroEntitySerializedFieldsBundle requires OROPlatform(BAP) and PHP 7.0 or above.
+OroEntitySerializedFieldsBundle requires OROPlatform(BAP) and PHP 7.1 or above.
 
 
 Installation
