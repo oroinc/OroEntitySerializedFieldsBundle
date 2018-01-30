@@ -49,6 +49,9 @@ class EntityConfigListener
         $className     = $event->getClassName();
         $configManager = $event->getConfigManager();
 
+        $fieldConfig = $configManager->getProvider('extend')->getConfig($className, $event->getFieldName());
+
+        $isSerialized = false;
         if ($this->session->isStarted()) {
             $sessionKey = sprintf(
                 FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
@@ -56,11 +59,7 @@ class EntityConfigListener
             );
 
             $isSerialized = $this->session->get($sessionKey, false);
-        } else {
-            $isSerialized = false;
         }
-
-        $fieldConfig = $configManager->getProvider('extend')->getConfig($className, $event->getFieldName());
 
         $this->originalFieldConfig = clone $fieldConfig;
 
