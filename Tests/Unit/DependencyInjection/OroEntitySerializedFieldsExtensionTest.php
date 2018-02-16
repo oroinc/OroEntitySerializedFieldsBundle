@@ -37,9 +37,8 @@ class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
      * @param string $class
      * @param array  $arguments
      * @param array  $tags
-     * @param string $scope
      */
-    public function testLoadServices($service, $class, array $arguments, array $tags, $scope)
+    public function testLoadServices($service, $class, array $arguments, array $tags)
     {
         $this->extension->load(array(), $this->container);
         $definition = $this->container->getDefinition($service);
@@ -49,7 +48,6 @@ class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($arguments, $definition->getArguments());
         $this->assertEquals($tags, $definition->getTags());
-        $this->assertEquals($scope, $definition->getScope());
     }
 
     /**
@@ -90,7 +88,6 @@ class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
                       ['alias' => 'oro_entity_extend_field_type']
                   )
               ],
-              'scope'     => 'container'
           ],
           'form.type.is_serialized_field' => [
               'service'   => 'oro_serialized_fields.form.type.is_serialized_field',
@@ -103,7 +100,6 @@ class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
                       ['alias' => 'oro_serialized_fields_is_serialized_type']
                   )
               ],
-              'scope'     => 'container'
           ]
         ];
     }
