@@ -3,7 +3,6 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Provider;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
-
 use Oro\Bundle\EntityBundle\Provider\AbstractExclusionProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 

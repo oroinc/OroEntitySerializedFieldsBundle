@@ -3,10 +3,10 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Grid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Guess\ColumnGuess;
-use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser;
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface as Property;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
-use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface as Property;
+use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser;
 
 class SerializedColumnOptionsGuesserTest extends \PHPUnit_Framework_TestCase
 {

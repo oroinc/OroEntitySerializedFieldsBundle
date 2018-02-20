@@ -1,10 +1,9 @@
 <?php
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\EntitySerializedFieldsBundle\DependencyInjection\OroEntitySerializedFieldsExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
-
-use Oro\Bundle\EntitySerializedFieldsBundle\DependencyInjection\OroEntitySerializedFieldsExtension;
 
 class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
 {

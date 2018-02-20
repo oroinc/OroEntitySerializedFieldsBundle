@@ -3,7 +3,6 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\DeletedAttributeProviderInterface;

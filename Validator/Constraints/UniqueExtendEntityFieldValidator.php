@@ -3,12 +3,10 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints;
 
 use Doctrine\Common\Inflector\Inflector;
-
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
 /**
  * Validates field name uniqueness.

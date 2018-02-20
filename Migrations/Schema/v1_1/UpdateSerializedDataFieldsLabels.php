@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_1;
 
-use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Connection;
-
+use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;

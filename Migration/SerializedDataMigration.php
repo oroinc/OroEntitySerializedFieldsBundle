@@ -3,12 +3,10 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 use Oro\Bundle\EntityExtendBundle\Migration\Schema\ExtendSchema;
-
-use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class SerializedDataMigration implements Migration
 {

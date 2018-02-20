@@ -3,14 +3,11 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_0\UpdateCustomFieldsWithStorageType;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-
-use Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_0\UpdateCustomFieldsWithStorageType;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class OroEntitySerializedFieldsBundleInstaller implements Installation, ContainerAwareInterface
 {
