@@ -3,11 +3,9 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
-
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
 {

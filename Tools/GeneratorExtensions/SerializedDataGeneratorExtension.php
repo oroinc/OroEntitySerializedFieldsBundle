@@ -3,9 +3,7 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions;
 
 use CG\Generator\PhpClass;
-
 use Doctrine\Common\Inflector\Inflector;
-
 use Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\AbstractEntityGeneratorExtension;
 
 class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension

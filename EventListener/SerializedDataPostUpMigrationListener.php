@@ -3,9 +3,8 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\EventListener;
 
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
-use Oro\Bundle\MigrationBundle\Event\PostMigrationEvent;
-
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\SerializedDataMigration;
+use Oro\Bundle\MigrationBundle\Event\PostMigrationEvent;
 
 class SerializedDataPostUpMigrationListener
 {

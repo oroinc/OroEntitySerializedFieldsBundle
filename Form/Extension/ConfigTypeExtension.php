@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension;
 
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
 class ConfigTypeExtension extends AbstractTypeExtension
 {

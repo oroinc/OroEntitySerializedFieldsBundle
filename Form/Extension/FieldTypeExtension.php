@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension;
 
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -9,8 +10,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Session\Session;
-
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
 class FieldTypeExtension extends AbstractTypeExtension
 {

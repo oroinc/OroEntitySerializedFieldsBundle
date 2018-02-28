@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormEvents;
-
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
+use Symfony\Component\Form\FormEvents;
 
 class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {

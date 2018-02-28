@@ -3,7 +3,6 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension;
 
 use Doctrine\DBAL\Schema\Table;
-
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;

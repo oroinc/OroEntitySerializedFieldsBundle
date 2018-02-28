@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Session\Session;
-
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\FieldConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\EntityGenerator;
-
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class EntityConfigListener
 {
@@ -49,6 +47,9 @@ class EntityConfigListener
         $className     = $event->getClassName();
         $configManager = $event->getConfigManager();
 
+        $fieldConfig = $configManager->getProvider('extend')->getConfig($className, $event->getFieldName());
+
+        $isSerialized = false;
         if ($this->session->isStarted()) {
             $sessionKey = sprintf(
                 FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
@@ -56,11 +57,7 @@ class EntityConfigListener
             );
 
             $isSerialized = $this->session->get($sessionKey, false);
-        } else {
-            $isSerialized = false;
         }
-
-        $fieldConfig = $configManager->getProvider('extend')->getConfig($className, $event->getFieldName());
 
         $this->originalFieldConfig = clone $fieldConfig;
 
