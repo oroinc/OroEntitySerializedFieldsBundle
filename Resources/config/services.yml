@@ -20,7 +20,7 @@ parameters:
 
 services:
     oro_serialized_fields.migration.searilized_data.post_up.listener:
-          class: %oro_serialized_fields.migration.searilized_data.post_up.listener.class%
+          class: '%oro_serialized_fields.migration.searilized_data.post_up.listener.class%'
           arguments:
               - "@oro_entity_extend.migration.entity_metadata_helper"
           tags:
@@ -34,12 +34,12 @@ services:
             - { name: oro_migration.extension, extension_name: serialized_fields }
 
     oro_serialized_fields.entity_generator.extension:
-        class: %oro_serialized_fields.entity_generator.extension.class%
+        class: '%oro_serialized_fields.entity_generator.extension.class%'
         tags:
             - { name: oro_entity_extend.entity_generator_extension }
 
     oro_serialized_fields.entity_config_dumper.extension:
-        class: %oro_serialized_fields.entity_config_dumper.extension.class%
+        class: '%oro_serialized_fields.entity_config_dumper.extension.class%'
         arguments:
             - "@oro_entity_config.config_manager"
             - "@oro_entity_extend.extend.field_type_helper"
@@ -47,19 +47,19 @@ services:
             - { name: oro_entity_extend.entity_config_dumper_extension, priority: -256 }
 
     oro_serialized_fields.datagrid.column_options_guesser:
-        class: %oro_serialized_fields.datagrid.column_options_guesser.class%
+        class: '%oro_serialized_fields.datagrid.column_options_guesser.class%'
         arguments:
             - "@oro_entity_config.config_manager"
         tags:
             - { name: oro_datagrid.column_options_guesser }
 
     oro_serialized_fields.datagrid.serialized_fields_extension:
-        class: %oro_serialized_fields.datagrid.serialized_fields_extension.class%
+        class: '%oro_serialized_fields.datagrid.serialized_fields_extension.class%'
         parent: oro_entity_extend.datagrid.extension.dynamic_fields
         decorates: oro_entity_extend.datagrid.extension.dynamic_fields
 
     oro_serialized_fields.form.extension.field_extension:
-        class: %oro_serialized_fields.form.extension.field_extension.class%
+        class: '%oro_serialized_fields.form.extension.field_extension.class%'
         arguments:
             - "@session"
             - ['fieldName', 'is_serialized', 'type']
@@ -72,14 +72,14 @@ services:
             - { name: validator.constraint_validator, alias: oro_serialized_fields.validator.unique_extend_entity_field }
 
     oro_serialized_fields.form.extension.config_extension:
-        class: %oro_serialized_fields.form.extension.config_extension.class%
+        class: '%oro_serialized_fields.form.extension.config_extension.class%'
         arguments:
             - ['fieldName', 'is_serialized', 'type']
         tags:
             - { name: form.type_extension, alias: oro_entity_config_type }
 
     oro_serialized_fields.form.type.is_serialized_field:
-        class: %oro_serialized_fields.form.type.is_serialized_field.class%
+        class: '%oro_serialized_fields.form.type.is_serialized_field.class%'
         arguments:
             - '@oro_entity_config.provider.serialized_field_provider'
         tags:
@@ -97,7 +97,7 @@ services:
             - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush }
 
     oro_serialized_fields.exclusion_provider.serialized_field:
-        class: %oro_serialized_fields.exclusion_provider.serialized_field.class%
+        class: '%oro_serialized_fields.exclusion_provider.serialized_field.class%'
         arguments:
             - "@oro_entity_config.provider.extend"
         tags:
