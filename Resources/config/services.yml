@@ -64,7 +64,7 @@ services:
             - "@session"
             - ['fieldName', 'is_serialized', 'type']
         tags:
-            - { name: form.type_extension, alias: oro_entity_extend_field_type }
+            - { name: form.type_extension, alias: oro_entity_extend_field_type, extended_type: Oro\Bundle\EntityExtendBundle\Form\Type\FieldType }
 
     oro_serialized_fields.validator.unique_extend_entity_field_validator:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\UniqueExtendEntityFieldValidator
@@ -76,7 +76,7 @@ services:
         arguments:
             - ['fieldName', 'is_serialized', 'type']
         tags:
-            - { name: form.type_extension, alias: oro_entity_config_type }
+            - { name: form.type_extension, alias: oro_entity_config_type, extended_type: Oro\Bundle\EntityConfigBundle\Form\Type\ConfigType }
 
     oro_serialized_fields.form.type.is_serialized_field:
         class: '%oro_serialized_fields.form.type.is_serialized_field.class%'
