@@ -1,11 +1,8 @@
-OroEntitySerializedFieldsBundle
-===============================
+# OroEntitySerializedFieldsBundle
 
-This document contains a little introduction into "Oro Entity Serialized Fields" package, information on how to download and install.
+OroEntitySerializedFieldsBundle extends [OroEntityExtendBundle](https://github.com/oroinc/platform/tree/master/src/Oro/Bundle/EntityExtendBundle) features with a new "Serialized field" custom field storage type that enables admin users to modify extended entities with new custom fields without updating the database schema.
 
-
-Table of content
-----------------
+## Table of content
 
 - [Fundamentals](#fundamentals)
 - [Requirements](#requirements)
@@ -13,9 +10,9 @@ Table of content
 - [Run unit tests](#run-unit-tests)
 
 
-Fundamentals
-------------
-ORO Platform provides ability to have custom entities or extend entities with new custom fields.
+## Fundamentals
+
+ORO Platform provides the ability to have custom entities or extend entities with new custom fields.
 
 The package allows to avoid schema update when you create custom field. Although this field come with some restrictions.
 
@@ -97,17 +94,15 @@ class AddSerializedFieldMigration implements
 }
 ```
 
-Requirements
-------------
+## Requirements
 
 OroEntitySerializedFieldsBundle requires OROPlatform(BAP) and PHP 7.1 or above.
 
 
-Installation
-------------
+## Installation
 
 Package is available through Oro Package Manager.
-For development purposes it might be cloned from github repository directly.
+For development purposes it can be cloned directly from the GitHub repository.
 
 ```
 git clone git@github.com:orocrm/OroEntitySerializedFieldsBundle.git
@@ -132,8 +127,7 @@ php composer.phar update
 php app/console oro:platform:update --force
 ```
 
-Run unit tests
---------------
+## Run unit tests
 
 To run unit tests for this package:
 
