@@ -84,7 +84,10 @@ class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
               ],
               'tags'      => [
                   'form.type_extension' => array(
-                      ['alias' => 'oro_entity_extend_field_type']
+                      [
+                          'alias' => 'oro_entity_extend_field_type',
+                          'extended_type' => 'Oro\Bundle\EntityExtendBundle\Form\Type\FieldType'
+                      ],
                   )
               ],
           ],
