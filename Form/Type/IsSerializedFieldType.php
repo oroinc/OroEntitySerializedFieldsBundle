@@ -4,6 +4,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Provider\SerializedFieldProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -65,7 +66,7 @@ class IsSerializedFieldType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 
     /**

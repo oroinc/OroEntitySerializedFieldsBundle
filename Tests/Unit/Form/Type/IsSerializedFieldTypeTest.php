@@ -4,6 +4,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Provider\SerializedFieldProvider;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormView;
 
 class IsSerializedFieldTypeTest extends \PHPUnit_Framework_TestCase
@@ -41,7 +42,7 @@ class IsSerializedFieldTypeTest extends \PHPUnit_Framework_TestCase
     public function testType()
     {
         $this->assertSame('oro_serialized_fields_is_serialized_type', $this->type->getName());
-        $this->assertSame('choice', $this->type->getParent());
+        $this->assertSame(ChoiceType::class, $this->type->getParent());
         $this->assertInstanceOf('Symfony\Component\Form\AbstractType', $this->type);
     }
 

@@ -3,6 +3,8 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityExtendBundle\Form\Type\FieldType;
+use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -42,7 +44,7 @@ class FieldTypeExtension extends AbstractTypeExtension
     {
         $builder->add(
             'is_serialized',
-            'oro_serialized_fields_is_serialized_type'
+            IsSerializedFieldType::class
         );
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
@@ -92,6 +94,6 @@ class FieldTypeExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'oro_entity_extend_field_type';
+        return FieldType::class;
     }
 }
