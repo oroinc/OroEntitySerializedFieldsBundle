@@ -3,6 +3,8 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityConfigBundle\Form\Type\ConfigType;
+use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -35,7 +37,7 @@ class ConfigTypeExtension extends AbstractTypeExtension
             $extendScopeConfig = $configModel->toArray('extend');
             $builder->add(
                 'is_serialized',
-                'oro_serialized_fields_is_serialized_type',
+                IsSerializedFieldType::class,
                 [
                     'disabled' => true,
                     'data'     => isset($extendScopeConfig['is_serialized'])
@@ -68,6 +70,6 @@ class ConfigTypeExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'oro_entity_config_type';
+        return ConfigType::class;
     }
 }

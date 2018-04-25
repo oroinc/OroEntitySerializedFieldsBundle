@@ -3,7 +3,9 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityExtendBundle\Form\Type\FieldType;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
+use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
 use Symfony\Component\Form\FormEvents;
 
 class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
@@ -34,7 +36,7 @@ class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals('oro_entity_extend_field_type', $this->extension->getExtendedType());
+        $this->assertEquals(FieldType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildForm()
@@ -44,7 +46,7 @@ class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $builder->expects($this->at(0))
             ->method('add')
-            ->with('is_serialized', 'oro_serialized_fields_is_serialized_type');
+            ->with('is_serialized', IsSerializedFieldType::class);
         $builder->expects($this->at(1))
             ->method('addEventListener')
             ->with(FormEvents::POST_SUBMIT, [$this->extension, 'postSubmit']);
