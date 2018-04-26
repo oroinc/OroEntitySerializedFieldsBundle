@@ -31,8 +31,8 @@ entity_config:
                         required:           true
                         sortable:           true
                         choices:
-                            0: 'oro.entity_serialized_fields.form.is_serialized.database'
-                            1: 'oro.entity_serialized_fields.form.is_serialized.serialized'
+                            oro.entity_serialized_fields.form.is_serialized.database: 0
+                            oro.entity_serialized_fields.form.is_serialized.serialized: 1
                 length:
                     options:
                         required_properties:
