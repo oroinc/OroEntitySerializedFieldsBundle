@@ -29,7 +29,6 @@ class IsSerializedFieldType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'choices_as_values' => true,
                 'choices'         => [
                     'oro.entity_serialized_fields.form.is_serialized.database' => 0,
                     'oro.entity_serialized_fields.form.is_serialized.serialized' => 1,
