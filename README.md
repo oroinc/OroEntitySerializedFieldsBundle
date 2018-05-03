@@ -124,7 +124,7 @@ Update your composer.json with
 
 ```
 php composer.phar update
-php app/console oro:platform:update --force
+php bin/console oro:platform:update --force
 ```
 
 ## Run unit tests
