@@ -7,10 +7,10 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormView;
 
-class IsSerializedFieldTypeTest extends \PHPUnit_Framework_TestCase
+class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SerializedFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var SerializedFieldProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $seriliazedFieldProvider;
 

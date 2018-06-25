@@ -8,10 +8,10 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\DeletedAttributeProviderInterface;
 use Oro\Bundle\EntitySerializedFieldsBundle\Provider\DeletedAttributeProviderDecorator;
 
-class DeletedAttributeProviderDecoratorTest extends \PHPUnit_Framework_TestCase
+class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DeletedAttributeProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DeletedAttributeProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $deletedAttributeProvider;
 

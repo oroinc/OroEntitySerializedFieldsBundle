@@ -4,7 +4,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\EntitySerializedFieldsBundle\EventListener\SerializedDataPostUpMigrationListener;
 
-class SerializedDataPostUpMigrationListenerTest extends \PHPUnit_Framework_TestCase
+class SerializedDataPostUpMigrationListenerTest extends \PHPUnit\Framework\TestCase
 {
     public function testOnPostUp()
     {

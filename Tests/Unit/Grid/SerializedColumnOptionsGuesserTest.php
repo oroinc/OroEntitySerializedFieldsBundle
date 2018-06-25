@@ -8,9 +8,9 @@ use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser;
 
-class SerializedColumnOptionsGuesserTest extends \PHPUnit_Framework_TestCase
+class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
     /** @var SerializedColumnOptionsGuesser */
