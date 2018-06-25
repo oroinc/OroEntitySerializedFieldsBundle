@@ -8,12 +8,12 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
 use Symfony\Component\Form\FormEvents;
 
-class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
+class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  FieldTypeExtension */
     protected $extension;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $session;
 
     public function setUp()
@@ -41,7 +41,7 @@ class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildForm()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject */
+        /** @var \PHPUnit\Framework\MockObject\MockObject */
         $builder = $this->createMock('Symfony\Component\Form\Test\FormBuilderInterface');
 
         $builder->expects($this->at(0))
@@ -67,7 +67,7 @@ class FieldTypeExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getFormEventMock()
     {

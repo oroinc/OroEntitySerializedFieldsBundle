@@ -8,7 +8,7 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config\AddSerializedFi
 
 class AddSerializedFieldsTest extends ConfigProcessorTestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
     /** @var ConfigProviderMock */

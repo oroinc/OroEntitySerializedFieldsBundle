@@ -5,7 +5,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Migration;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\SerializedDataMigration;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\SerializedDataMigrationQuery;
 
-class SerializedDataMigrationTest extends \PHPUnit_Framework_TestCase
+class SerializedDataMigrationTest extends \PHPUnit\Framework\TestCase
 {
     public function testUp()
     {

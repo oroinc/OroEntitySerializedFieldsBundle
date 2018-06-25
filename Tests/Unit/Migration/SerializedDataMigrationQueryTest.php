@@ -9,12 +9,12 @@ use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\SerializedDataMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 
-class SerializedDataMigrationQueryTest extends \PHPUnit_Framework_TestCase
+class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var Connection|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Connection|\PHPUnit\Framework\MockObject\MockObject */
     protected $connection;
 
-    /** @var EntityMetadataHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityMetadataHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $helper;
 
     /** @var Schema */

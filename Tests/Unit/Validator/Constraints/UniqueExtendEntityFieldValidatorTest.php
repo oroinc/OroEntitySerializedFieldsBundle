@@ -7,7 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\UniqueExtendEntityField;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\UniqueExtendEntityFieldValidator;
 
-class UniqueExtendEntityFieldValidatorTest extends \PHPUnit_Framework_TestCase
+class UniqueExtendEntityFieldValidatorTest extends \PHPUnit\Framework\TestCase
 {
     const ENTITY_CLASS = 'Test\Entity';
 

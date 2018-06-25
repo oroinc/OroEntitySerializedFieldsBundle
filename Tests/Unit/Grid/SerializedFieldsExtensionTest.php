@@ -13,28 +13,28 @@ use Oro\Bundle\EntityExtendBundle\Grid\FieldsHelper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 
-class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
+class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
 {
     const ENTITY_CLASS_NAME = 'SomeEntityClassName';
     const ENTITY_ALIAS = 'entityAlias';
 
     /**
-     * @var FieldsHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $fieldsHelper;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var EntityClassResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityClassResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityClassResolver;
 
     /**
-     * @var DatagridGuesser|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatagridGuesser|\PHPUnit\Framework\MockObject\MockObject
      */
     private $datagridGuesser;
 
@@ -44,7 +44,7 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
     private $extension;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker
+     * @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker
      */
     private $featureChecker;
 

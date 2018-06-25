@@ -7,15 +7,15 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntitySerializedFieldsBundle\Provider\ConfigSerializedFieldExclusionProvider;
 
-class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit_Framework_TestCase
+class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ConfigSerializedFieldExclusionProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $configProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $metadata;
 
     public function setUp()

@@ -5,7 +5,7 @@ use Oro\Bundle\EntitySerializedFieldsBundle\DependencyInjection\OroEntitySeriali
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class OroEntitySerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
+class OroEntitySerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var OroEntitySerializedFieldsExtension
