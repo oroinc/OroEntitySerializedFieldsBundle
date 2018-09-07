@@ -4,6 +4,9 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Grid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridGuesser;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
@@ -49,6 +52,16 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
     private $featureChecker;
 
     /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $doctrineHelper;
+
+    /**
+     * @var SelectedFieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $selectedFieldsProvider;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -77,6 +90,9 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('isResourceEnabled')
             ->willReturn(true);
 
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->selectedFieldsProvider = $this->createMock(SelectedFieldsProviderInterface::class);
+
         $this->extension = new SerializedFieldsExtension(
             $this->configManager,
             $this->entityClassResolver,
@@ -84,21 +100,9 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
             $this->fieldsHelper,
             $this->featureChecker
         );
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset(
-            $this->configManager,
-            $this->entityClassResolver,
-            $this->datagridGuesser,
-            $this->fieldsHelper,
-            $this->featureChecker,
-            $this->extension
-        );
+        $this->extension->setDoctrineHelper($this->doctrineHelper);
+        $this->extension->setSelectedFieldsProvider($this->selectedFieldsProvider);
     }
 
     /**
@@ -209,6 +213,12 @@ class SerializedFieldsExtensionTest extends \PHPUnit_Framework_TestCase
         call_user_func_array([$extendConfigProviderMock, 'withConsecutive'], $fieldsData);
         call_user_func_array([$extendConfigProviderMock, 'willReturnOnConsecutiveCalls'], $configs);
 
+        $this->selectedFieldsProvider
+            ->expects($this->any())
+            ->method('getSelectedFields')
+            ->willReturn(['notSerializedField1', 'notSerializedField2']);
+
+        $this->extension->setParameters($this->createMock(ParameterBag::class));
         $this->extension->buildExpression($fields, $datagridConfig, self::ENTITY_ALIAS);
 
         $this->assertEquals($expectedData, $datagridConfig->offsetGetByPath('[source][query][select]'));
