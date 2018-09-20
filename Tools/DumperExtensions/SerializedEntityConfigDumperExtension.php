@@ -9,6 +9,11 @@ use Oro\Bundle\EntityExtendBundle\Tools\DumperExtensions\AbstractEntityConfigDum
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions\SerializedDataGeneratorExtension;
 
+/**
+ * The extension for the entity config dumper that do the following:
+ * * adds "serialized_data" field that are used to store values of serialized fields
+ * * updates entity configuration related to serialized fields
+ */
 class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperExtension
 {
     const SERIALIZED_DATA_FIELD = SerializedDataGeneratorExtension::SERIALIZED_DATA_FIELD;
@@ -70,17 +75,21 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
                 );
 
                 if (!empty($serializedFields)) {
-                    $indexes              = $entityConfig->get('index', false, []);
+                    $indexes = $entityConfig->get('index', false, []);
                     $serializedProperties = [];
                     foreach ($serializedFields as $fieldConfig) {
                         $fieldName = $fieldConfig->getId()->getFieldName();
 
-                        if (isset($schema['property'][$fieldName])) {
-                            $serializedProperties[$fieldName] = $schema['property'][$fieldName];
-                            unset($schema['property'][$fieldName]);
+                        $serializedProperties[$fieldName] = [];
+                        if ($fieldConfig->is('is_deleted')) {
+                            $serializedProperties[$fieldName]['private'] = true;
                         }
-                        unset($schema['doctrine'][$entityClassName]['fields'][$fieldName]);
-                        unset($indexes[$fieldName]);
+
+                        unset(
+                            $schema['property'][$fieldName],
+                            $schema['doctrine'][$entityClassName]['fields'][$fieldName],
+                            $indexes[$fieldName]
+                        );
                     }
                     if (empty($serializedProperties)) {
                         unset($schema['serialized_property']);

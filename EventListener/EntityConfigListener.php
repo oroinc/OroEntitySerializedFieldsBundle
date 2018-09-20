@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\EventListener;
 
-use Oro\Bundle\EntityConfigBundle\Config\Config;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -15,6 +13,9 @@ use Oro\Bundle\EntityExtendBundle\Tools\EntityGenerator;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+/**
+ * The entity config listener to manage serialized fields.
+ */
 class EntityConfigListener
 {
     /** @var EntityGenerator $entityGenerator */
@@ -23,11 +24,11 @@ class EntityConfigListener
     /** @var Session */
     protected $session;
 
-    /** @var Config|null */
-    private $originalEntityConfig;
+    /** @var array [entity class => config, ...] */
+    private $originalEntityConfigs = [];
 
-    /** @var Config|null */
-    private $originalFieldConfig;
+    /** @var array [entity class => true/false, ...] */
+    private $hasChangedSerializedFields = [];
 
     /**
      * @param EntityGenerator $entityGenerator
@@ -36,7 +37,7 @@ class EntityConfigListener
     public function __construct(EntityGenerator $entityGenerator, Session $session)
     {
         $this->entityGenerator = $entityGenerator;
-        $this->session         = $session;
+        $this->session = $session;
     }
 
     /**
@@ -44,10 +45,11 @@ class EntityConfigListener
      */
     public function createField(FieldConfigEvent $event)
     {
-        $className     = $event->getClassName();
+        $className = $event->getClassName();
+        $fieldName = $event->getFieldName();
         $configManager = $event->getConfigManager();
 
-        $fieldConfig = $configManager->getProvider('extend')->getConfig($className, $event->getFieldName());
+        $fieldConfig = $configManager->getFieldConfig('extend', $className, $fieldName);
 
         $isSerialized = false;
         if ($this->session->isStarted()) {
@@ -55,17 +57,19 @@ class EntityConfigListener
                 FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
                 $configManager->getConfigModelId($className)
             );
-
             $isSerialized = $this->session->get($sessionKey, false);
         }
 
-        $this->originalFieldConfig = clone $fieldConfig;
+        if ($fieldConfig->is('is_serialized')) {
+            $this->hasChangedSerializedFields[$className] = true;
+        } elseif (!array_key_exists($className, $this->hasChangedSerializedFields)) {
+            $this->hasChangedSerializedFields[$className] = false;
+        }
 
         $fieldConfig->set('is_serialized', $isSerialized);
         if ($isSerialized) {
             $fieldConfig->set('state', ExtendScope::STATE_ACTIVE);
         }
-
         $configManager->persist($fieldConfig);
     }
 
@@ -78,10 +82,9 @@ class EntityConfigListener
     public function initializeEntity(PreFlushConfigEvent $event)
     {
         $className = $event->getClassName();
-        if ($this->originalEntityConfig === null) {
-            $entityConfig = $event->getConfigManager()->getProvider('extend')->getConfig($className);
-
-            $this->originalEntityConfig = clone $entityConfig;
+        if (!isset($this->originalEntityConfigs[$className])) {
+            $entityConfig = $event->getConfigManager()->getEntityConfig('extend', $className);
+            $this->originalEntityConfigs[$className] = clone $entityConfig;
         }
     }
 
@@ -96,23 +99,24 @@ class EntityConfigListener
         }
 
         $configManager = $event->getConfigManager();
-        $changeSet     = $configManager->getConfigChangeSet($config);
+        $changeSet = $configManager->getConfigChangeSet($config);
         if (empty($changeSet)) {
             $event->stopPropagation();
 
             return;
         }
 
+        $className = $event->getClassName();
         if ($event->isEntityConfig()) { // entity config
             /**
              * Case with creating new serialized field (fired from entity persist):
              *  - owning entity "state" attribute should NOT be changed
              */
-            if ($this->originalEntityConfig !== null
-                && $this->originalFieldConfig !== null
-                && $this->originalFieldConfig->is('is_serialized')
+            if (isset($this->originalEntityConfigs[$className])
+                && array_key_exists($className, $this->hasChangedSerializedFields)
+                && $this->hasChangedSerializedFields[$className]
             ) {
-                $this->revertEntityState($configManager, $event->getClassName());
+                $this->revertEntityState($configManager, $className);
             }
         } elseif ($config->is('is_serialized')) { // serialized field config
             /**
@@ -120,11 +124,11 @@ class EntityConfigListener
              *  - field's "state" attribute should be "Active"
              *  - owning entity "state" attribute should NOT be changed
              */
-            if ($this->originalEntityConfig !== null && !$config->is('state', ExtendScope::STATE_DELETE)) {
-                $this->revertEntityState($configManager, $event->getClassName());
+            if (isset($this->originalEntityConfigs[$className]) && !$config->is('state', ExtendScope::STATE_DELETE)) {
+                $this->revertEntityState($configManager, $className);
                 if (!$config->is('state', ExtendScope::STATE_ACTIVE)) {
+                    $this->hasChangedSerializedFields[$className] = true;
                     $config->set('state', ExtendScope::STATE_ACTIVE);
-
                     $configManager->persist($config);
                     $configManager->calculateConfigChangeSet($config);
                 }
@@ -136,20 +140,17 @@ class EntityConfigListener
              *  - owning entity "state" attribute should NOT be changed
              */
             if ($config->is('state', ExtendScope::STATE_DELETE)) {
+                $this->hasChangedSerializedFields[$className] = true;
                 $config->set('is_deleted', true);
-
-                $this->originalFieldConfig = clone $config;
-
                 $configManager->persist($config);
                 $configManager->calculateConfigChangeSet($config);
             }
 
             /**
              * update owning entity "schema" to be ready to refresh extended entity proxy immediately
-             * also {@see flushConfig}
              */
-            $entityConfig = $this->getEntityConfig($configManager, $event->getClassName());
-            $schema       = $entityConfig->get('schema', false, []);
+            $entityConfig = $configManager->getEntityConfig('extend', $className);
+            $schema = $entityConfig->get('schema', false, []);
             if (!empty($schema)
                 && $this->updateEntitySchema($schema, $config->getId()->getFieldName(), $config->is('is_deleted'))
             ) {
@@ -167,42 +168,34 @@ class EntityConfigListener
      */
     public function postFlush(PostFlushConfigEvent $event)
     {
-        if (null === $this->originalFieldConfig) {
-            return;
-        }
-
+        $toUpdate = [];
         $configManager = $event->getConfigManager();
         foreach ($event->getModels() as $model) {
             if (!$model instanceof FieldConfigModel) {
                 continue;
             }
 
-            /** @var FieldConfigId $configId */
-            $configId    = $configManager->getConfigIdByModel($model, 'extend');
-            $fieldConfig = $configManager->getProvider('extend')->getConfig(
-                $configId->getClassName(),
-                $configId->getFieldName()
-            );
+            $className = $model->getEntity()->getClassName();
+            if (isset($toUpdate[$className]) || !isset($this->hasChangedSerializedFields[$className])) {
+                continue;
+            }
 
+            /** @var FieldConfigId $configId */
+            $configId = $configManager->getConfigIdByModel($model, 'extend');
+            $fieldConfig = $configManager->getFieldConfig('extend', $className, $configId->getFieldName());
             if ($fieldConfig->is('is_serialized')) {
-                $entityConfig = $this->getEntityConfig($configManager, $configId->getClassName());
-                $schema       = $entityConfig->get('schema');
-                if ($schema) {
-                    $this->entityGenerator->generateSchemaFiles($schema);
-                }
+                $toUpdate[$className] = $configManager->getEntityConfig('extend', $className);
             }
         }
-    }
+        foreach ($toUpdate as $className => $entityConfig) {
+            $schema = $entityConfig->get('schema');
+            if ($schema) {
+                $this->entityGenerator->generateSchemaFiles($schema);
+            }
+        }
 
-    /**
-     * @param ConfigManager $configManager
-     * @param string        $className
-     *
-     * @return ConfigInterface
-     */
-    protected function getEntityConfig(ConfigManager $configManager, $className)
-    {
-        return $configManager->getProvider('extend')->getConfig($className);
+        $this->originalEntityConfigs = [];
+        $this->hasChangedSerializedFields = [];
     }
 
     /**
@@ -213,9 +206,10 @@ class EntityConfigListener
      */
     protected function revertEntityState(ConfigManager $configManager, $className)
     {
-        $entityConfig = $this->getEntityConfig($configManager, $className);
-        if ($entityConfig->get('state') !== $this->originalEntityConfig->get('state')) {
-            $entityConfig->set('state', $this->originalEntityConfig->get('state'));
+        $entityConfig = $configManager->getEntityConfig('extend', $className);
+        $originalEntityConfig = $this->originalEntityConfigs[$className];
+        if ($entityConfig->get('state') !== $originalEntityConfig->get('state')) {
+            $entityConfig->set('state', $originalEntityConfig->get('state'));
 
             $configManager->persist($entityConfig);
             $configManager->calculateConfigChangeSet($entityConfig);
@@ -238,7 +232,7 @@ class EntityConfigListener
                     || !$schema['serialized_property'][$fieldName]['private']
                 ) {
                     $schema['serialized_property'][$fieldName]['private'] = true;
-                    $hasChanges                                           = true;
+                    $hasChanges = true;
                 }
             } elseif (isset($schema['serialized_property'][$fieldName]['private'])) {
                 unset($schema['serialized_property'][$fieldName]['private']);
