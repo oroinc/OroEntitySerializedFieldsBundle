@@ -1,6 +1,6 @@
 {
     "name": "oro/platform-serialised-fields",
-    "description": "Oro Platform Serialized Fields",
+    "description": "OroPlatform Serialized Fields",
     "homepage": "https://github.com/oroinc/OroEntitySerializedFieldsBundle",
     "license": "OSL-3.0",
     "keywords": ["Oro", "Platform", "fields", "entity"],

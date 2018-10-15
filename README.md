@@ -12,7 +12,7 @@ OroEntitySerializedFieldsBundle extends [OroEntityExtendBundle](https://github.c
 
 ## Fundamentals
 
-ORO Platform provides the ability to have custom entities or extend entities with new custom fields.
+OroPlatform provides the ability to have custom entities or extend entities with new custom fields.
 
 The package allows to avoid schema update when you create custom field. Although this field come with some restrictions.
 
