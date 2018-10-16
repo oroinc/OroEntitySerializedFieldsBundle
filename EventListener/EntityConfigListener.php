@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\FieldConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
+use Oro\Bundle\EntityConfigBundle\Event\PreSetRequireUpdateEvent;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\EntityGenerator;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
@@ -103,25 +104,14 @@ class EntityConfigListener
             return;
         }
 
-        if ($event->isEntityConfig()) { // entity config
-            /**
-             * Case with creating new serialized field (fired from entity persist):
-             *  - owning entity "state" attribute should NOT be changed
-             */
-            if ($this->originalEntityConfig !== null
-                && $this->originalFieldConfig !== null
-                && $this->originalFieldConfig->is('is_serialized')
-            ) {
-                $this->revertEntityState($configManager, $event->getClassName());
-            }
-        } elseif ($config->is('is_serialized')) { // serialized field config
+        $className = $event->getClassName();
+        if ($event->isFieldConfig() && $config->is('is_serialized')) { // serialized field config
             /**
              * Case with creating new serialized field (fired from field persist):
              *  - field's "state" attribute should be "Active"
              *  - owning entity "state" attribute should NOT be changed
              */
-            if ($this->originalEntityConfig !== null && !$config->is('state', ExtendScope::STATE_DELETE)) {
-                $this->revertEntityState($configManager, $event->getClassName());
+            if (isset($this->originalEntityConfigs[$className]) && !$config->is('state', ExtendScope::STATE_DELETE)) {
                 if (!$config->is('state', ExtendScope::STATE_ACTIVE)) {
                     $config->set('state', ExtendScope::STATE_ACTIVE);
 
@@ -206,23 +196,6 @@ class EntityConfigListener
     }
 
     /**
-     * Reverts entity state to it's original value
-     *
-     * @param ConfigManager $configManager
-     * @param string        $className
-     */
-    protected function revertEntityState(ConfigManager $configManager, $className)
-    {
-        $entityConfig = $this->getEntityConfig($configManager, $className);
-        if ($entityConfig->get('state') !== $this->originalEntityConfig->get('state')) {
-            $entityConfig->set('state', $this->originalEntityConfig->get('state'));
-
-            $configManager->persist($entityConfig);
-            $configManager->calculateConfigChangeSet($entityConfig);
-        }
-    }
-
-    /**
      * @param array  $schema
      * @param string $fieldName
      * @param bool   $isDeletedField
@@ -253,5 +226,38 @@ class EntityConfigListener
         }
 
         return $hasChanges;
+    }
+
+    /**
+     * @param PreSetRequireUpdateEvent $event
+     */
+    public function preSetRequireUpdate(PreSetRequireUpdateEvent $event)
+    {
+        $config = $event->getConfig('extend');
+
+        $event->setUpdateRequired(true);
+
+        $className = $event->getClassName();
+        if ($event->isEntityConfig()) { // entity config
+            /**
+             * Case with creating new serialized field (fired from entity persist):
+             *  - owning entity "state" attribute should NOT be changed
+             */
+            if (isset($this->originalEntityConfigs[$className])
+                && array_key_exists($className, $this->hasChangedSerializedFields)
+                && $this->hasChangedSerializedFields[$className]
+            ) {
+                $event->setUpdateRequired(false);
+            }
+        } elseif ($config->is('is_serialized')) { // serialized field config
+            /**
+             * Case with creating new serialized field (fired from field persist):
+             *  - field's "state" attribute should be "Active"
+             *  - owning entity "state" attribute should NOT be changed
+             */
+            if (isset($this->originalEntityConfigs[$className]) && !$config->is('state', ExtendScope::STATE_DELETE)) {
+                $event->setUpdateRequired(false);
+            }
+        }
     }
 }
