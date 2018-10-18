@@ -16,6 +16,9 @@ use Oro\Bundle\EntityExtendBundle\Tools\EntityGenerator;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+/**
+ * The entity config listener to manage serialized fields.
+ */
 class EntityConfigListener
 {
     /** @var EntityGenerator $entityGenerator */
