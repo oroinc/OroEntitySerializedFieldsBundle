@@ -26,9 +26,6 @@ class EntityConfigListener
     /** @var Session */
     protected $session;
 
-    /** @var array [entity class => config, ...] */
-    private $originalEntityConfigs = [];
-
     /** @var array [entity class => true/false, ...] */
     private $hasChangedSerializedFields = [];
 
@@ -78,18 +75,12 @@ class EntityConfigListener
     }
 
     /**
-     * Starts before all events.
-     * The main aim of method to store original entity state for future events.
+     * This method is preserved for backwards compatibility
      *
      * @param PreFlushConfigEvent $event
      */
     public function initializeEntity(PreFlushConfigEvent $event)
     {
-        $className = $event->getClassName();
-        if (!isset($this->originalEntityConfigs[$className])) {
-            $entityConfig = $event->getConfigManager()->getEntityConfig('extend', $className);
-            $this->originalEntityConfigs[$className] = clone $entityConfig;
-        }
     }
 
     /**
@@ -117,7 +108,7 @@ class EntityConfigListener
              *  - field's "state" attribute should be "Active"
              *  - owning entity "state" attribute should NOT be changed
              */
-            if (isset($this->originalEntityConfigs[$className]) && !$config->is('state', ExtendScope::STATE_DELETE)) {
+            if (!$config->is('state', ExtendScope::STATE_DELETE)) {
                 if (!$config->is('state', ExtendScope::STATE_ACTIVE)) {
                     $this->hasChangedSerializedFields[$className] = true;
                     $config->set('state', ExtendScope::STATE_ACTIVE);
@@ -186,7 +177,6 @@ class EntityConfigListener
             }
         }
 
-        $this->originalEntityConfigs = [];
         $this->hasChangedSerializedFields = [];
     }
 
@@ -241,29 +231,11 @@ class EntityConfigListener
     {
         $config = $event->getConfig('extend');
 
-        $event->setUpdateRequired(true);
-
         $className = $event->getClassName();
-        if ($event->isEntityConfig()) { // entity config
-            /**
-             * Case with creating new serialized field (fired from entity persist):
-             *  - owning entity "state" attribute should NOT be changed
-             */
-            if (isset($this->originalEntityConfigs[$className])
-                && array_key_exists($className, $this->hasChangedSerializedFields)
-                && $this->hasChangedSerializedFields[$className]
-            ) {
-                $event->setUpdateRequired(false);
-            }
-        } elseif ($config->is('is_serialized')) { // serialized field config
-            /**
-             * Case with creating new serialized field (fired from field persist):
-             *  - field's "state" attribute should be "Active"
-             *  - owning entity "state" attribute should NOT be changed
-             */
-            if (isset($this->originalEntityConfigs[$className]) && !$config->is('state', ExtendScope::STATE_DELETE)) {
-                $event->setUpdateRequired(false);
-            }
+        if (($event->isEntityConfig() && isset($this->hasChangedSerializedFields[$className])) // entity config
+            || (!$event->isEntityConfig() && $config->is('is_serialized')) // field config
+        ) {
+            $event->setUpdateRequired(false);
         }
     }
 }
