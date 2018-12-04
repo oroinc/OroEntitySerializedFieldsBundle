@@ -939,11 +939,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
 
-        $entityConfig = $this->addEntityConfig(
-            $entityClassName,
-            ['state' => ExtendScope::STATE_UPDATE]
-        );
-
         $fieldConfig = $this->addFieldConfig(
             $entityClassName,
             $fieldName,
@@ -961,11 +956,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
-
-        $entityConfig = $this->addEntityConfig(
-            $entityClassName,
-            ['state' => ExtendScope::STATE_UPDATE]
-        );
 
         $fieldConfig = $this->addFieldConfig(
             $entityClassName,
@@ -988,11 +978,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
 
-        $entityConfig = $this->addEntityConfig(
-            $entityClassName,
-            ['state' => ExtendScope::STATE_UPDATE]
-        );
-
         $fieldConfig = $this->addFieldConfig(
             $entityClassName,
             $fieldName,
@@ -1007,5 +992,14 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->preSetRequireUpdate($event);
         self::assertFalse($event->isUpdateRequired());
+    }
+
+    public function testPreSetRequireUpdateEmptyConfig()
+    {
+        $event = new PreSetRequireUpdateEvent([], $this->configManager);
+        self::assertTrue($event->isUpdateRequired());
+
+        $this->listener->preSetRequireUpdate($event);
+        self::assertTrue($event->isUpdateRequired());
     }
 }

@@ -217,6 +217,9 @@ class EntityConfigListener
     public function preSetRequireUpdate(PreSetRequireUpdateEvent $event)
     {
         $config = $event->getConfig('extend');
+        if (null === $config) {
+            return;
+        }
 
         $className = $event->getClassName();
         if (($event->isEntityConfig() && isset($this->hasChangedSerializedFields[$className])) // entity config
