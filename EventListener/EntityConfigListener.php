@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\EventListener;
 
-use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\FieldConfigEvent;
@@ -178,17 +176,6 @@ class EntityConfigListener
         }
 
         $this->hasChangedSerializedFields = [];
-    }
-
-    /**
-     * @param ConfigManager $configManager
-     * @param string        $className
-     *
-     * @return ConfigInterface
-     */
-    protected function getEntityConfig(ConfigManager $configManager, $className)
-    {
-        return $configManager->getProvider('extend')->getConfig($className);
     }
 
     /**
