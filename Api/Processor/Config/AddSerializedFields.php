@@ -5,8 +5,8 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\Config\ConfigContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -16,22 +16,22 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class AddSerializedFields implements ProcessorInterface
 {
-    const SERIALIZED_DATA_FIELD = 'serialized_data';
+    private const SERIALIZED_DATA_FIELD = 'serialized_data';
 
     /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
-    /** @var ConfigProvider */
-    protected $extendConfigProvider;
+    /** @var ConfigManager */
+    private $configManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param ConfigProvider $extendConfigProvider
+     * @param ConfigManager  $configManager
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ConfigProvider $extendConfigProvider)
+    public function __construct(DoctrineHelper $doctrineHelper, ConfigManager $configManager)
     {
         $this->doctrineHelper = $doctrineHelper;
-        $this->extendConfigProvider = $extendConfigProvider;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -52,7 +52,7 @@ class AddSerializedFields implements ProcessorInterface
             // only manageable entities are supported
             return;
         }
-        if (!$this->extendConfigProvider->hasConfig($entityClass)) {
+        if (!$this->configManager->hasConfig($entityClass)) {
             // only configurable entities are supported
             return;
         }
@@ -71,18 +71,20 @@ class AddSerializedFields implements ProcessorInterface
      * @param EntityDefinitionConfig $definition
      * @param string                 $entityClass
      */
-    protected function addSerializedFields(EntityDefinitionConfig $definition, $entityClass)
+    private function addSerializedFields(EntityDefinitionConfig $definition, $entityClass)
     {
-        $fieldConfigs = $this->extendConfigProvider->getConfigs($entityClass);
+        $fieldConfigs = $this->configManager->getConfigs('extend', $entityClass);
         foreach ($fieldConfigs as $fieldConfig) {
             if (!$fieldConfig->is('is_serialized') || !ExtendHelper::isFieldAccessible($fieldConfig)) {
                 continue;
             }
+
             /** @var FieldConfigId $fieldId */
             $fieldId = $fieldConfig->getId();
-            $field = $definition->findField($fieldId->getFieldName(), true);
+            $fieldName = $fieldId->getFieldName();
+            $field = $definition->findField($fieldName, true);
             if (null === $field) {
-                $field = $definition->addField($fieldId->getFieldName());
+                $field = $definition->addField($fieldName);
                 $field->setDataType($fieldId->getFieldType());
                 $field->setDependsOn([self::SERIALIZED_DATA_FIELD]);
             } else {
@@ -92,7 +94,7 @@ class AddSerializedFields implements ProcessorInterface
                 $dependsOn = $field->getDependsOn();
                 if (empty($dependsOn)) {
                     $field->setDependsOn([self::SERIALIZED_DATA_FIELD]);
-                } elseif (!in_array(self::SERIALIZED_DATA_FIELD, $dependsOn, true)) {
+                } elseif (!\in_array(self::SERIALIZED_DATA_FIELD, $dependsOn, true)) {
                     $dependsOn[] = self::SERIALIZED_DATA_FIELD;
                     $field->setDependsOn($dependsOn);
                 }
