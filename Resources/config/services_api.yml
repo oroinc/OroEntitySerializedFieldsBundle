@@ -2,8 +2,8 @@ services:
     oro_serialized_fields.api.get_config.add_serialized_fields:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config\AddSerializedFields
         arguments:
-            - "@oro_api.doctrine_helper"
-            - "@oro_entity_config.provider.extend"
+            - '@oro_api.doctrine_helper'
+            - '@oro_entity_config.config_manager'
         tags:
             - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&definition', priority: -35 }
             - { name: oro.api.processor, action: get_relation_config, extra: '!identifier_fields_only&definition', priority: -35 }
