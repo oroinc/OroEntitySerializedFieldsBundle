@@ -136,7 +136,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@logger'
-            - '@oro_entity.database_exception_helper'
             - '@oro_serialized_fields.provider.deleted_serialized_attribute'
         tags:
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_serialized_fields.serialized_attribute_was_removed_from_family' }
