@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Session\Session;
-
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\FieldConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityConfigBundle\Event\PreSetRequireUpdateEvent;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\EntityGenerator;
-
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * The entity config listener to manage serialized fields.
@@ -26,9 +25,6 @@ class EntityConfigListener
 
     /** @var Session */
     protected $session;
-
-    /** @var array [entity class => config, ...] */
-    private $originalEntityConfigs = [];
 
     /** @var array [entity class => true/false, ...] */
     private $hasChangedSerializedFields = [];
@@ -77,18 +73,12 @@ class EntityConfigListener
     }
 
     /**
-     * Starts before all events.
-     * The main aim of method to store original entity state for future events.
+     * This method is preserved for backwards compatibility
      *
      * @param PreFlushConfigEvent $event
      */
     public function initializeEntity(PreFlushConfigEvent $event)
     {
-        $className = $event->getClassName();
-        if (!isset($this->originalEntityConfigs[$className])) {
-            $entityConfig = $event->getConfigManager()->getEntityConfig('extend', $className);
-            $this->originalEntityConfigs[$className] = clone $entityConfig;
-        }
     }
 
     /**
@@ -110,25 +100,13 @@ class EntityConfigListener
         }
 
         $className = $event->getClassName();
-        if ($event->isEntityConfig()) { // entity config
-            /**
-             * Case with creating new serialized field (fired from entity persist):
-             *  - owning entity "state" attribute should NOT be changed
-             */
-            if (isset($this->originalEntityConfigs[$className])
-                && array_key_exists($className, $this->hasChangedSerializedFields)
-                && $this->hasChangedSerializedFields[$className]
-            ) {
-                $this->revertEntityState($configManager, $className);
-            }
-        } elseif ($config->is('is_serialized')) { // serialized field config
+        if ($event->isFieldConfig() && $config->is('is_serialized')) { // serialized field config
             /**
              * Case with creating new serialized field (fired from field persist):
              *  - field's "state" attribute should be "Active"
              *  - owning entity "state" attribute should NOT be changed
              */
-            if (isset($this->originalEntityConfigs[$className]) && !$config->is('state', ExtendScope::STATE_DELETE)) {
-                $this->revertEntityState($configManager, $className);
+            if (!$config->is('state', ExtendScope::STATE_DELETE)) {
                 if (!$config->is('state', ExtendScope::STATE_ACTIVE)) {
                     $this->hasChangedSerializedFields[$className] = true;
                     $config->set('state', ExtendScope::STATE_ACTIVE);
@@ -197,37 +175,7 @@ class EntityConfigListener
             }
         }
 
-        $this->originalEntityConfigs = [];
         $this->hasChangedSerializedFields = [];
-    }
-
-    /**
-     * @param ConfigManager $configManager
-     * @param string        $className
-     *
-     * @return ConfigInterface
-     */
-    protected function getEntityConfig(ConfigManager $configManager, $className)
-    {
-        return $configManager->getEntityConfig('extend', $className);
-    }
-
-    /**
-     * Reverts entity state to it's original value
-     *
-     * @param ConfigManager $configManager
-     * @param string        $className
-     */
-    protected function revertEntityState(ConfigManager $configManager, $className)
-    {
-        $entityConfig = $this->getEntityConfig($configManager, $className);
-        $originalEntityConfig = $this->originalEntityConfigs[$className];
-        if ($entityConfig->get('state') !== $originalEntityConfig->get('state')) {
-            $entityConfig->set('state', $originalEntityConfig->get('state'));
-
-            $configManager->persist($entityConfig);
-            $configManager->calculateConfigChangeSet($entityConfig);
-        }
     }
 
     /**
@@ -261,5 +209,43 @@ class EntityConfigListener
         }
 
         return $hasChanges;
+    }
+
+    /**
+     * @param PreSetRequireUpdateEvent $event
+     */
+    public function preSetRequireUpdate(PreSetRequireUpdateEvent $event)
+    {
+        $config = $event->getConfig('extend');
+        if (null === $config) {
+            return;
+        }
+
+        $className = $event->getClassName();
+        if (($event->isEntityConfig() && isset($this->hasChangedSerializedFields[$className])) // entity config
+            || (!$event->isEntityConfig() && $config->is('is_serialized')) // field config
+        ) {
+            $event->setUpdateRequired(false);
+        }
+    }
+
+    /**
+     * @param ConfigManager $configManager
+     * @param $className
+     * @return ConfigInterface
+     */
+    protected function getEntityConfig(ConfigManager $configManager, $className)
+    {
+        return $configManager->getEntityConfig('extend', $className);
+    }
+
+    /**
+     * Method preserved for backwards compatibility
+     *
+     * @param ConfigManager $configManager
+     * @param string $className
+     */
+    protected function revertEntityState(ConfigManager $configManager, $className)
+    {
     }
 }
