@@ -9,6 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\FieldConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
+use Oro\Bundle\EntityConfigBundle\Event\PreSetRequireUpdateEvent;
 use Oro\Bundle\EntityConfigBundle\Tests\Unit\ConfigProviderMock;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\EntityGenerator;
@@ -16,6 +17,9 @@ use Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ */
 class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject|EntityGenerator */
@@ -202,45 +206,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertAttributeEquals([$entityClassName => false], 'hasChangedSerializedFields', $this->listener);
     }
 
-    public function testInitializeEntityShouldRememberCloneOfEntityConfig()
-    {
-        $entityClassName = 'Test\Entity';
-        $anotherEntityClassName = 'Test\AnotherEntity';
-
-        $entityConfig = $this->addEntityConfig(
-            $entityClassName,
-            [
-                'state' => ExtendScope::STATE_UPDATE
-            ]
-        );
-        $anotherEntityConfig = $this->addEntityConfig(
-            $anotherEntityClassName,
-            [
-                'state' => ExtendScope::STATE_ACTIVE
-            ]
-        );
-        $originalEntityConfig = clone $entityConfig;
-
-        $this->listener->initializeEntity(
-            new PreFlushConfigEvent(['extend' => $entityConfig], $this->configManager)
-        );
-        $entityConfig->set('testAttr', 'testValue');
-        self::assertAttributeEquals(
-            [$entityClassName => $originalEntityConfig],
-            'originalEntityConfigs',
-            $this->listener
-        );
-
-        $this->listener->initializeEntity(
-            new PreFlushConfigEvent(['extend' => $anotherEntityConfig], $this->configManager)
-        );
-        self::assertAttributeEquals(
-            [$entityClassName => $originalEntityConfig, $anotherEntityClassName => $anotherEntityConfig],
-            'originalEntityConfigs',
-            $this->listener
-        );
-    }
-
     public function testPreFlushForNotExtendableEntity()
     {
         $entityClassName = 'Test\Entity';
@@ -277,34 +242,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($event->isPropagationStopped());
     }
 
-    public function testPreFlushForEntityConfigWhenOriginalEntityConfigIsNotRemembered()
-    {
-        $entityClassName = 'Test\Entity';
-        $fieldName = 'testField';
-
-        $entityConfig = $this->addEntityConfig($entityClassName);
-        $this->addFieldConfig(
-            $entityClassName,
-            $fieldName,
-            [
-                'is_serialized' => true
-            ]
-        );
-
-        $this->configManager->expects(self::once())
-            ->method('getConfigChangeSet')
-            ->with(self::identicalTo($entityConfig))
-            ->willReturn(['old', 'new']);
-        $this->configManager->expects(self::never())
-            ->method('persist');
-
-        self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => true]);
-        $event = new PreFlushConfigEvent(['extend' => $entityConfig], $this->configManager);
-        $this->listener->preFlush($event);
-
-        self::assertFalse($event->isPropagationStopped());
-    }
-
     public function testPreFlushForEntityConfigWhenNoChangedSerializedFields()
     {
         $entityClassName = 'Test\Entity';
@@ -318,7 +255,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects(self::never())
             ->method('persist');
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         $event = new PreFlushConfigEvent(['extend' => $entityConfig], $this->configManager);
         $this->listener->preFlush($event);
 
@@ -340,7 +276,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects(self::never())
             ->method('persist');
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => true]);
         $event = new PreFlushConfigEvent(['extend' => $entityConfig], $this->configManager);
         $this->listener->preFlush($event);
@@ -348,7 +283,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testPreFlushShouldRestoreEntityConfigStateForEntityConfigAndSerializedField()
+    public function testPreFlushShouldNotModifyEntityConfigState()
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -371,21 +306,18 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($entityConfig))
             ->willReturn(['old', 'new']);
-        $this->configManager->expects(self::once())
-            ->method('persist')
-            ->with(self::identicalTo($entityConfig));
-        $this->configManager->expects(self::once())
-            ->method('calculateConfigChangeSet')
-            ->with(self::identicalTo($entityConfig));
+        $this->configManager->expects(self::never())
+            ->method('persist');
+        $this->configManager->expects(self::never())
+            ->method('calculateConfigChangeSet');
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => true]);
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
         $event = new PreFlushConfigEvent(['extend' => $entityConfig], $this->configManager);
         $this->listener->preFlush($event);
 
         self::assertFalse($event->isPropagationStopped());
-        self::assertEquals(ExtendScope::STATE_UPDATE, $entityConfig->get('state'));
+        self::assertEquals(ExtendScope::STATE_ACTIVE, $entityConfig->get('state'));
     }
 
     public function testPreFlushShouldDoNothingIfEntityConfigStateIsNotChangedForEntityConfigAndSerializedField()
@@ -416,7 +348,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects(self::never())
             ->method('calculateConfigChangeSet');
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => true]);
         $event = new PreFlushConfigEvent(['extend' => $entityConfig], $this->configManager);
         $this->listener->preFlush($event);
@@ -449,20 +380,19 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($fieldConfig))
             ->willReturn(['old', 'new']);
-        $this->configManager->expects(self::exactly(2))
+        $this->configManager->expects(self::once())
             ->method('persist')
-            ->withConsecutive(self::identicalTo($entityConfig), self::identicalTo($fieldConfig));
-        $this->configManager->expects(self::exactly(2))
+            ->with(self::identicalTo($fieldConfig));
+        $this->configManager->expects(self::once())
             ->method('calculateConfigChangeSet')
-            ->withConsecutive(self::identicalTo($entityConfig), self::identicalTo($fieldConfig));
+            ->with(self::identicalTo($fieldConfig));
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
         $event = new PreFlushConfigEvent(['extend' => $fieldConfig], $this->configManager);
         $this->listener->preFlush($event);
 
         self::assertFalse($event->isPropagationStopped());
-        self::assertEquals(ExtendScope::STATE_UPDATE, $entityConfig->get('state'));
+        self::assertEquals(ExtendScope::STATE_ACTIVE, $entityConfig->get('state'));
         self::assertEquals(ExtendScope::STATE_ACTIVE, $fieldConfig->get('state'));
         self::assertAttributeEquals([$entityClassName => true], 'hasChangedSerializedFields', $this->listener);
     }
@@ -498,7 +428,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('calculateConfigChangeSet')
             ->with(self::identicalTo($fieldConfig));
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
         $event = new PreFlushConfigEvent(['extend' => $fieldConfig], $this->configManager);
         $this->listener->preFlush($event);
@@ -543,7 +472,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('calculateConfigChangeSet')
             ->with(self::identicalTo($entityConfig));
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
         $event = new PreFlushConfigEvent(['extend' => $fieldConfig], $this->configManager);
         $this->listener->preFlush($event);
@@ -597,7 +525,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('calculateConfigChangeSet')
             ->with(self::identicalTo($entityConfig));
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
         $event = new PreFlushConfigEvent(['extend' => $fieldConfig], $this->configManager);
         $this->listener->preFlush($event);
@@ -657,7 +584,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('calculateConfigChangeSet')
             ->with(self::identicalTo($entityConfig));
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
         $event = new PreFlushConfigEvent(['extend' => $fieldConfig], $this->configManager);
         $this->listener->preFlush($event);
@@ -711,7 +637,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects(self::never())
             ->method('calculateConfigChangeSet');
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
         $event = new PreFlushConfigEvent(['extend' => $fieldConfig], $this->configManager);
         $this->listener->preFlush($event);
@@ -768,7 +693,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('calculateConfigChangeSet')
             ->with(self::identicalTo($entityConfig));
 
-        self::setAttribute($this->listener, 'originalEntityConfigs', [$entityClassName => clone $entityConfig]);
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
         $event = new PreFlushConfigEvent(['extend' => $fieldConfig], $this->configManager);
         $this->listener->preFlush($event);
@@ -953,5 +877,129 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postFlush(
             new PostFlushConfigEvent([$fieldModel], $this->configManager)
         );
+    }
+
+    public function testPostFlushForUnsupportedEntity()
+    {
+        $this->configManager->expects(self::never())
+            ->method('getConfigIdByModel');
+        $this->entityGenerator->expects(self::never())
+            ->method('generateSchemaFiles');
+
+        $this->listener->postFlush(
+            new PostFlushConfigEvent([new \stdClass()], $this->configManager)
+        );
+    }
+
+    public function testPreSetRequireUpdateEntityConfigNewSerializedField()
+    {
+        $entityClassName = 'Test\Entity';
+        $fieldName = 'testField';
+
+        $entityConfig = $this->addEntityConfig(
+            $entityClassName,
+            ['state' => ExtendScope::STATE_UPDATE]
+        );
+
+        $this->addFieldConfig(
+            $entityClassName,
+            $fieldName,
+            ['is_serialized' => true]
+        );
+
+        $this->listener->createField(
+            new FieldConfigEvent($entityClassName, $fieldName, $this->configManager)
+        );
+
+        $event = new PreSetRequireUpdateEvent(['extend' => $entityConfig], $this->configManager);
+        self::assertTrue($event->isUpdateRequired());
+
+        $this->listener->preSetRequireUpdate($event);
+        self::assertFalse($event->isUpdateRequired());
+    }
+
+    public function testPreSetRequireUpdateEntityConfigNoNewSerializedField()
+    {
+        $entityClassName = 'Test\Entity';
+
+        $entityConfig = $this->addEntityConfig(
+            $entityClassName,
+            ['state' => ExtendScope::STATE_UPDATE]
+        );
+
+        $event = new PreSetRequireUpdateEvent(['extend' => $entityConfig], $this->configManager);
+        self::assertTrue($event->isUpdateRequired());
+
+        $this->listener->preSetRequireUpdate($event);
+        self::assertTrue($event->isUpdateRequired());
+    }
+
+    public function testPreSetRequireUpdateFieldConfigNotSerializedField()
+    {
+        $entityClassName = 'Test\Entity';
+        $fieldName = 'testField';
+
+        $fieldConfig = $this->addFieldConfig(
+            $entityClassName,
+            $fieldName,
+            ['state' => ExtendScope::STATE_NEW]
+        );
+
+        $event = new PreSetRequireUpdateEvent(['extend' => $fieldConfig], $this->configManager);
+        self::assertTrue($event->isUpdateRequired());
+
+        $this->listener->preSetRequireUpdate($event);
+        self::assertTrue($event->isUpdateRequired());
+    }
+
+    public function testPreSetRequireUpdateFieldConfigSerializedFieldConfigStateNotDelete()
+    {
+        $entityClassName = 'Test\Entity';
+        $fieldName = 'testField';
+
+        $fieldConfig = $this->addFieldConfig(
+            $entityClassName,
+            $fieldName,
+            [
+                'state' => ExtendScope::STATE_NEW,
+                'is_serialized' => true,
+            ]
+        );
+
+        $event = new PreSetRequireUpdateEvent(['extend' => $fieldConfig], $this->configManager);
+        self::assertTrue($event->isUpdateRequired());
+
+        $this->listener->preSetRequireUpdate($event);
+        self::assertFalse($event->isUpdateRequired());
+    }
+
+    public function testPreSetRequireUpdateFieldConfigSerializedFieldConfigStateDelete()
+    {
+        $entityClassName = 'Test\Entity';
+        $fieldName = 'testField';
+
+        $fieldConfig = $this->addFieldConfig(
+            $entityClassName,
+            $fieldName,
+            [
+                'state' => ExtendScope::STATE_DELETE,
+                'is_serialized' => true,
+            ]
+        );
+
+        $event = new PreSetRequireUpdateEvent(['extend' => $fieldConfig], $this->configManager);
+        self::assertTrue($event->isUpdateRequired());
+
+        $this->listener->preSetRequireUpdate($event);
+        self::assertFalse($event->isUpdateRequired());
+    }
+
+    public function testPreSetRequireUpdateEmptyConfig()
+    {
+        $event = new PreSetRequireUpdateEvent([], $this->configManager);
+        self::assertTrue($event->isUpdateRequired());
+
+        $this->listener->preSetRequireUpdate($event);
+        self::assertTrue($event->isUpdateRequired());
     }
 }
