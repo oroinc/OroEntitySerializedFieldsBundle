@@ -71,6 +71,45 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_serialized_fields.validator.unique_extend_entity_field }
 
+    oro_serialized_fields.validator.extend_entity_serialized_data:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedDataValidator
+        arguments:
+            - '@oro_entity_config.provider.extend'
+            - '@oro_entity.helper.field_helper'
+        calls:
+            -
+                - addConstraints
+                -
+                    - integer
+                    -
+                        - Regex:
+                              pattern: '/^[\d+]*$/'
+                              message: "This value should contain only numbers."
+            -
+                - addConstraints
+                -
+                    - smallint
+                    -
+                        - Regex:
+                              pattern: '/^[\d+]*$/'
+                              message: "This value should contain only numbers."
+            -
+                - addConstraints
+                -
+                    - bigint
+                    -
+                        - Regex:
+                              pattern: '/^[\d+]*$/'
+                              message: "This value should contain only numbers."
+            - [addConstraints, ['float', [{ Type: {type: 'numeric'} }]]]
+            - [addConstraints, ['decimal', [{ Type: {type: 'numeric'} }]]]
+            - [addConstraints, ['money', [{ Type: {type: 'numeric'} }]]]
+            - [addConstraints, ['percent', [{ Type: {type: 'numeric'} }]]]
+            - [addConstraints, ['date', [{ Date: ~ }]]]
+            - [addConstraints, ['datetime', [{ DateTime: ~ }]]]
+        tags:
+            - { name: validator.constraint_validator, alias: oro_serialized_fields.validator.extend_entity_serialized_data }
+
     oro_serialized_fields.form.extension.config_extension:
         class: %oro_serialized_fields.form.extension.config_extension.class%
         arguments:
