@@ -1,0 +1,5 @@
+services:
+    oro_serialized_fields.tests.migration_listener:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Tests\Functional\Environment\TestEntitiesMigrationListener
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp }
