@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\GetConfig;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
-use Oro\Bundle\ApiBundle\Processor\Config\ConfigContext;
+use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
 use Oro\Bundle\ApiBundle\Util\ConfigUtil;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
