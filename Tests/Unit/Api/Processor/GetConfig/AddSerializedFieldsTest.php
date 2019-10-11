@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api\Processor\Config;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Api\Processor\GetConfig;
 
-use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Config\ConfigProcessorTestCase;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\GetConfig\ConfigProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\ConfigUtil;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
@@ -10,7 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\Config\AddSerializedFields;
+use Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\GetConfig\AddSerializedFields;
 
 class AddSerializedFieldsTest extends ConfigProcessorTestCase
 {
