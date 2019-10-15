@@ -47,10 +47,11 @@ Feature: Serialized fields
     And filter Name as is equal to "Group"
     And I click view Group in grid
     When I click restore Field1 in grid
+    Then I should see "Field was restored" flash message
     # check that restored serialized field is available on the entity form and can be saved
-    Then I go to System/ User Management/ Groups
+    When I go to System/ User Management/ Groups
     And I click edit Group2 in grid
     And I fill form with:
       |Field1 |Test2 |
     And I save and close form
-    And I should see "Group saved" flash message
+    Then I should see "Group saved" flash message
