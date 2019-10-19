@@ -2,7 +2,7 @@
     {% spaceless %}
         {{ form_widget(form) }}
         <script type="text/javascript">
-            require(['jquery', 'oroui/js/mediator'], function ($, mediator) {
+            loadModules(['jquery', 'oroui/js/mediator'], function ($, mediator) {
                 $(function () {
                     var storageTypeSelector  = 'form[name=oro_entity_extend_field_type] select[data-ftid=oro_entity_extend_field_type_is_serialized]';
                     var fieldTypeSelector    = 'form[name=oro_entity_extend_field_type] select[data-ftid=oro_entity_extend_field_type_type]';
