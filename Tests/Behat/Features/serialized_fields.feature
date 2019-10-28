@@ -42,6 +42,7 @@ Feature: Serialized fields
     And I save and close form
     And I should see "Group saved" flash message
 
+  @skip
   Scenario: Restore serialized field
     Given I go to System/ Entities/ Entity Management
     And filter Name as is equal to "Group"
