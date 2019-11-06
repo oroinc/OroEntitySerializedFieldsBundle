@@ -1,7 +1,3 @@
-parameters:
-    # rewrite validation_loader service to turn off guessers for serialized fields
-    oro_entity_extend.validation_loader.class: Oro\Bundle\EntitySerializedFieldsBundle\Validator\ExtendFieldValidationLoader
-
 services:
     oro_serialized_fields.migration.searilized_data.post_up.listener:
           class: Oro\Bundle\EntitySerializedFieldsBundle\EventListener\SerializedDataPostUpMigrationListener
