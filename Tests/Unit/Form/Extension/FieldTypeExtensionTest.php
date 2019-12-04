@@ -34,9 +34,9 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(FieldType::class, $this->extension->getExtendedType());
+        $this->assertEquals([FieldType::class], FieldTypeExtension::getExtendedTypes());
     }
 
     public function testBuildForm()
