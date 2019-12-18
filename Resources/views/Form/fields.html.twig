@@ -7,16 +7,23 @@
                     var storageTypeSelector  = 'form[name=oro_entity_extend_field_type] select[data-ftid=oro_entity_extend_field_type_is_serialized]';
                     var fieldTypeSelector    = 'form[name=oro_entity_extend_field_type] select[data-ftid=oro_entity_extend_field_type_type]';
                     var _onChangeStorageType = function () {
-                        var that = this;
                         var serializableTypes = {{ form.vars.serializableTypes|json_encode()|raw }};
+                        var excludeTypes = [];
+                        {% if form.parent.vars.excludeTypes is defined %}
+                            excludeTypes = {{ form.parent.vars.excludeTypes|json_encode()|raw }};
+                        {% endif %}
                         $(fieldTypeSelector + ' optgroup').each(function (index, value) {
                             $.each($(value).find('option'), function (index, value) {
-                                if ($(that).val() == 1) {
+                                $(value).removeAttr('disabled');
+                                var selectedStorageType = $(storageTypeSelector).val();
+                                if (selectedStorageType == 1) {
                                     if (serializableTypes.indexOf($(value).val()) === -1) {
                                         $(value).attr('disabled', 'disabled');
                                     }
                                 } else {
-                                    $(value).removeAttr('disabled');
+                                    if (excludeTypes.indexOf($(value).val()) !== -1) {
+                                        $(value).attr('disabled', 'disabled');
+                                    }
                                 }
                             })
                         });
