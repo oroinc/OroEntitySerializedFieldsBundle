@@ -69,7 +69,7 @@ class AddSerializedFields implements ProcessorInterface
             $skipNotConfiguredCustomFields =
                 $context->getRequestedExclusionPolicy() === ConfigUtil::EXCLUSION_POLICY_CUSTOM_FIELDS
                 && $this->isExtendSystemEntity($entityClass);
-            $this->addSerializedFields($definition, $context->getClassName(), $skipNotConfiguredCustomFields);
+            $this->addSerializedFields($definition, $entityClass, $skipNotConfiguredCustomFields);
         }
     }
 
@@ -88,7 +88,6 @@ class AddSerializedFields implements ProcessorInterface
             if (!$fieldConfig->is('is_serialized') || !ExtendHelper::isFieldAccessible($fieldConfig)) {
                 continue;
             }
-
 
             /** @var FieldConfigId $fieldId */
             $fieldId = $fieldConfig->getId();
