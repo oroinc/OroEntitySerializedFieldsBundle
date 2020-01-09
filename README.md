@@ -134,3 +134,9 @@ To run unit tests for this package:
 ```bash
 phpunit -c PACKAGE_ROOT/phpunit.xml.dist
 ```
+
+Resources
+---------
+
+  * [OroCommerce, OroCRM and OroPlatform Documentation](https://doc.oroinc.com)
+  * [Contributing](https://doc.oroinc.com/community/contribute/)
