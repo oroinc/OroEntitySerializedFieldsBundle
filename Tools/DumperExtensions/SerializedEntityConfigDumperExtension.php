@@ -71,7 +71,8 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
                     function (ConfigInterface $field) {
                         return $field->is('is_serialized');
                     },
-                    $entityConfig->getId()->getClassName()
+                    $entityConfig->getId()->getClassName(),
+                    true
                 );
 
                 if (!empty($serializedFields)) {
