@@ -19,7 +19,7 @@ class ExtendFieldValidationLoaderTest extends \PHPUnit\Framework\TestCase
     /** @var ExtendFieldValidationLoader */
     private $loader;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->formConfigProvider = $this->createMock(ConfigProvider::class);

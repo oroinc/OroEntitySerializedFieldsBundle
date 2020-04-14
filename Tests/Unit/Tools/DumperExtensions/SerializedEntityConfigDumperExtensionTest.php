@@ -15,7 +15,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
     /** @var SerializedEntityConfigDumperExtension */
     private $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
 

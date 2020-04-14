@@ -14,7 +14,7 @@ class UniqueExtendEntityFieldValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var UniqueExtendEntityFieldValidator */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = new UniqueExtendEntityFieldValidator();
     }

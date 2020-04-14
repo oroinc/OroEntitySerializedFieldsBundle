@@ -37,7 +37,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
     /** @var EntityConfigListener */
     private $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->entityGenerator = $this->createMock(EntityGenerator::class);
         $this->session = $this->createMock(Session::class);

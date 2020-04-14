@@ -17,7 +17,7 @@ class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
     /** @var IsSerializedFieldType */
     protected $type;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->seriliazedFieldProvider = $this->getMockBuilder(SerializedFieldProvider::class)
             ->disableOriginalConstructor()
@@ -25,7 +25,7 @@ class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
         $this->type = new IsSerializedFieldType($this->seriliazedFieldProvider);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->type);
     }
