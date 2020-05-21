@@ -16,7 +16,7 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
     /** @var SerializedColumnOptionsGuesser */
     protected $guesser;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()

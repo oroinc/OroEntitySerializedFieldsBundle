@@ -16,7 +16,7 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $session;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()

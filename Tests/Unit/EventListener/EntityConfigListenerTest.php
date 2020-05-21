@@ -15,6 +15,7 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\EntityGenerator;
 use Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
@@ -22,13 +23,13 @@ use Symfony\Component\HttpFoundation\Session\Session;
  */
 class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|EntityGenerator */
+    /** @var MockObject|EntityGenerator */
     private $entityGenerator;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Session */
+    /** @var MockObject|Session */
     private $session;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
+    /** @var MockObject|ConfigManager */
     private $configManager;
 
     /** @var ConfigProviderMock */
@@ -37,7 +38,10 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
     /** @var EntityConfigListener */
     private $listener;
 
-    public function setUp()
+    /** @var \ReflectionProperty */
+    private $hasChangedSerializedFieldsProperty;
+
+    protected function setUp(): void
     {
         $this->entityGenerator = $this->createMock(EntityGenerator::class);
         $this->session = $this->createMock(Session::class);
@@ -61,19 +65,28 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             $this->entityGenerator,
             $this->session
         );
+
+        $this->hasChangedSerializedFieldsProperty = new \ReflectionProperty(
+            EntityConfigListener::class,
+            'hasChangedSerializedFields'
+        );
+        $this->hasChangedSerializedFieldsProperty->setAccessible(true);
     }
 
     /**
-     * @param object $object
-     * @param string $attributeName
-     * @param mixed  $value
+     * Sets the hasChangedSerializedFields private property value on $this->listener
      */
-    private static function setAttribute($object, $attributeName, $value)
+    private function setHasChangedSerializedFields(array $value): void
     {
-        $attribute = new \ReflectionProperty($object, $attributeName);
-        $attribute->setAccessible(true);
-        $attribute->setValue($object, $value);
-        $attribute->setAccessible(false);
+        $this->hasChangedSerializedFieldsProperty->setValue($this->listener, $value);
+    }
+
+    /**
+     * Reads the hasChangedSerializedFields private property value off $this->listener
+     */
+    private function getHasChangedSerializedFields(): array
+    {
+        return $this->hasChangedSerializedFieldsProperty->getValue($this->listener);
     }
 
     /**
@@ -125,7 +138,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(ExtendScope::STATE_NEW, $fieldConfig->get('state'));
         self::assertFalse($fieldConfig->get('is_serialized'));
-        self::assertAttributeEquals([$entityClassName => false], 'hasChangedSerializedFields', $this->listener);
+        self::assertEquals([$entityClassName => false], $this->getHasChangedSerializedFields());
     }
 
     public function testCreateNotSerializedFieldWhenSessionIsStarted()
@@ -164,7 +177,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(ExtendScope::STATE_NEW, $fieldConfig->get('state'));
         self::assertFalse($fieldConfig->get('is_serialized'));
-        self::assertAttributeEquals([$entityClassName => false], 'hasChangedSerializedFields', $this->listener);
+        self::assertEquals([$entityClassName => false], $this->getHasChangedSerializedFields());
     }
 
     public function testCreateSerializedFieldWhenSessionIsStarted()
@@ -203,7 +216,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(ExtendScope::STATE_ACTIVE, $fieldConfig->get('state'));
         self::assertTrue($fieldConfig->get('is_serialized'));
-        self::assertAttributeEquals([$entityClassName => false], 'hasChangedSerializedFields', $this->listener);
+        self::assertEquals([$entityClassName => false], $this->getHasChangedSerializedFields());
     }
 
     public function testPreFlushForNotExtendableEntity()
@@ -223,7 +236,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($event->isPropagationStopped());
     }
 
-    public function testPreFlushShoudStopEventPropagationWhenExtendedEntityConfigIsNotChanged()
+    public function testPreFlushShouldStopEventPropagationWhenExtendedEntityConfigIsNotChanged()
     {
         $entityClassName = 'Test\Entity';
 
@@ -276,7 +289,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects(self::never())
             ->method('persist');
 
-        self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => true]);
+        $this->setHasChangedSerializedFields([$entityClassName => true]);
         $event = new PreFlushConfigEvent(['extend' => $entityConfig], $this->configManager);
         $this->listener->preFlush($event);
 
@@ -311,7 +324,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects(self::never())
             ->method('calculateConfigChangeSet');
 
-        self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => true]);
+        $this->setHasChangedSerializedFields([$entityClassName => true]);
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
         $event = new PreFlushConfigEvent(['extend' => $entityConfig], $this->configManager);
         $this->listener->preFlush($event);
@@ -348,7 +361,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects(self::never())
             ->method('calculateConfigChangeSet');
 
-        self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => true]);
+        $this->setHasChangedSerializedFields([$entityClassName => true]);
         $event = new PreFlushConfigEvent(['extend' => $entityConfig], $this->configManager);
         $this->listener->preFlush($event);
 
@@ -394,7 +407,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($event->isPropagationStopped());
         self::assertEquals(ExtendScope::STATE_ACTIVE, $entityConfig->get('state'));
         self::assertEquals(ExtendScope::STATE_ACTIVE, $fieldConfig->get('state'));
-        self::assertAttributeEquals([$entityClassName => true], 'hasChangedSerializedFields', $this->listener);
+        self::assertEquals([$entityClassName => true], $this->getHasChangedSerializedFields());
     }
 
     public function testPreFlushDeletedSerializedField()
@@ -435,7 +448,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($event->isPropagationStopped());
         self::assertEquals(ExtendScope::STATE_ACTIVE, $entityConfig->get('state'));
         self::assertTrue($fieldConfig->get('is_deleted'));
-        self::assertAttributeEquals([$entityClassName => true], 'hasChangedSerializedFields', $this->listener);
+        self::assertEquals([$entityClassName => true], $this->getHasChangedSerializedFields());
     }
 
     public function testPreFlushShouldUpdateEntitySchemaForNewSerializedField()
@@ -789,7 +802,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('generateSchemaFiles')
             ->with($entityConfig->get('schema'));
 
-        self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => true]);
+        $this->setHasChangedSerializedFields([$entityClassName => true]);
         $this->listener->postFlush(
             new PostFlushConfigEvent([$fieldModel], $this->configManager)
         );
@@ -832,7 +845,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->method('generateSchemaFiles')
             ->with($entityConfig->get('schema'));
 
-        self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => false]);
+        $this->setHasChangedSerializedFields([$entityClassName => false]);
         $this->listener->postFlush(
             new PostFlushConfigEvent([$fieldModel], $this->configManager)
         );
@@ -873,7 +886,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->entityGenerator->expects(self::never())
             ->method('generateSchemaFiles');
 
-        self::setAttribute($this->listener, 'hasChangedSerializedFields', [$entityClassName => true]);
+        $this->setHasChangedSerializedFields([$entityClassName => true]);
         $this->listener->postFlush(
             new PostFlushConfigEvent([$fieldModel], $this->configManager)
         );

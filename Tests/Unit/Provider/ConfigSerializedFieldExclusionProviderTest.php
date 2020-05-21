@@ -18,7 +18,7 @@ class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit\Framework\Test
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $metadata;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
             ->disableOriginalConstructor()

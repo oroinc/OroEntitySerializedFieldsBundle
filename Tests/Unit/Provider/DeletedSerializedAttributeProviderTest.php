@@ -25,8 +25,8 @@ class DeletedSerializedAttributeProviderTest extends \PHPUnit\Framework\TestCase
      * @var DeletedSerializedAttributeProvider
      */
     protected $provider;
-    
-    protected function setUp()
+
+    protected function setUp(): void
     {
         $this->configModelManager = $this->getMockBuilder(ConfigModelManager::class)
             ->disableOriginalConstructor()
@@ -43,7 +43,7 @@ class DeletedSerializedAttributeProviderTest extends \PHPUnit\Framework\TestCase
         $ids = [1, 2];
         $serializedAttribute = $this->getAttribute(true);
         $fieldColumnAttribute = $this->getAttribute(false);
-        
+
         $repository = $this->getMockBuilder(FieldConfigModelRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -62,7 +62,7 @@ class DeletedSerializedAttributeProviderTest extends \PHPUnit\Framework\TestCase
         $this->configModelManager->expects($this->once())
             ->method('getEntityManager')
             ->willReturn($entityManager);
-        
+
         $this->configModelManager->expects($this->once())
             ->method('checkDatabase')
             ->willReturn(true);

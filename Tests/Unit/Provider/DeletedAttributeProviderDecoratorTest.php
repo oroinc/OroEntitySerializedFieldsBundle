@@ -19,8 +19,8 @@ class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
      * @var DeletedAttributeProviderDecorator
      */
     protected $decorator;
-    
-    protected function setUp()
+
+    protected function setUp(): void
     {
         $this->deletedAttributeProvider = $this->createMock(DeletedAttributeProviderInterface::class);
         $this->decorator = new DeletedAttributeProviderDecorator($this->deletedAttributeProvider);
@@ -52,7 +52,7 @@ class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
         $this->deletedAttributeProvider->expects($this->once())
             ->method('removeAttributeValues')
             ->with($attributeFamily, $names);
-        
+
         $this->decorator->removeAttributeValues($attributeFamily, $names);
     }
 
