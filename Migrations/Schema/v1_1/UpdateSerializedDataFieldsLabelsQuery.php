@@ -3,7 +3,7 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -128,7 +128,7 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
         $label = 'oro.entity_serialized_fields.data.label';
         foreach ($fieldsToUpdate as $fieldId => $fieldData) {
             $fieldData[$scope][$code] = $label;
-            $data                     = $this->connection->convertToDatabaseValue($fieldData, Type::TARRAY);
+            $data                     = $this->connection->convertToDatabaseValue($fieldData, Types::ARRAY);
 
             $fieldSql    = 'UPDATE oro_entity_config_field SET data = ? WHERE id = ?';
             $fieldParams = [$data, $fieldId];
