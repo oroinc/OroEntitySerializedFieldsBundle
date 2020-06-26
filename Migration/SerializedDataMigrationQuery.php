@@ -5,6 +5,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
@@ -16,6 +17,9 @@ use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Add serialized_data field to extend entity tables in active state.
+ */
 class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
 {
     /**
@@ -93,10 +97,10 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
             ];
 
             if (!$table->hasColumn(static::COLUMN_NAME)) {
-                $table->addColumn(static::COLUMN_NAME, Type::TARRAY, $options);
+                $table->addColumn(static::COLUMN_NAME, Types::ARRAY, $options);
             } else { //Forcibly set options to existing field
                 $serializedColumn = $table->getColumn(static::COLUMN_NAME);
-                $serializedColumn->setType(Type::getType(Type::TARRAY));
+                $serializedColumn->setType(Type::getType(Types::ARRAY));
                 $serializedColumn->setOptions($options);
             }
             $hasSchemaChanges = true;
@@ -131,13 +135,13 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
 
         $sql    = 'SELECT class_name, data FROM oro_entity_config WHERE mode = ?';
         $params = [ConfigModel::MODE_DEFAULT];
-        $types  = [Type::STRING];
+        $types  = [Types::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);
         $rows = $this->connection->fetchAll($sql, $params, $types);
         foreach ($rows as $row) {
             $entityClass = $row['class_name'];
-            $config      = $this->connection->convertToPHPValue($row['data'], Type::TARRAY);
+            $config      = $this->connection->convertToPHPValue($row['data'], Types::ARRAY);
             if (isset($config['extend']['is_extend'])
                 && $config['extend']['is_extend']
                 && $config['extend']['state'] === ExtendScope::STATE_ACTIVE
