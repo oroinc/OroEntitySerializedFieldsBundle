@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
