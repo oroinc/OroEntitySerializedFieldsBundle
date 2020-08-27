@@ -72,6 +72,7 @@ class EntityConfigListener
 
     /**
      * @param PreFlushConfigEvent $event
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function preFlush(PreFlushConfigEvent $event)
     {

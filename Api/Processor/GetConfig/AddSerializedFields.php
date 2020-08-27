@@ -77,6 +77,7 @@ class AddSerializedFields implements ProcessorInterface
      * @param EntityDefinitionConfig $definition
      * @param string                 $entityClass
      * @param bool                   $skipNotConfiguredCustomFields
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function addSerializedFields(
         EntityDefinitionConfig $definition,

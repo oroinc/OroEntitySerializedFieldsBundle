@@ -42,6 +42,7 @@ class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
     /**
      * @param LoggerInterface $logger
      * @param bool            $dryRun
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function doExecute(LoggerInterface $logger, $dryRun = false)
     {
