@@ -98,13 +98,7 @@ class AddSerializedFields implements ProcessorInterface
                 if (!$field->getDataType()) {
                     $field->setDataType($fieldId->getFieldType());
                 }
-                $dependsOn = $field->getDependsOn();
-                if (empty($dependsOn)) {
-                    $field->setDependsOn([self::SERIALIZED_DATA_FIELD]);
-                } elseif (!\in_array(self::SERIALIZED_DATA_FIELD, $dependsOn, true)) {
-                    $dependsOn[] = self::SERIALIZED_DATA_FIELD;
-                    $field->setDependsOn($dependsOn);
-                }
+                $field->addDependsOn(self::SERIALIZED_DATA_FIELD);
             } elseif (!$skipNotConfiguredCustomFields || !$this->isCustomField($fieldConfig)) {
                 $field = $definition->addField($fieldName);
                 $field->setDataType($fieldId->getFieldType());
