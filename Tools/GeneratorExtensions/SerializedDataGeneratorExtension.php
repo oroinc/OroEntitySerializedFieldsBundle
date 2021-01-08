@@ -1,27 +1,35 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions;
 
-use CG\Generator\PhpClass;
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
 use Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\AbstractEntityGeneratorExtension;
+use Oro\Component\PhpUtils\ClassGenerator;
 
+/**
+ * Generates getters and setters for serialized fields.
+ */
 class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
 {
-    const SERIALIZED_DATA_FIELD = 'serialized_data';
+    public const SERIALIZED_DATA_FIELD = 'serialized_data';
+
+    private Inflector $inflector;
+
+    public function __construct(Inflector $inflector)
+    {
+        $this->inflector = $inflector;
+    }
 
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function supports(array $schema)
+    public function supports(array $schema): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generate(array $schema, PhpClass $class)
+    public function generate(array $schema, ClassGenerator $class): void
     {
         if (empty($schema['serialized_property'])) {
             return;
@@ -39,41 +47,28 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
 
             $isPrivate = is_array($config) && isset($config['private']) && $config['private'];
             if (!$isPrivate) {
-                $class
-                    ->setMethod(
-                        $this->generateClassMethod(
-                            $getMethodName,
-                            'return isset($this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\'])' .
-                            ' ? $this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\']' .
-                            ' : null;'
-                        )
-                    )
-                    ->setMethod(
-                        $this->generateClassMethod(
-                            $setMethodName,
-                            '$this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\'] = $value; return $this;',
-                            ['value']
-                        )
+                $class->addMethod($getMethodName)
+                    ->addBody(
+                        'return isset($this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\'])' .
+                        ' ? $this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\']' .
+                        ' : null;'
                     );
+                $class->addMethod($setMethodName)
+                    ->addBody(
+                        '$this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\'] = $value; return $this;'
+                    )
+                    ->addParameter('value');
             }
         }
     }
 
-    /**
-     * @param string $fieldName
-     * @return string
-     */
-    protected function generateGetMethodName($fieldName)
+    protected function generateGetMethodName(string $fieldName): string
     {
-        return 'get' . ucfirst(Inflector::camelize($fieldName));
+        return 'get' . \ucfirst($this->inflector->camelize($fieldName));
     }
 
-    /**
-     * @param string $fieldName
-     * @return string
-     */
-    protected function generateSetMethodName($fieldName)
+    protected function generateSetMethodName(string $fieldName): string
     {
-        return 'set' . ucfirst(Inflector::camelize($fieldName));
+        return 'set' . \ucfirst($this->inflector->camelize($fieldName));
     }
 }
