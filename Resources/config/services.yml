@@ -15,6 +15,8 @@ services:
 
     oro_serialized_fields.entity_generator.extension:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions\SerializedDataGeneratorExtension
+        arguments:
+            - '@Doctrine\Inflector\Inflector'
         tags:
             - { name: oro_entity_extend.entity_generator_extension }
 
