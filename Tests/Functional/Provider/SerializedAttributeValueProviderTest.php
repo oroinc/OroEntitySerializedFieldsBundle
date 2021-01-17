@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Functional\Provider;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
@@ -95,6 +95,6 @@ class SerializedAttributeValueProviderTest extends WebTestCase
      */
     protected function getSerializedAttributeName()
     {
-        return ucfirst(Inflector::camelize('serialized_attribute'));
+        return ucfirst((new InflectorFactory())->build()->camelize('serialized_attribute'));
     }
 }
