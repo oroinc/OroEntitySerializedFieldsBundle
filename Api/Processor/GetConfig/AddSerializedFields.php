@@ -81,9 +81,9 @@ class AddSerializedFields implements ProcessorInterface
      */
     private function addSerializedFields(
         EntityDefinitionConfig $definition,
-        $entityClass,
-        $skipNotConfiguredCustomFields
-    ) {
+        string $entityClass,
+        bool $skipNotConfiguredCustomFields
+    ): void {
         $fieldConfigs = $this->configManager->getConfigs('extend', $entityClass);
         foreach ($fieldConfigs as $fieldConfig) {
             if (!$fieldConfig->is('is_serialized') || !ExtendHelper::isFieldAccessible($fieldConfig)) {
@@ -118,7 +118,7 @@ class AddSerializedFields implements ProcessorInterface
      *
      * @return bool
      */
-    private function isExtendSystemEntity($entityClass)
+    private function isExtendSystemEntity(string $entityClass): bool
     {
         $entityConfig = $this->configManager->getEntityConfig('extend', $entityClass);
 
@@ -132,7 +132,7 @@ class AddSerializedFields implements ProcessorInterface
      *
      * @return bool
      */
-    private function isCustomField(ConfigInterface $fieldConfig)
+    private function isCustomField(ConfigInterface $fieldConfig): bool
     {
         return
             $fieldConfig->is('is_extend')
