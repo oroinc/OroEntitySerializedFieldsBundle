@@ -109,13 +109,17 @@ services:
     oro_serialized_fields.listener.entity_config:
         class: Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener
         arguments:
-            - "@oro_entity_extend.entity_generator"
-            - "@session"
+            - '@oro_serialized_fields.entity_proxy_update_config_provider'
+            - '@oro_entity_extend.entity_generator'
+            - '@session'
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.field.create, method: createField, priority: -255 }
             - { name: kernel.event_listener, event: oro.entity_config.pre_flush, method: preFlush, priority: -255 }
             - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush }
             - { name: kernel.event_listener, event: oro.entity_config.pre_set_require_update, method: preSetRequireUpdate }
+
+    oro_serialized_fields.entity_proxy_update_config_provider:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Provider\EntityProxyUpdateConfigProvider
 
     oro_serialized_fields.exclusion_provider.serialized_field:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Provider\ConfigSerializedFieldExclusionProvider
