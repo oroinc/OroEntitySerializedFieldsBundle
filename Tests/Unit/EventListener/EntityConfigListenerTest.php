@@ -16,6 +16,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\EntityGenerator;
 use Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Oro\Bundle\EntitySerializedFieldsBundle\Provider\EntityProxyUpdateConfigProviderInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
@@ -73,17 +74,12 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 
     private function setHasChangedSerializedFields(array $value): void
     {
-        $property = new \ReflectionProperty(EntityConfigListener::class, 'hasChangedSerializedFields');
-        $property->setAccessible(true);
-        $property->setValue($this->listener, $value);
+        ReflectionUtil::setPropertyValue($this->listener, 'hasChangedSerializedFields', $value);
     }
 
     private function getHasChangedSerializedFields(): array
     {
-        $property = new \ReflectionProperty(EntityConfigListener::class, 'hasChangedSerializedFields');
-        $property->setAccessible(true);
-
-        return $property->getValue($this->listener);
+        return ReflectionUtil::getPropertyValue($this->listener, 'hasChangedSerializedFields');
     }
 
     private function addEntityConfig(string $className, array $values = []): Config
