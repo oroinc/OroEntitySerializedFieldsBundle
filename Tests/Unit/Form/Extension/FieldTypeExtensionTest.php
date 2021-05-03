@@ -2,35 +2,38 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\Form\Type\FieldType;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\Test\FormBuilderInterface;
+use Symfony\Component\Form\Test\FormInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  FieldTypeExtension */
-    protected $extension;
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
+    private $session;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $session;
+    /** @var FieldTypeExtension */
+    private $extension;
 
     protected function setUp(): void
     {
-        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->session = $this->createMock(Session::class);
 
         $this->extension = new FieldTypeExtension(
             $this->session,
             ['fieldName', 'is_serialized', 'type']
         );
 
-        $extension = $this->extension;
         $this->assertEquals(
             '_extendbundle_create_entity_%s_is_serialized',
-            $extension::SESSION_ID_FIELD_SERIALIZED
+            FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED
         );
     }
 
@@ -41,13 +44,12 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildForm()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject */
-        $builder = $this->createMock('Symfony\Component\Form\Test\FormBuilderInterface');
+        $builder = $this->createMock(FormBuilderInterface::class);
 
-        $builder->expects($this->at(0))
+        $builder->expects($this->once())
             ->method('add')
             ->with('is_serialized', IsSerializedFieldType::class);
-        $builder->expects($this->at(1))
+        $builder->expects($this->once())
             ->method('addEventListener')
             ->with(FormEvents::POST_SUBMIT, [$this->extension, 'postSubmit']);
 
@@ -58,8 +60,7 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $event = $this->getFormEventMock();
 
-        $this->session
-            ->expects($this->once())
+        $this->session->expects($this->once())
             ->method('set')
             ->with('_extendbundle_create_entity_1_is_serialized', true);
 
@@ -71,49 +72,40 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function getFormEventMock()
     {
-        $form = $this->createMock('Symfony\Component\Form\Test\FormInterface');
+        $form = $this->createMock(FormInterface::class);
 
-        $formConfig = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $formConfig
-            ->expects($this->once())
+        $formConfig = $this->createMock(Form::class);
+        $formConfig->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue(1));
-        $form
-            ->expects($this->once())
+            ->willReturn(1);
+        $form->expects($this->once())
             ->method('get')
             ->with('is_serialized')
-            ->will($this->returnValue($formConfig));
-        $form
-            ->expects($this->once())
+            ->willReturn($formConfig);
+        $form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
-        $form
-            ->expects($this->once())
+            ->willReturn(true);
+        $form->expects($this->once())
             ->method('has')
             ->with('is_serialized')
             ->willReturn(true);
 
-        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(FormEvent::class);
         $event->expects($this->once())
             ->method('getForm')
-            ->will($this->returnValue($form));
+            ->willReturn($form);
 
-        $entityConfigModel = $this->createMock('Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel');
-        $entityConfigModel
-            ->expects($this->once())
+        $entityConfigModel = $this->createMock(EntityConfigModel::class);
+        $entityConfigModel->expects($this->once())
             ->method('getId')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
         $fieldConfigModel = new FieldConfigModel('test_field', 'string');
         $fieldConfigModel->setEntity($entityConfigModel);
 
         $event->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue($fieldConfigModel));
+            ->willReturn($fieldConfigModel);
 
         return $event;
     }
