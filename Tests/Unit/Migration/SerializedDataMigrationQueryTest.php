@@ -20,7 +20,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
     /** @var Schema */
     protected $schema;
 
-    /**  @var SerializedDataMigrationQuery */
+    /** @var SerializedDataMigrationQuery */
     protected $query;
 
     protected function setUp(): void
