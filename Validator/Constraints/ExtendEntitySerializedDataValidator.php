@@ -5,8 +5,8 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
-use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityConfigBundle\Validator\FieldConfigConstraintsFactory;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Symfony\Component\Validator\Constraint;
@@ -32,6 +32,9 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
     /** @var array */
     private $fieldConstraints = [];
 
+    /** @var FieldConfigConstraintsFactory */
+    private $fieldConfigConstraintsFactory;
+
     /**
      * @param ConfigProvider $configProvider
      * @param FieldHelper $fieldHelper
@@ -40,6 +43,11 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
     {
         $this->configProvider = $configProvider;
         $this->fieldHelper = $fieldHelper;
+    }
+
+    public function setFieldConfigConstraintsFactory(FieldConfigConstraintsFactory $fieldConfigConstraintsFactory): void
+    {
+        $this->fieldConfigConstraintsFactory = $fieldConfigConstraintsFactory;
     }
 
     /**
@@ -101,10 +109,13 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
                 continue;
             }
 
-            /** @var FieldConfigId $fieldId */
-            $fieldId = $config->getId();
-
-            $fieldConstraints = $this->getConstraintsByFieldType($fieldId->getFieldType());
+            $fieldConstraints = $this->getConstraintsByFieldType($config->getId()->getFieldType());
+            if ($this->fieldConfigConstraintsFactory) {
+                $fieldConstraints = \array_merge(
+                    $fieldConstraints,
+                    $this->fieldConfigConstraintsFactory->create($config)
+                );
+            }
             if ($fieldConstraints) {
                 $constraints[$fieldName] = $fieldConstraints;
             }
