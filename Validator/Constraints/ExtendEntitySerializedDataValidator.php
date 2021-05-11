@@ -5,8 +5,8 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
-use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityConfigBundle\Validator\FieldConfigConstraintsFactory;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Symfony\Component\Validator\Constraint;
@@ -32,14 +32,16 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
     /** @var array */
     private $fieldConstraints = [];
 
-    /**
-     * @param ConfigProvider $configProvider
-     * @param FieldHelper $fieldHelper
-     */
-    public function __construct(ConfigProvider $configProvider, FieldHelper $fieldHelper)
-    {
+    private FieldConfigConstraintsFactory $fieldConfigConstraintsFactory;
+
+    public function __construct(
+        ConfigProvider $configProvider,
+        FieldHelper $fieldHelper,
+        FieldConfigConstraintsFactory $fieldConfigConstraintsFactory
+    ) {
         $this->configProvider = $configProvider;
         $this->fieldHelper = $fieldHelper;
+        $this->fieldConfigConstraintsFactory = $fieldConfigConstraintsFactory;
     }
 
     /**
@@ -101,10 +103,11 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
                 continue;
             }
 
-            /** @var FieldConfigId $fieldId */
-            $fieldId = $config->getId();
+            $fieldConstraints = \array_merge(
+                $this->getConstraintsByFieldType($config->getId()->getFieldType()),
+                $this->fieldConfigConstraintsFactory->create($config)
+            );
 
-            $fieldConstraints = $this->getConstraintsByFieldType($fieldId->getFieldType());
             if ($fieldConstraints) {
                 $constraints[$fieldName] = $fieldConstraints;
             }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Validator;
 
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Validator\ExtendFieldValidationLoader as BaseLoader;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedData;
@@ -27,9 +28,9 @@ class ExtendFieldValidationLoader extends BaseLoader
     /**
      * {@inheritdoc}
      */
-    protected function isApplicable($className, $fieldName)
+    protected function isApplicable(ConfigInterface $extendConfig): bool
     {
-        return parent::isApplicable($className, $fieldName)
-            && $this->extendConfigProvider->getConfig($className, $fieldName)->is('is_serialized', false);
+        return parent::isApplicable($extendConfig)
+            && $extendConfig->is('is_serialized', false);
     }
 }
