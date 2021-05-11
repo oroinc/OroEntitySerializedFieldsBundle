@@ -3,6 +3,7 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Validator;
 
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityConfigBundle\Validator\FieldConfigConstraintsFactory;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedData;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\ExtendFieldValidationLoader;
@@ -16,6 +17,9 @@ class ExtendFieldValidationLoaderTest extends \PHPUnit\Framework\TestCase
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $formConfigProvider;
 
+    /** @var FieldConfigConstraintsFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldConfigConstraintsFactory;
+
     /** @var ExtendFieldValidationLoader */
     private $loader;
 
@@ -23,19 +27,24 @@ class ExtendFieldValidationLoaderTest extends \PHPUnit\Framework\TestCase
     {
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->formConfigProvider = $this->createMock(ConfigProvider::class);
+        $this->fieldConfigConstraintsFactory = $this->createMock(FieldConfigConstraintsFactory::class);
 
-        $this->loader = new ExtendFieldValidationLoader($this->extendConfigProvider, $this->formConfigProvider);
+        $this->loader = new ExtendFieldValidationLoader(
+            $this->extendConfigProvider,
+            $this->formConfigProvider,
+            $this->fieldConfigConstraintsFactory
+        );
     }
 
     public function testLoadClassMetadata(): void
     {
         /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
-        $metadata->expects($this->atLeastOnce())
+        $metadata->expects(self::atLeastOnce())
             ->method('getClassName')
             ->willReturn(ExtendEntityInterface::class);
 
-        $metadata->expects($this->once())
+        $metadata->expects(self::once())
             ->method('addConstraint')
             ->with(new ExtendEntitySerializedData());
 
@@ -46,11 +55,11 @@ class ExtendFieldValidationLoaderTest extends \PHPUnit\Framework\TestCase
     {
         /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
-        $metadata->expects($this->atLeastOnce())
+        $metadata->expects(self::atLeastOnce())
             ->method('getClassName')
             ->willReturn(\stdClass::class);
 
-        $metadata->expects($this->never())
+        $metadata->expects(self::never())
             ->method('addConstraint')
             ->with(new ExtendEntitySerializedData());
 
