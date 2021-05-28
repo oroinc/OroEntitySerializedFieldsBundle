@@ -58,6 +58,10 @@ services:
             - '@oro_entity.helper.field_helper'
         calls:
             -
+                - setFieldConfigConstraintsFactory
+                -
+                    - "@oro_entity_config.validator.field_config_constraints_factory"
+            -
                 - addConstraints
                 -
                     - integer
