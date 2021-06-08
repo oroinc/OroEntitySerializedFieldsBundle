@@ -8,6 +8,9 @@ use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface as 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 
+/**
+ * Column options Guesser for serialized field configs.
+ */
 class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
 {
     /** @var ConfigManager */
@@ -31,7 +34,7 @@ class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
             $options = [
                 'frontend_type' => Property::TYPE_HTML,
                 'type'          => 'twig',
-                'template'      => 'OroEntitySerializedFieldsBundle:Datagrid:Property/serialized.html.twig',
+                'template'      => '@OroEntitySerializedFields/Datagrid/Property/serialized.html.twig',
                 'context'       => [
                     'field_name' => $property,
                     'field_type' => $type,
