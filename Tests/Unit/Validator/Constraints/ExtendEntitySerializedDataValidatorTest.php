@@ -23,9 +23,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $configProvider;
 
-    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $fieldHelper;
-
     /** @var FieldConfigConstraintsFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $fieldConfigConstraintsFactory;
 
@@ -35,18 +32,17 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);
+        $this->fieldConfigConstraintsFactory = $this->createMock(FieldConfigConstraintsFactory::class);
 
-        $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->fieldHelper->expects(self::any())
+        $fieldHelper = $this->createMock(FieldHelper::class);
+        $fieldHelper->expects(self::any())
             ->method('getFields')
             ->with(ExtendEntityStub::class)
             ->willReturn([['name' => self::FIELD_NAME]]);
 
-        $this->fieldConfigConstraintsFactory = $this->createMock(FieldConfigConstraintsFactory::class);
-
         $this->constraintValidator = new ExtendEntitySerializedDataValidator(
             $this->configProvider,
-            $this->fieldHelper,
+            $fieldHelper,
             $this->fieldConfigConstraintsFactory
         );
         $this->constraintValidator->addConstraints('integer', [['Type' => ['type' => 'integer']]]);
@@ -67,7 +63,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
 
         $constraintGreaterThan10 = new Constraints\GreaterThan(10);
 
-        /** @var ContextualValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $contextualValidator */
         $contextualValidator = $this->createMock(ContextualValidatorInterface::class);
         $contextualValidator->expects(self::once())
             ->method('atPath')
@@ -83,10 +78,8 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
                 ]
             );
 
-        /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator */
         $validator = $this->createMock(ValidatorInterface::class);
 
-        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects(self::once())
             ->method('getValidator')
@@ -120,7 +113,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
             false
         );
 
-        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects(self::never())
             ->method('getValidator');
@@ -131,15 +123,11 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
 
     /**
      * @dataProvider fieldConfigDataProvider
-     *
-     * @param array $values
-     * @param bool $expectedCall
      */
     public function testValidateFieldConfig(array $values, bool $expectedCall = true): void
     {
         $this->mockConfigProvider('integer', $values, $expectedCall);
 
-        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects(self::never())
             ->method('getValidator');
@@ -150,9 +138,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
         $this->constraintValidator->validate(new ExtendEntityStub($serializedData), new ExtendEntitySerializedData());
     }
 
-    /**
-     * @return array
-     */
     public function fieldConfigDataProvider(): array
     {
         return [
@@ -220,7 +205,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
             ]
         );
 
-        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects(self::never())
             ->method('getValidator');
@@ -231,12 +215,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
         $this->constraintValidator->validate(new ExtendEntityStub($serializedData), new ExtendEntitySerializedData());
     }
 
-    /**
-     * @param string $type
-     * @param array $values
-     * @param bool $hasConfig
-     * @param bool $getConfig
-     */
     private function mockConfigProvider(
         string $type,
         array $values,
@@ -258,12 +236,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
             );
     }
 
-    /**
-     * @param string $type
-     * @param array $values
-     *
-     * @return Config
-     */
     private function getConfig(string $type, array $values): Config
     {
         return new Config(
