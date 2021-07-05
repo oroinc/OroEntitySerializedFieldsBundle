@@ -6,62 +6,56 @@ use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\UniqueExtendEntityField;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\UniqueExtendEntityFieldValidator;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class UniqueExtendEntityFieldValidatorTest extends \PHPUnit\Framework\TestCase
+class UniqueExtendEntityFieldValidatorTest extends ConstraintValidatorTestCase
 {
-    const ENTITY_CLASS = 'Test\Entity';
-
-    /** @var UniqueExtendEntityFieldValidator */
-    protected $validator;
-
-    protected function setUp(): void
+    protected function createValidator()
     {
-        $this->validator = new UniqueExtendEntityFieldValidator();
+        return new UniqueExtendEntityFieldValidator();
     }
 
-    /**
-     * @dataProvider validateProvider
-     *
-     * @param string $fieldName
-     * @param bool   $isViolationExpected
-     */
-    public function testValidate($fieldName, $isViolationExpected)
+    public function testValidatesForSerializedDataField()
     {
-        $entity = new EntityConfigModel(self::ENTITY_CLASS);
-        $field  = new FieldConfigModel($fieldName);
+        $entity = new EntityConfigModel('Test\Entity');
+        $field = new FieldConfigModel('serializedData');
         $entity->addField($field);
-
-        $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
-        $this->validator->initialize($context);
 
         $constraint = new UniqueExtendEntityField();
 
-        if ($isViolationExpected) {
-            $violation = $this->createMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
-            $context->expects($this->once())
-                ->method('buildViolation')
-                ->with($constraint->message)
-                ->willReturn($violation);
-            $violation->expects($this->once())
-                ->method('atPath')
-                ->with('fieldName')
-                ->willReturnSelf();
-            $violation->expects($this->once())
-                ->method('addViolation');
-        } else {
-            $context->expects($this->never())
-                ->method('buildViolation');
-        }
-
         $this->validator->validate($field, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->setParameters(['{{ value }}' => 'serializedData', '{{ field }}' => 'serialized_data'])
+            ->atPath('property.path.fieldName')
+            ->assertRaised();
     }
 
-    public function validateProvider()
+    public function testValidatesForSerializedDataFieldInSnakeCase()
     {
-        return [
-            ['anotherField', false],
-            ['serialized_data', true],
-            ['serializedData', true],
-        ];
+        $entity = new EntityConfigModel('Test\Entity');
+        $field = new FieldConfigModel('serialized_data');
+        $entity->addField($field);
+
+        $constraint = new UniqueExtendEntityField();
+
+        $this->validator->validate($field, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->setParameters(['{{ value }}' => 'serialized_data', '{{ field }}' => 'serialized_data'])
+            ->atPath('property.path.fieldName')
+            ->assertRaised();
+    }
+
+    public function testValidateForNotSerializedData()
+    {
+        $entity = new EntityConfigModel('Test\Entity');
+        $field = new FieldConfigModel('anotherField');
+        $entity->addField($field);
+
+        $constraint = new UniqueExtendEntityField();
+        $this->validator->validate($field, $constraint);
+
+        $this->assertNoViolation();
     }
 }
