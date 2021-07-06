@@ -66,7 +66,7 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
             [
                 'frontend_type' => Property::TYPE_HTML,
                 'type'          => 'twig',
-                'template'      => 'OroEntitySerializedFieldsBundle:Datagrid:Property/serialized.html.twig',
+                'template'      => '@OroEntitySerializedFields/Datagrid/Property/serialized.html.twig',
                 'context'       => [
                     'field_name' => $property,
                     'field_type' => $type,
