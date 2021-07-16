@@ -13,9 +13,6 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
     /** @var Schema */
     protected $schema;
 
-    /**
-     * @param Schema $schema
-     */
     public function __construct(Schema $schema)
     {
         $this->schema = $schema;
@@ -116,9 +113,6 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @param array           $fieldsToUpdate
-     * @param LoggerInterface $logger
-     * @param                 $dryRun
      * @throws \Doctrine\DBAL\DBALException
      */
     private function executeUpdates(array $fieldsToUpdate, LoggerInterface $logger, $dryRun)

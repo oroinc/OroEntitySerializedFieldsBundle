@@ -13,9 +13,6 @@ class SerializedDataMigration implements Migration
     /** @var EntityMetadataHelper */
     protected $metadataHelper;
 
-    /**
-     * @param EntityMetadataHelper $metadataHelper
-     */
     public function __construct(EntityMetadataHelper $metadataHelper)
     {
         $this->metadataHelper = $metadataHelper;
