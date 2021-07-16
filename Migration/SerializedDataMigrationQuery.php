@@ -33,10 +33,6 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
     /** @var EntityMetadataHelper */
     protected $metadataHelper;
 
-    /**
-     * @param Schema               $schema
-     * @param EntityMetadataHelper $metadataHelper
-     */
     public function __construct(Schema $schema, EntityMetadataHelper $metadataHelper)
     {
         $this->schema         = $schema;

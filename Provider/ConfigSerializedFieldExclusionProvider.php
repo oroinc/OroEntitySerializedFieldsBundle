@@ -15,9 +15,6 @@ class ConfigSerializedFieldExclusionProvider extends AbstractExclusionProvider
     /** @var ConfigProvider */
     protected $extendConfigProvider;
 
-    /**
-     * @param ConfigProvider $extendConfigProvider
-     */
     public function __construct(ConfigProvider $extendConfigProvider)
     {
         $this->extendConfigProvider = $extendConfigProvider;

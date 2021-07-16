@@ -16,18 +16,11 @@ class SerializedAttributeValueProvider implements AttributeValueProviderInterfac
      */
     protected $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param AttributeFamily $attributeFamily
-     * @param array $names
-     */
     public function removeAttributeValues(AttributeFamily $attributeFamily, array $names)
     {
         $manager = $this->doctrineHelper->getEntityManagerForClass($attributeFamily->getEntityClass());

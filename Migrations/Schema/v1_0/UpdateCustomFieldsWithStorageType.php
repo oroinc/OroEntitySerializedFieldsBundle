@@ -12,9 +12,6 @@ class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
     /** @var Schema */
     protected $schema;
 
-    /**
-     * @param Schema $schema
-     */
     public function __construct(Schema $schema)
     {
         $this->schema = $schema;

@@ -13,9 +13,6 @@ class DeletedAttributeProviderDecorator implements DeletedAttributeProviderInter
      */
     protected $deletedAttributeProvider;
 
-    /**
-     * @param DeletedAttributeProviderInterface $deletedAttributeProvider
-     */
     public function __construct(DeletedAttributeProviderInterface $deletedAttributeProvider)
     {
         $this->deletedAttributeProvider = $deletedAttributeProvider;
@@ -34,10 +31,6 @@ class DeletedAttributeProviderDecorator implements DeletedAttributeProviderInter
         });
     }
 
-    /**
-     * @param AttributeFamily $attributeFamily
-     * @param array $names
-     */
     public function removeAttributeValues(AttributeFamily $attributeFamily, array $names)
     {
         $this->deletedAttributeProvider->removeAttributeValues($attributeFamily, $names);

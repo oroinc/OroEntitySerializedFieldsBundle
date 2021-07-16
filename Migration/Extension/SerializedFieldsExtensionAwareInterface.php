@@ -9,8 +9,6 @@ interface SerializedFieldsExtensionAwareInterface
 {
     /**
      * Sets the SerializedFieldsExtension
-     *
-     * @param SerializedFieldsExtension $serializedFieldsExtension
      */
     public function setSerializedFieldsExtension(SerializedFieldsExtension $serializedFieldsExtension);
 }

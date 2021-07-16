@@ -10,8 +10,6 @@ interface EntityProxyUpdateConfigProviderInterface
     /**
      * Indicates whether the update of entity proxies is allowed on the fly
      * or should be done by the "Schema Update" process.
-     *
-     * @return bool
      */
     public function isEntityProxyUpdateAllowed(): bool;
 }
