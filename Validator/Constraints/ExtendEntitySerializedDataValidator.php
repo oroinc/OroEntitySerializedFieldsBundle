@@ -35,10 +35,6 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
     /** @var FieldConfigConstraintsFactory */
     private $fieldConfigConstraintsFactory;
 
-    /**
-     * @param ConfigProvider $configProvider
-     * @param FieldHelper $fieldHelper
-     */
     public function __construct(ConfigProvider $configProvider, FieldHelper $fieldHelper)
     {
         $this->configProvider = $configProvider;
@@ -79,10 +75,6 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param string $className
-     * @return array
-     */
     private function getFieldConstraints(string $className): array
     {
         if (!array_key_exists($className, $this->fieldConstraints)) {
@@ -92,9 +84,6 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
         return $this->fieldConstraints[$className];
     }
 
-    /**
-     * @param string $className
-     */
     private function buildFieldConstraints(string $className): void
     {
         $constraints = [];
@@ -124,10 +113,6 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
         $this->fieldConstraints[$className] = $constraints;
     }
 
-    /**
-     * @param ConfigInterface $fieldConfig
-     * @return bool
-     */
     private function isFieldValidatable(ConfigInterface $fieldConfig): bool
     {
         return $fieldConfig->is('is_extend') &&
@@ -184,11 +169,6 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
         return $constraints;
     }
 
-    /**
-     * @param string $className
-     * @param array|null $options
-     * @return Constraint
-     */
     private function createConstraint(string $className, array $options = null): Constraint
     {
         $fullClassName = '\\Symfony\\Component\\Validator\\Constraints\\' . $className;

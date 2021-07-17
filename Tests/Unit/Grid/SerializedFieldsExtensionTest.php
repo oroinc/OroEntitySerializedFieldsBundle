@@ -180,10 +180,6 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getFieldsDataProvider
-     * @param array $fields
-     * @param array $fieldsData
-     * @param array $configs
-     * @param array $expectedData
      */
     public function testBuildExpression(array $fields, array $fieldsData, array $configs, array $expectedData)
     {

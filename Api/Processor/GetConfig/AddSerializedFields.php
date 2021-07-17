@@ -27,10 +27,6 @@ class AddSerializedFields implements ProcessorInterface
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager  $configManager
-     */
     public function __construct(DoctrineHelper $doctrineHelper, ConfigManager $configManager)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -73,11 +69,6 @@ class AddSerializedFields implements ProcessorInterface
         }
     }
 
-    /**
-     * @param EntityDefinitionConfig $definition
-     * @param string                 $entityClass
-     * @param bool                   $skipNotConfiguredCustomFields
-     */
     private function addSerializedFields(
         EntityDefinitionConfig $definition,
         string $entityClass,
@@ -106,11 +97,6 @@ class AddSerializedFields implements ProcessorInterface
         }
     }
 
-    /**
-     * @param string $entityClass
-     *
-     * @return bool
-     */
     private function isExtendSystemEntity(string $entityClass): bool
     {
         $entityConfig = $this->configManager->getEntityConfig('extend', $entityClass);
@@ -120,11 +106,6 @@ class AddSerializedFields implements ProcessorInterface
             && !$entityConfig->is('owner', ExtendScope::OWNER_CUSTOM);
     }
 
-    /**
-     * @param ConfigInterface $fieldConfig
-     *
-     * @return bool
-     */
     private function isCustomField(ConfigInterface $fieldConfig): bool
     {
         return

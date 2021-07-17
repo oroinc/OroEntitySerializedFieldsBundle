@@ -128,9 +128,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
 
     /**
      * @dataProvider fieldConfigDataProvider
-     *
-     * @param array $values
-     * @param bool $expectedCall
      */
     public function testValidateFieldConfig(array $values, bool $expectedCall = true): void
     {
@@ -147,9 +144,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
         $this->constraintValidator->validate(new ExtendEntityStub($serializedData), new ExtendEntitySerializedData());
     }
 
-    /**
-     * @return array
-     */
     public function fieldConfigDataProvider(): array
     {
         return [
@@ -228,12 +222,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
         $this->constraintValidator->validate(new ExtendEntityStub($serializedData), new ExtendEntitySerializedData());
     }
 
-    /**
-     * @param string $type
-     * @param array $values
-     * @param bool $hasConfig
-     * @param bool $getConfig
-     */
     private function mockConfigProvider(
         string $type,
         array $values,
@@ -255,12 +243,6 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
             );
     }
 
-    /**
-     * @param string $type
-     * @param array $values
-     *
-     * @return Config
-     */
     private function getConfig(string $type, array $values): Config
     {
         return new Config(

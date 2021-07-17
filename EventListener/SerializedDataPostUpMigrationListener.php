@@ -11,9 +11,6 @@ class SerializedDataPostUpMigrationListener
     /**  @var EntityMetadataHelper */
     protected $metadataHelper;
 
-    /**
-     * @param EntityMetadataHelper $metadataHelper
-     */
     public function __construct(EntityMetadataHelper $metadataHelper)
     {
         $this->metadataHelper = $metadataHelper;
@@ -21,8 +18,6 @@ class SerializedDataPostUpMigrationListener
 
     /**
      * POST UP event handler
-     *
-     * @param PostMigrationEvent $event
      */
     public function onPostUp(PostMigrationEvent $event)
     {
