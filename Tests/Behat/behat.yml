@@ -3,13 +3,11 @@ oro_behat_extension:
     OroEntitySerializedFieldsBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroFormBundle::FeatureContext
-        - OroFormBundle::FormContext
-        - OroConfigBundle::FeatureContext
-        - OroDataGridBundle::GridContext
-        - OroEmailBundle::EmailContext
-        - OroImportExportBundle::ImportExportContext:
-            - '@oro_entity.entity_alias_resolver'
-            - '@oro_importexport.processor.registry'
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
       paths:
         - '@OroEntitySerializedFieldsBundle/Tests/Behat/Features'
