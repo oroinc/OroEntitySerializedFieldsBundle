@@ -181,11 +181,11 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
      */
     protected function isTableOptions($key)
     {
-        if (false !== strpos($key, '!')) {
+        if (str_contains($key, '!')) {
             // it is a column options
             return false;
         }
-        if (0 === strpos($key, '_')) {
+        if (str_starts_with($key, '_')) {
             // it is an auxiliary section, for example '_append'
             return false;
         }
