@@ -88,8 +88,8 @@ services:
             - [addConstraints, ['decimal', [{ Type: {type: 'numeric'} }]]]
             - [addConstraints, ['money', [{ Type: {type: 'numeric'} }]]]
             - [addConstraints, ['percent', [{ Type: {type: 'numeric'} }]]]
-            - [addConstraints, ['date', [{ Date: ~ }]]]
-            - [addConstraints, ['datetime', [{ DateTime: ~ }]]]
+            - [addConstraints, ['date', [{ Type: {type: '\DateTimeInterface'} }]]]
+            - [addConstraints, ['datetime', [{ Type: {type: '\DateTimeInterface'} }]]]
         tags:
             - { name: validator.constraint_validator, alias: oro_serialized_fields.validator.extend_entity_serialized_data }
 
