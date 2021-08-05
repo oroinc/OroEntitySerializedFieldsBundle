@@ -4,6 +4,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints;
 
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityConfigBundle\Validator\FieldConfigConstraintsFactory;
@@ -129,7 +130,8 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
      */
     private function getFieldsByClassName($entityClassName): array
     {
-        $properties = $this->fieldHelper->getFields($entityClassName);
+        $properties = $this->fieldHelper
+            ->getEntityFields($entityClassName, EntityFieldProvider::OPTION_WITH_HIDDEN_FIELDS);
 
         return array_column($properties, 'name');
     }
