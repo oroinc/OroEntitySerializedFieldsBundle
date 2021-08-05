@@ -3,6 +3,7 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
@@ -38,8 +39,8 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
 
         $this->fieldHelper = $this->createMock(FieldHelper::class);
         $this->fieldHelper->expects(self::any())
-            ->method('getFields')
-            ->with(ExtendEntityStub::class)
+            ->method('getEntityFields')
+            ->with(ExtendEntityStub::class, EntityFieldProvider::OPTION_WITH_HIDDEN_FIELDS)
             ->willReturn([['name' => self::FIELD_NAME]]);
 
         $this->constraintValidator = new ExtendEntitySerializedDataValidator($this->configProvider, $this->fieldHelper);
