@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints;
 
-use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Component\DoctrineUtils\Inflector\InflectorFactory;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -17,11 +16,8 @@ class UniqueExtendEntityFieldValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_serialized_fields.validator.unique_extend_entity_field';
 
-    private Inflector $inflector;
-
     public function __construct()
     {
-        $this->inflector = (new InflectorFactory())->build();
     }
 
     public function validate($value, Constraint $constraint)
@@ -73,6 +69,6 @@ class UniqueExtendEntityFieldValidator extends ConstraintValidator
      */
     public function normalizeFieldName($fieldName)
     {
-        return strtolower($this->inflector->classify($fieldName));
+        return strtolower(InflectorFactory::create()->classify($fieldName));
     }
 }
