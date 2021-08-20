@@ -171,3 +171,17 @@ services:
             - '@oro_serialized_fields.provider.deleted_serialized_attribute'
         tags:
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_serialized_fields.serialized_attribute_was_removed_from_family' }
+
+    oro_serialized_fields.provider.serialized_fields:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Provider\SerializedFieldsProvider
+        arguments:
+            - '@oro_entity_config.config_manager'
+
+    oro_serialized_fields.tools.serialized_fields_sanitizer:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Tools\SerializedFieldsSanitizer
+        arguments:
+            - '@doctrine'
+            - '@oro_ui.html_tag_helper'
+            - '@oro_serialized_fields.provider.serialized_fields'
+        tags:
+            - { name: oro_security.fields_sanitizer }

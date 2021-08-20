@@ -3,3 +3,8 @@ services:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Tests\Functional\Environment\TestEntitiesMigrationListener
         tags:
             - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp }
+
+    oro_serialized_fields.tests.tools.serialized_fields_sanitizer:
+        parent: oro_serialized_fields.tools.serialized_fields_sanitizer
+        decorates: oro_serialized_fields.tools.serialized_fields_sanitizer
+        public: true
