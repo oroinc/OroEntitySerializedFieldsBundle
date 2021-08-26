@@ -4,6 +4,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Validator\Constrain
 
 use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityExtendBundle\Validator\FieldNameValidationHelper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\UniqueExtendEntityField;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\UniqueExtendEntityFieldValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -12,10 +13,17 @@ class UniqueExtendEntityFieldValidatorTest extends ConstraintValidatorTestCase
 {
     protected function createValidator()
     {
-        return new UniqueExtendEntityFieldValidator();
+        $validationHelper = $this->createMock(FieldNameValidationHelper::class);
+        $validationHelper->expects($this->any())
+            ->method('normalizeFieldName')
+            ->willReturnCallback(function (string $fieldName): string {
+                return str_replace('_', '', ucwords($fieldName, '_'));
+            });
+
+        return new UniqueExtendEntityFieldValidator($validationHelper);
     }
 
-    public function testValidatesForSerializedDataField()
+    public function testValidatesForSerializedDataFieldInCamelCase()
     {
         $entity = new EntityConfigModel('Test\Entity');
         $field = new FieldConfigModel('serializedData');
