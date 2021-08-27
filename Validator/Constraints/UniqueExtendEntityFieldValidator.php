@@ -3,10 +3,9 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Component\DoctrineUtils\Inflector\InflectorFactory;
+use Oro\Bundle\EntityExtendBundle\Validator\FieldNameValidationHelper;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Validates field name uniqueness.
@@ -14,57 +13,40 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class UniqueExtendEntityFieldValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_serialized_fields.validator.unique_extend_entity_field';
+    private FieldNameValidationHelper $validationHelper;
+
+    public function __construct(FieldNameValidationHelper $validationHelper)
+    {
+        $this->validationHelper = $validationHelper;
+    }
 
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof FieldConfigModel) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel supported only, %s given',
-                    is_object($value) ? get_class($value) : gettype($value)
-                )
-            );
+            throw new \InvalidArgumentException(sprintf(
+                '%s supported only, %s given',
+                FieldConfigModel::class,
+                is_object($value) ? get_class($value) : gettype($value)
+            ));
         }
 
+        // a special case for "serialized_data" field.
         $fieldName = $value->getFieldName();
-
-        // A special case for `serialized_data` field.
-        if ($this->normalizeFieldName($fieldName) === $this->normalizeFieldName('serialized_data')) {
-            $this->addViolation($constraint->message, $fieldName, 'serialized_data');
-
-            return;
+        if ($this->isReservedFieldName($fieldName)) {
+            $this->context
+                ->buildViolation(
+                    $constraint->message,
+                    ['{{ value }}' => $fieldName, '{{ field }}' => 'serialized_data']
+                )
+                ->atPath('fieldName')
+                ->addViolation();
         }
     }
 
-    /**
-     * @param string $message
-     * @param string $newFieldName
-     * @param string $existingFieldName
-     */
-    protected function addViolation($message, $newFieldName, $existingFieldName)
+    private function isReservedFieldName(string $fieldName): string
     {
-        /** @var ExecutionContextInterface $context */
-        $context = $this->context;
-        $context
-            ->buildViolation(
-                $message,
-                ['{{ value }}' => $newFieldName, '{{ field }}' => $existingFieldName]
-            )
-            ->atPath('fieldName')
-            ->addViolation();
-    }
+        $normalizedFieldName = $this->validationHelper->normalizeFieldName($fieldName);
 
-    /**
-     * Normalizes a field name.
-     * The normalized name is lower cased and unessential symbols, like _, are removed.
-     *
-     * @param string $fieldName
-     *
-     * @return string
-     */
-    public function normalizeFieldName($fieldName)
-    {
-        return strtolower(InflectorFactory::create()->classify($fieldName));
+        return $this->validationHelper->normalizeFieldName('serialized_data') === $normalizedFieldName;
     }
 }

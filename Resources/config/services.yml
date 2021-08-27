@@ -50,8 +50,10 @@ services:
 
     oro_serialized_fields.validator.unique_extend_entity_field_validator:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\UniqueExtendEntityFieldValidator
+        arguments:
+            - '@oro_entity_extend.extend.field_name_validation_helper'
         tags:
-            - { name: validator.constraint_validator, alias: oro_serialized_fields.validator.unique_extend_entity_field }
+            - { name: validator.constraint_validator }
 
     oro_serialized_fields.validator.extend_entity_serialized_data:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedDataValidator
