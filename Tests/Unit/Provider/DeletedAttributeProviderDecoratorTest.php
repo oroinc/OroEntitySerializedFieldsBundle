@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Provider;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\DeletedAttributeProviderInterface;
@@ -10,19 +9,16 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Provider\DeletedAttributeProviderDec
 
 class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DeletedAttributeProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $deletedAttributeProvider;
+    /** @var DeletedAttributeProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $deletedAttributeProvider;
 
-    /**
-     * @var DeletedAttributeProviderDecorator
-     */
-    protected $decorator;
+    /** @var DeletedAttributeProviderDecorator */
+    private $decorator;
 
     protected function setUp(): void
     {
         $this->deletedAttributeProvider = $this->createMock(DeletedAttributeProviderInterface::class);
+
         $this->decorator = new DeletedAttributeProviderDecorator($this->deletedAttributeProvider);
     }
 
@@ -46,7 +42,6 @@ class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 
     public function testRemoveAttributeValues()
     {
-        /** @var EntityManagerInterface $entityManager */
         $attributeFamily = new AttributeFamily();
         $names = [];
         $this->deletedAttributeProvider->expects($this->once())
@@ -56,11 +51,7 @@ class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
         $this->decorator->removeAttributeValues($attributeFamily, $names);
     }
 
-    /**
-     * @param bool $isSerialized
-     * @return FieldConfigModel
-     */
-    protected function getAttribute($isSerialized)
+    private function getAttribute(bool $isSerialized): FieldConfigModel
     {
         $attribute = new FieldConfigModel();
         $attribute->fromArray('extend', ['is_serialized' => $isSerialized]);

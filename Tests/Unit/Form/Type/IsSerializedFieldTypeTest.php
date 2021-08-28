@@ -4,35 +4,30 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Provider\SerializedFieldProvider;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var SerializedFieldProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $seriliazedFieldProvider;
+    /** @var SerializedFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $serializedFieldProvider;
 
     /** @var IsSerializedFieldType */
-    protected $type;
+    private $type;
 
     protected function setUp(): void
     {
-        $this->seriliazedFieldProvider = $this->getMockBuilder(SerializedFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->type = new IsSerializedFieldType($this->seriliazedFieldProvider);
-    }
+        $this->serializedFieldProvider = $this->createMock(SerializedFieldProvider::class);
 
-    protected function tearDown(): void
-    {
-        unset($this->type);
+        $this->type = new IsSerializedFieldType($this->serializedFieldProvider);
     }
 
     public function testConfigureOptions()
     {
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'));
@@ -43,7 +38,7 @@ class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame('oro_serialized_fields_is_serialized_type', $this->type->getName());
         $this->assertSame(ChoiceType::class, $this->type->getParent());
-        $this->assertInstanceOf('Symfony\Component\Form\AbstractType', $this->type);
+        $this->assertInstanceOf(AbstractType::class, $this->type);
     }
 
     public function testFinishView()
@@ -63,16 +58,13 @@ class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
             'percent'
         ];
 
-        $this->seriliazedFieldProvider
-            ->expects($this->once())
+        $this->serializedFieldProvider->expects($this->once())
             ->method('getSerializableTypes')
             ->willReturn($expectedElements);
 
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->createMock(Form::class);
         $formView = new FormView();
-        $this->type->finishView($formView, $form, array());
+        $this->type->finishView($formView, $form, []);
 
         $this->assertEquals($expectedElements, $formView->vars['serializableTypes']);
     }

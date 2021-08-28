@@ -38,7 +38,6 @@ class ExtendFieldValidationLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function testLoadClassMetadata(): void
     {
-        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
         $metadata->expects(self::atLeastOnce())
             ->method('getClassName')
@@ -53,7 +52,6 @@ class ExtendFieldValidationLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function testLoadClassMetadataNotExtendEntity(): void
     {
-        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
         $metadata->expects(self::atLeastOnce())
             ->method('getClassName')

@@ -18,73 +18,40 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 
 class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    const ENTITY_CLASS_NAME = 'SomeEntityClassName';
-    const ENTITY_ALIAS = 'entityAlias';
+    private const ENTITY_CLASS_NAME = 'SomeEntityClassName';
+    private const ENTITY_ALIAS = 'entityAlias';
 
-    /**
-     * @var FieldsHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FieldsHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $fieldsHelper;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var EntityClassResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EntityClassResolver|\PHPUnit\Framework\MockObject\MockObject */
     private $entityClassResolver;
 
-    /**
-     * @var DatagridGuesser|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DatagridGuesser|\PHPUnit\Framework\MockObject\MockObject */
     private $datagridGuesser;
 
-    /**
-     * @var SerializedFieldsExtension
-     */
+    /** @var SerializedFieldsExtension */
     private $extension;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker */
     private $featureChecker;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var SelectedFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SelectedFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $selectedFieldsProvider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->entityClassResolver = $this->getMockBuilder(EntityClassResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->datagridGuesser = $this->getMockBuilder(DatagridGuesser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->fieldsHelper = $this->getMockBuilder(FieldsHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->entityClassResolver = $this->createMock(EntityClassResolver::class);
+        $this->datagridGuesser = $this->createMock(DatagridGuesser::class);
+        $this->fieldsHelper = $this->createMock(FieldsHelper::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->featureChecker->expects($this->any())
             ->method('isResourceEnabled')
@@ -103,10 +70,7 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getFieldsDataProvider()
+    public function getFieldsDataProvider(): array
     {
         $notSerializedField1 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'notSerializedField1');
         $notSerializedField2 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'notSerializedField2');
@@ -185,30 +149,25 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $datagridConfig = DatagridConfiguration::create([]);
 
-        $extendConfigProvider = $this->getMockBuilder(ConfigProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $extendConfigProvider = $this->createMock(ConfigProvider::class);
 
         $extendConfigProviderMock = $extendConfigProvider
             ->expects($this->exactly(count($fields)))
             ->method('getConfig');
 
-        $this->configManager
-            ->expects($this->any())
+        $this->configManager->expects($this->any())
             ->method('getProvider')
             ->with('extend')
             ->willReturn($extendConfigProvider);
 
-        $this->entityClassResolver
-            ->expects($this->any())
+        $this->entityClassResolver->expects($this->any())
             ->method('getEntityClass')
             ->willReturn(self::ENTITY_CLASS_NAME);
 
         call_user_func_array([$extendConfigProviderMock, 'withConsecutive'], $fieldsData);
         call_user_func_array([$extendConfigProviderMock, 'willReturnOnConsecutiveCalls'], $configs);
 
-        $this->selectedFieldsProvider
-            ->expects($this->any())
+        $this->selectedFieldsProvider->expects($this->any())
             ->method('getSelectedFields')
             ->willReturn(['notSerializedField1', 'notSerializedField2']);
 

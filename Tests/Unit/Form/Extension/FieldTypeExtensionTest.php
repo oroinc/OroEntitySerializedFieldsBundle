@@ -58,26 +58,12 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testPostSubmit()
     {
-        $event = $this->getFormEventMock();
-
-        $this->session->expects($this->once())
-            ->method('set')
-            ->with('_extendbundle_create_entity_1_is_serialized', true);
-
-        $this->extension->postSubmit($event);
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getFormEventMock()
-    {
-        $form = $this->createMock(FormInterface::class);
-
         $formConfig = $this->createMock(Form::class);
         $formConfig->expects($this->once())
             ->method('getData')
             ->willReturn(1);
+
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('get')
             ->with('is_serialized')
@@ -90,11 +76,6 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('is_serialized')
             ->willReturn(true);
 
-        $event = $this->createMock(FormEvent::class);
-        $event->expects($this->once())
-            ->method('getForm')
-            ->willReturn($form);
-
         $entityConfigModel = $this->createMock(EntityConfigModel::class);
         $entityConfigModel->expects($this->once())
             ->method('getId')
@@ -103,10 +84,18 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $fieldConfigModel = new FieldConfigModel('test_field', 'string');
         $fieldConfigModel->setEntity($entityConfigModel);
 
+        $this->session->expects($this->once())
+            ->method('set')
+            ->with('_extendbundle_create_entity_1_is_serialized', true);
+
+        $event = $this->createMock(FormEvent::class);
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
         $event->expects($this->once())
             ->method('getData')
             ->willReturn($fieldConfigModel);
 
-        return $event;
+        $this->extension->postSubmit($event);
     }
 }

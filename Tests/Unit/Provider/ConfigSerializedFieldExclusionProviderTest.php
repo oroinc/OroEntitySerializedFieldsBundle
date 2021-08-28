@@ -2,31 +2,28 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntitySerializedFieldsBundle\Provider\ConfigSerializedFieldExclusionProvider;
 
 class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $configProvider;
+
+    /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject */
+    private $metadata;
+
     /** @var ConfigSerializedFieldExclusionProvider */
-    protected $provider;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $configProvider;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $metadata;
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configProvider = $this->createMock(ConfigProvider::class);
+        $this->metadata = $this->createMock(ClassMetadata::class);
 
         $this->provider = new ConfigSerializedFieldExclusionProvider($this->configProvider);
     }
@@ -43,10 +40,8 @@ class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit\Framework\Test
 
     /**
      * @dataProvider dataProvider
-     *
-     * @param Config  $fieldConfig  Field config config
      */
-    public function testIsIgnoredField($fieldConfig)
+    public function testIsIgnoredField(Config $fieldConfig)
     {
         $fieldName = $fieldConfig->getId()->getFieldName();
 
@@ -79,25 +74,22 @@ class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit\Framework\Test
 
         $this->metadata->expects($this->once())
             ->method('getName')
-            ->will($this->returnValue($className));
+            ->willReturn($className);
 
         $this->configProvider->expects($this->once())
             ->method('getConfig')
             ->with($className)
-            ->will($this->returnValue($fieldConfig));
+            ->willReturn($fieldConfig);
 
         $this->configProvider->expects($this->once())
             ->method('hasConfig')
             ->with($className)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->assertTrue($this->provider->isIgnoredField($this->metadata, $fieldName));
     }
 
-    /**
-     * @return array
-     */
-    public function dataProvider()
+    public function dataProvider(): array
     {
         return [
             'Field config without is_serializable property' => [
@@ -110,21 +102,20 @@ class ConfigSerializedFieldExclusionProviderTest extends \PHPUnit\Framework\Test
                 $this->getFieldConfig(
                     'Test\Entity\Entity3',
                     'custom_address',
-                    [ 'is_serialized' => false ]
+                    ['is_serialized' => false]
                 )
             ]
         ];
     }
 
-    protected function getFieldConfig($entityClassName, $fieldName, $values = array())
+    private function getFieldConfig(string $entityClassName, string $fieldName, array $values = []): Config
     {
         $extend = [
             'is_extend' => true,
             'owner'     => ExtendScope::OWNER_CUSTOM,
             'state'     => ExtendScope::STATE_ACTIVE
         ];
-        $fieldConfigId = new FieldConfigId('extend', $entityClassName, $fieldName);
-        $fieldConfig   = new Config($fieldConfigId);
+        $fieldConfig = new Config(new FieldConfigId('extend', $entityClassName, $fieldName));
         $fieldConfig->setValues(array_merge($extend, $values));
 
         return $fieldConfig;
