@@ -2,53 +2,51 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Grid;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Guess\ColumnGuess;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface as Property;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser;
+use Symfony\Component\Form\Guess\Guess;
 
 class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $configManager;
+    private $configManager;
 
     /** @var SerializedColumnOptionsGuesser */
-    protected $guesser;
+    private $guesser;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->guesser = new SerializedColumnOptionsGuesser($this->configManager);
     }
 
     public function testGuessFormatterNoGuess()
     {
-        $this->getFieldConfig();
+        $this->prepareFieldConfig();
         $guess = $this->guesser->guessFormatter('TestClass', 'testProp', 'string');
         $this->assertNull($guess);
     }
 
     public function testGuessFormatterNoConfig()
     {
-        $class    = 'TestClass';
+        $class = 'TestClass';
         $property = 'testProp';
-        $type     = 'integer';
+        $type = 'integer';
 
-        $extendConfigProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->configManager->expects($this->once())
             ->method('getProvider')
             ->with('extend')
-            ->will($this->returnValue($extendConfigProvider));
+            ->willReturn($extendConfigProvider);
         $extendConfigProvider->expects($this->once())
             ->method('hasConfig')
             ->with($class, $property)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $guess = $this->guesser->guessFormatter($class, $property, $type);
         $this->assertNull($guess);
@@ -56,11 +54,11 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
 
     public function testGuessFormatter()
     {
-        $class    = 'TestClass';
+        $class = 'TestClass';
         $property = 'testProp';
-        $type     = 'string';
+        $type = 'string';
 
-        $this->getFieldConfig(['is_serialized' => true]);
+        $this->prepareFieldConfig(['is_serialized' => true]);
         $guess = $this->guesser->guessFormatter($class, $property, $type);
         $this->assertEquals(
             [
@@ -74,33 +72,31 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
             ],
             $guess->getOptions()
         );
-        $this->assertEquals(ColumnGuess::HIGH_CONFIDENCE, $guess->getConfidence());
+        $this->assertEquals(Guess::HIGH_CONFIDENCE, $guess->getConfidence());
     }
 
     public function testGuessFilterNoGuess()
     {
-        $this->getFieldConfig();
+        $this->prepareFieldConfig();
         $guess = $this->guesser->guessFilter('TestClass', 'testProp', 'string');
         $this->assertNull($guess);
     }
 
     public function testGuessFilterNoConfig()
     {
-        $class    = 'TestClass';
+        $class = 'TestClass';
         $property = 'testProp';
-        $type     = 'integer';
+        $type = 'integer';
 
-        $extendConfigProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->configManager->expects($this->once())
             ->method('getProvider')
             ->with('extend')
-            ->will($this->returnValue($extendConfigProvider));
+            ->willReturn($extendConfigProvider);
         $extendConfigProvider->expects($this->once())
             ->method('hasConfig')
             ->with($class, $property)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $guess = $this->guesser->guessFilter($class, $property, $type);
         $this->assertNull($guess);
@@ -108,11 +104,11 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
 
     public function testGuessFilter()
     {
-        $class    = 'TestClass';
+        $class = 'TestClass';
         $property = 'testProp';
-        $type     = 'string';
+        $type = 'string';
 
-        $this->getFieldConfig(['is_serialized' => true]);
+        $this->prepareFieldConfig(['is_serialized' => true]);
         $guess = $this->guesser->guessFilter($class, $property, $type);
         $this->assertEquals(
             [
@@ -121,33 +117,31 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
             ],
             $guess->getOptions()
         );
-        $this->assertEquals(ColumnGuess::HIGH_CONFIDENCE, $guess->getConfidence());
+        $this->assertEquals(Guess::HIGH_CONFIDENCE, $guess->getConfidence());
     }
 
     public function testGuessSorterNoGuess()
     {
-        $this->getFieldConfig();
+        $this->prepareFieldConfig();
         $guess = $this->guesser->guessSorter('TestClass', 'testProp', 'string');
         $this->assertNull($guess);
     }
 
     public function testGuessSorterNoConfig()
     {
-        $class    = 'TestClass';
+        $class = 'TestClass';
         $property = 'testProp';
-        $type     = 'integer';
+        $type = 'integer';
 
-        $extendConfigProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->configManager->expects($this->once())
             ->method('getProvider')
             ->with('extend')
-            ->will($this->returnValue($extendConfigProvider));
+            ->willReturn($extendConfigProvider);
         $extendConfigProvider->expects($this->once())
             ->method('hasConfig')
             ->with($class, $property)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $guess = $this->guesser->guessSorter($class, $property, $type);
         $this->assertNull($guess);
@@ -155,11 +149,11 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
 
     public function testGuessSorter()
     {
-        $class    = 'TestClass';
+        $class = 'TestClass';
         $property = 'testProp';
-        $type     = 'string';
+        $type = 'string';
 
-        $this->getFieldConfig(['is_serialized' => true]);
+        $this->prepareFieldConfig(['is_serialized' => true]);
         $guess = $this->guesser->guessSorter($class, $property, $type);
         $this->assertEquals(
             [
@@ -167,31 +161,29 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
             ],
             $guess->getOptions()
         );
-        $this->assertEquals(ColumnGuess::HIGH_CONFIDENCE, $guess->getConfidence());
+        $this->assertEquals(Guess::HIGH_CONFIDENCE, $guess->getConfidence());
     }
 
-    protected function getFieldConfig($values = array())
+    private function prepareFieldConfig(array $values = []): void
     {
-        $class    = 'TestClass';
+        $class = 'TestClass';
         $property = 'testProp';
 
         $config = new Config(new FieldConfigId('extend', $class, $property, 'integer'));
         $config->setValues($values);
 
-        $extendConfigProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->configManager->expects($this->once())
             ->method('getProvider')
             ->with('extend')
-            ->will($this->returnValue($extendConfigProvider));
+            ->willReturn($extendConfigProvider);
         $extendConfigProvider->expects($this->once())
             ->method('hasConfig')
             ->with($class, $property)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $extendConfigProvider->expects($this->once())
             ->method('getConfig')
             ->with($class, $property)
-            ->will($this->returnValue($config));
+            ->willReturn($config);
     }
 }

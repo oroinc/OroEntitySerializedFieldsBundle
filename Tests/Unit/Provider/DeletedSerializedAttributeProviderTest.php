@@ -11,27 +11,20 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Provider\DeletedSerializedAttributeP
 
 class DeletedSerializedAttributeProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigModelManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configModelManager;
+    /** @var ConfigModelManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configModelManager;
 
-    /**
-     * @var AttributeValueProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $attributeValueProvider;
+    /** @var AttributeValueProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $attributeValueProvider;
 
-    /**
-     * @var DeletedSerializedAttributeProvider
-     */
-    protected $provider;
+    /** @var DeletedSerializedAttributeProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->configModelManager = $this->getMockBuilder(ConfigModelManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configModelManager = $this->createMock(ConfigModelManager::class);
         $this->attributeValueProvider = $this->createMock(AttributeValueProviderInterface::class);
+
         $this->provider = new DeletedSerializedAttributeProvider(
             $this->configModelManager,
             $this->attributeValueProvider
@@ -44,9 +37,7 @@ class DeletedSerializedAttributeProviderTest extends \PHPUnit\Framework\TestCase
         $serializedAttribute = $this->getAttribute(true);
         $fieldColumnAttribute = $this->getAttribute(false);
 
-        $repository = $this->getMockBuilder(FieldConfigModelRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(FieldConfigModelRepository::class);
         $repository->expects($this->once())
             ->method('getAttributesByIds')
             ->with($ids)
@@ -72,11 +63,7 @@ class DeletedSerializedAttributeProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($serializedAttribute, array_pop($attributes));
     }
 
-    /**
-     * @param bool $isSerialized
-     * @return FieldConfigModel
-     */
-    protected function getAttribute($isSerialized)
+    private function getAttribute(bool $isSerialized): FieldConfigModel
     {
         $attribute = new FieldConfigModel();
         $attribute->fromArray('extend', ['is_serialized' => $isSerialized]);

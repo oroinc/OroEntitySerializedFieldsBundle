@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 use Oro\Bundle\EntitySerializedFieldsBundle\EventListener\SerializedDataPostUpMigrationListener;
+use Oro\Bundle\MigrationBundle\Event\PostMigrationEvent;
 
 class SerializedDataPostUpMigrationListenerTest extends \PHPUnit\Framework\TestCase
 {
     public function testOnPostUp()
     {
-        $metadataHelper = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metadataHelper = $this->createMock(EntityMetadataHelper::class);
         $listener = new SerializedDataPostUpMigrationListener($metadataHelper);
-        $event = $this->getMockBuilder('Oro\Bundle\MigrationBundle\Event\PostMigrationEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(PostMigrationEvent::class);
         $event->expects($this->once())
             ->method('addMigration');
         $listener->onPostUp($event);
