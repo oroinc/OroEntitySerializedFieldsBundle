@@ -3,6 +3,7 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_0\UpdateCustomFieldsWithStorageType;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -35,7 +36,7 @@ class OroEntitySerializedFieldsBundleInstaller implements Installation, Containe
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        if ($this->container->hasParameter('installed') && $this->container->getParameter('installed')) {
+        if ($this->container->get(ApplicationState::class)->isInstalled()) {
             $queries->addQuery(new UpdateCustomFieldsWithStorageType($schema));
         }
     }
