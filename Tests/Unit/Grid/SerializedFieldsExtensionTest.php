@@ -151,8 +151,7 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
 
         $extendConfigProvider = $this->createMock(ConfigProvider::class);
 
-        $extendConfigProvider
-            ->expects($this->exactly(count($fields)))
+        $extendConfigProvider->expects($this->exactly(count($fields)))
             ->method('getConfig')
             ->withConsecutive(...$fieldsData)
             ->willReturnOnConsecutiveCalls(...$configs);
