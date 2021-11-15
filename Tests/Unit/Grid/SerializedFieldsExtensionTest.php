@@ -33,10 +33,7 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var DatagridGuesser|\PHPUnit\Framework\MockObject\MockObject */
     private $datagridGuesser;
 
-    /** @var SerializedFieldsExtension */
-    private $extension;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
@@ -44,6 +41,9 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
 
     /** @var SelectedFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $selectedFieldsProvider;
+
+    /** @var SerializedFieldsExtension */
+    private $extension;
 
     protected function setUp(): void
     {
@@ -151,9 +151,10 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
 
         $extendConfigProvider = $this->createMock(ConfigProvider::class);
 
-        $extendConfigProviderMock = $extendConfigProvider
-            ->expects($this->exactly(count($fields)))
-            ->method('getConfig');
+        $extendConfigProvider->expects($this->exactly(count($fields)))
+            ->method('getConfig')
+            ->withConsecutive(...$fieldsData)
+            ->willReturnOnConsecutiveCalls(...$configs);
 
         $this->configManager->expects($this->any())
             ->method('getProvider')
@@ -163,9 +164,6 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->entityClassResolver->expects($this->any())
             ->method('getEntityClass')
             ->willReturn(self::ENTITY_CLASS_NAME);
-
-        call_user_func_array([$extendConfigProviderMock, 'withConsecutive'], $fieldsData);
-        call_user_func_array([$extendConfigProviderMock, 'willReturnOnConsecutiveCalls'], $configs);
 
         $this->selectedFieldsProvider->expects($this->any())
             ->method('getSelectedFields')

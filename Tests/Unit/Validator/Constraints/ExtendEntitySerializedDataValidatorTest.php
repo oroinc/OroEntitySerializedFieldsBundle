@@ -21,11 +21,14 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
 {
     private const FIELD_NAME = 'test_field';
 
-    private ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $configProvider;
 
-    private FieldConfigConstraintsFactory|\PHPUnit\Framework\MockObject\MockObject $fieldConfigConstraintsFactory;
+    /** @var FieldConfigConstraintsFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldConfigConstraintsFactory;
 
-    private ExtendEntitySerializedDataValidator $constraintValidator;
+    /** @var ExtendEntitySerializedDataValidator */
+    private $constraintValidator;
 
     protected function setUp(): void
     {
@@ -219,14 +222,12 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
         bool $hasConfig = true,
         bool $getConfig = true
     ): void {
-        $this->configProvider
-            ->expects($getConfig ? self::once() : self::never())
+        $this->configProvider->expects($getConfig ? self::once() : self::never())
             ->method('hasConfig')
             ->with(ExtendEntityStub::class, self::FIELD_NAME)
             ->willReturn($hasConfig);
 
-        $this->configProvider
-            ->expects($hasConfig ? self::once() : self::never())
+        $this->configProvider->expects($hasConfig ? self::once() : self::never())
             ->method('getConfig')
             ->with(ExtendEntityStub::class, self::FIELD_NAME)
             ->willReturn(
