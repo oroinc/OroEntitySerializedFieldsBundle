@@ -1,5 +1,5 @@
 {% block oro_serialized_fields_is_serialized_type_widget %}
-    {% spaceless %}
+    {% apply spaceless %}
         {{ form_widget(form) }}
         <script type="text/javascript">
             loadModules(['jquery', 'oroui/js/mediator'], function ($, mediator) {
@@ -38,5 +38,5 @@
                 })
             });
         </script>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
