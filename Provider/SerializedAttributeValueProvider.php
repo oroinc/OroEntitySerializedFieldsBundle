@@ -7,6 +7,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Provider\AttributeValueProviderInterface;
 
+/**
+ * Provides given entity attributes' values clean up.
+ */
 class SerializedAttributeValueProvider implements AttributeValueProviderInterface
 {
     const BATCH_SIZE = 1000;
@@ -39,13 +42,11 @@ class SerializedAttributeValueProvider implements AttributeValueProviderInterfac
         foreach ($iterator as $entity) {
             $itemsCount++;
             foreach ($names as $name) {
-                $getter = 'get' . ucfirst($name);
-                if (!$entity->$getter()) {
+                if (!method_exists($entity, '__set')) {
                     continue;
                 }
 
-                $setter = 'set' . ucfirst($name);
-                $entity->$setter(null);
+                $entity->{$name} = null;
                 $manager->persist($entity);
             }
             if (0 === $itemsCount % self::BATCH_SIZE) {

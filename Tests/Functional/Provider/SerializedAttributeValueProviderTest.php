@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Functional\Provider;
 
-use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
@@ -48,23 +47,21 @@ class SerializedAttributeValueProviderTest extends WebTestCase
     {
         $attributeFamily = $this->getReference(LoadAttributeFamilyData::ATTRIBUTE_FAMILY_1);
 
-        $attributeName = $this->getSerializedAttributeName();
         $testActivityTargetManager = $this->doctrineHelper->getEntityManagerForClass(TestActivityTarget::class);
         $testActivityTarget = $this->loadTestActivityTarget(
             $attributeFamily,
             $testActivityTargetManager,
-            $attributeName
+            'serialized_attribute'
         );
 
-        $getter = 'get' . $attributeName;
-        $this->assertNotEmpty($testActivityTarget->$getter());
+        $this->assertNotEmpty($testActivityTarget->serialized_attribute);
 
         $this->provider->removeAttributeValues(
             $attributeFamily,
-            [$attributeName]
+            ['serialized_attribute']
         );
 
-        $this->assertEmpty($testActivityTarget->$getter());
+        $this->assertEmpty($testActivityTarget->serialized_attribute);
     }
 
     /**
@@ -81,20 +78,11 @@ class SerializedAttributeValueProviderTest extends WebTestCase
         $testActivityTarget = $this->getReference('activity_target_one');
         $testActivityTarget->setAttributeFamily($attributeFamily);
 
-        $setter = 'set' . $attributeName;
-        $testActivityTarget->$setter('some string');
+        $testActivityTarget->$attributeName = 'some string';
 
         $manager->persist($testActivityTarget);
         $manager->flush();
 
         return $testActivityTarget;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getSerializedAttributeName()
-    {
-        return ucfirst((new InflectorFactory())->build()->camelize('serialized_attribute'));
     }
 }
