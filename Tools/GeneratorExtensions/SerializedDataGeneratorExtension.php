@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions;
 
-use Doctrine\Inflector\Inflector;
 use Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\AbstractEntityGeneratorExtension;
+use Oro\Bundle\EntitySerializedFieldsBundle\Entity\SerializedFieldsTrait;
 use Oro\Component\PhpUtils\ClassGenerator;
 
 /**
@@ -14,11 +15,11 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
 {
     public const SERIALIZED_DATA_FIELD = 'serialized_data';
 
-    private Inflector $inflector;
+    private bool $isDebug;
 
-    public function __construct(Inflector $inflector)
+    public function __construct(bool $isDebug = false)
     {
-        $this->inflector = $inflector;
+        $this->isDebug = $isDebug;
     }
 
     /**
@@ -31,44 +32,16 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
 
     public function generate(array $schema, ClassGenerator $class): void
     {
-        if (empty($schema['serialized_property'])) {
+        if (!$class->hasProperty(self::SERIALIZED_DATA_FIELD)) {
             return;
         }
 
-        foreach ($schema['serialized_property'] as $fieldName => $config) {
-            $getMethodName = $this->generateGetMethodName($fieldName);
-            $setMethodName = $this->generateSetMethodName($fieldName);
-            if ($class->hasMethod($getMethodName)) {
-                $class->removeMethod($getMethodName);
-            }
-            if ($class->hasMethod($setMethodName)) {
-                $class->removeMethod($setMethodName);
-            }
+        $class->addTrait(SerializedFieldsTrait::class);
 
-            $isPrivate = is_array($config) && isset($config['private']) && $config['private'];
-            if (!$isPrivate) {
-                $class->addMethod($getMethodName)
-                    ->addBody(
-                        'return isset($this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\'])' .
-                        ' ? $this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\']' .
-                        ' : null;'
-                    );
-                $class->addMethod($setMethodName)
-                    ->addBody(
-                        '$this->' . self::SERIALIZED_DATA_FIELD .'[\'' . $fieldName . '\'] = $value; return $this;'
-                    )
-                    ->addParameter('value');
+        if (!empty($schema['serialized_property']) && $this->isDebug) {
+            foreach (array_keys($schema['serialized_property']) as $fieldName) {
+                $class->addComment(sprintf('@property $%s', $fieldName));
             }
         }
-    }
-
-    protected function generateGetMethodName(string $fieldName): string
-    {
-        return 'get' . \ucfirst($this->inflector->camelize($fieldName));
-    }
-
-    protected function generateSetMethodName(string $fieldName): string
-    {
-        return 'set' . \ucfirst($this->inflector->camelize($fieldName));
     }
 }

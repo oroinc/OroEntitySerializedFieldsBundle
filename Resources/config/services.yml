@@ -16,7 +16,7 @@ services:
     oro_serialized_fields.entity_generator.extension:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions\SerializedDataGeneratorExtension
         arguments:
-            - '@Doctrine\Inflector\Inflector'
+            - '%kernel.debug%'
         tags:
             - { name: oro_entity_extend.entity_generator_extension }
 
@@ -148,9 +148,10 @@ services:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Provider\SerializedAttributeValueProvider
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@property_accessor'
 
     oro_serialized_fields.event_listener.deleted_attribute_relation_serialized:
-        class: Oro\Bundle\EntityConfigBundle\EventListener\DeletedAttributeRelationListener
+        class: Oro\Bundle\EntitySerializedFieldsBundle\EventListener\DeletedAttributeRelationListener
         arguments:
             - '@oro_message_queue.message_producer'
             - '@oro_serialized_fields.provider.deleted_serialized_attribute'
@@ -169,3 +170,12 @@ services:
             - '@oro_serialized_fields.provider.deleted_serialized_attribute'
         tags:
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_serialized_fields.serialized_attribute_was_removed_from_family' }
+
+    oro_serialized_fields.property_accessor.read_reflection_extractor:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\PropertyInfo\ReflectionExtractor
+        arguments: [[], null, null, false]
+
+    oro_serialized_fields.property_accessor.write_reflection_extractor:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\PropertyInfo\ReflectionExtractor
+        arguments:
+            $mutatorPrefixes: ['set']

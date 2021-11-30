@@ -8,7 +8,6 @@ entity_config:
                 #
                 is_serialized:
                     options:
-                        default_value:      false
                         required_properties:
                             -
                                config_id:
