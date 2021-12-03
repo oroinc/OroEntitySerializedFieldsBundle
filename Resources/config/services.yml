@@ -13,6 +13,12 @@ services:
         tags:
             - { name: oro_migration.extension, extension_name: serialized_fields }
 
+    oro_serialized_fields.migration.serialized_columns_holder_helper:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Migration\SerializedColumnsHolderHelper
+        public: true
+        arguments:
+            - '@oro_entity_extend.migration.entity_metadata_helper'
+
     oro_serialized_fields.entity_generator.extension:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions\SerializedDataGeneratorExtension
         arguments:
@@ -24,7 +30,6 @@ services:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Tools\DumperExtensions\SerializedEntityConfigDumperExtension
         arguments:
             - "@oro_entity_config.config_manager"
-            - "@oro_entity_extend.extend.field_type_helper"
         tags:
             - { name: oro_entity_extend.entity_config_dumper_extension, priority: -256 }
 
@@ -179,3 +184,15 @@ services:
         class: Oro\Bundle\EntitySerializedFieldsBundle\PropertyInfo\ReflectionExtractor
         arguments:
             $mutatorPrefixes: ['set']
+
+    oro_serialized_fields.normalizer.fields_compound_normalizer:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Normalizer\CompoundSerializedFieldsNormalizer
+        public: true
+        arguments:
+            - !tagged_locator { tag: 'oro_serialized_fields.field_normalizer', index_by: 'field_type' }
+
+    oro_serialized_fields.normalizer.datetime_normalizer:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Normalizer\DatetimeSerializedFieldNormalizer
+        tags:
+            - { name: 'oro_serialized_fields.field_normalizer', field_type: 'datetime' }
+            - { name: 'oro_serialized_fields.field_normalizer', field_type: 'date' }

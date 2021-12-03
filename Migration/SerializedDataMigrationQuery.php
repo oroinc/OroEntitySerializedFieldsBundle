@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
@@ -35,7 +38,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
 
     public function __construct(Schema $schema, EntityMetadataHelper $metadataHelper)
     {
-        $this->schema         = $schema;
+        $this->schema = $schema;
         $this->metadataHelper = $metadataHelper;
     }
 
@@ -60,59 +63,58 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
 
     /**
      * @param LoggerInterface $logger
-     * @param bool            $dryRun
+     * @param bool $dryRun
      */
     protected function runSerializedData(LoggerInterface $logger, $dryRun = false)
     {
-        $entities         = $this->getEntities($logger);
+        $entities = $this->getEntities($logger);
         $hasSchemaChanges = false;
-        $toSchema         = clone $this->schema;
-        foreach ($entities as $entityClass => $tableName) {
+        $toSchema = clone $this->schema;
+        $platform = $this->connection->getDatabasePlatform();
+
+        $options = [
+            'notnull' => false,
+            OroOptions::KEY => [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                'entity' => [
+                    'label' => 'oro.entity_serialized_fields.data.label'
+                ],
+                'extend' => [
+                    'is_extend' => false,
+                    'owner' => ExtendScope::OWNER_CUSTOM
+                ],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => false],
+                'dataaudit' => ['auditable' => false]
+            ]
+        ];
+        if ($platform instanceof PostgreSQL94Platform) {
+            $options['customSchemaOptions'] = ['jsonb' => true];
+        }
+
+        foreach ($entities as $tableName) {
             // Process only existing tables
             if (!$toSchema->hasTable($tableName)) {
                 continue;
             }
             $table = $toSchema->getTable($tableName);
-            $options =  [
-                'notnull'       => false,
-                OroOptions::KEY => [
-                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                    'entity'                          => [
-                        'label' => 'oro.entity_serialized_fields.data.label'
-                    ],
-                    'extend'                          => [
-                        'is_extend' => false,
-                        'owner'     => ExtendScope::OWNER_CUSTOM
-                    ],
-                    'datagrid'                        => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
-                    'form'                            => ['is_enabled' => false],
-                    'view'                            => ['is_displayable' => false],
-                    'merge'                           => ['display' => false],
-                    'dataaudit'                       => ['auditable' => false]
-                ]
-            ];
 
             if (!$table->hasColumn(static::COLUMN_NAME)) {
-                $table->addColumn(static::COLUMN_NAME, Types::ARRAY, $options);
+                $table->addColumn(static::COLUMN_NAME, Types::JSON, $options);
             } else { //Forcibly set options to existing field
                 $serializedColumn = $table->getColumn(static::COLUMN_NAME);
-                $serializedColumn->setType(Type::getType(Types::ARRAY));
+                if ($serializedColumn->getType()->getName() !== Types::JSON) {
+                    $serializedColumn->setType(Type::getType(Types::JSON));
+                }
                 $serializedColumn->setOptions($options);
             }
             $hasSchemaChanges = true;
         }
 
         if ($hasSchemaChanges) {
-            // Run schema related SQLs manually because this query run when diff is already calculated by schema tool
-            $comparator = new Comparator();
-            $platform   = $this->connection->getDatabasePlatform();
-            $schemaDiff = $comparator->compare($this->schema, $toSchema);
-            foreach ($schemaDiff->toSql($platform) as $query) {
-                $this->logQuery($logger, $query);
-                if (!$dryRun) {
-                    $this->connection->query($query);
-                }
-            }
+            $this->applySchemaChanges($toSchema, $platform, $logger, $dryRun);
         }
     }
 
@@ -129,17 +131,16 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
     {
         $result = [];
 
-        $sql    = 'SELECT class_name, data FROM oro_entity_config WHERE mode = ?';
+        $sql = 'SELECT class_name, data FROM oro_entity_config WHERE mode = ?';
         $params = [ConfigModel::MODE_DEFAULT];
-        $types  = [Types::STRING];
+        $types = [Types::STRING];
 
         $this->logQuery($logger, $sql, $params, $types);
-        $rows = $this->connection->fetchAll($sql, $params, $types);
+        $rows = $this->connection->fetchAllAssociative($sql, $params, $types);
         foreach ($rows as $row) {
             $entityClass = $row['class_name'];
-            $config      = $this->connection->convertToPHPValue($row['data'], Types::ARRAY);
-            if (isset($config['extend']['is_extend'])
-                && $config['extend']['is_extend']
+            $config = $this->connection->convertToPHPValue($row['data'], Types::ARRAY);
+            if (!empty($config['extend']['is_extend'])
                 && $config['extend']['state'] === ExtendScope::STATE_ACTIVE
             ) {
                 $tableName = $config['extend']['schema']['doctrine'][$entityClass]['table'] ??
@@ -154,8 +155,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
             $options = $this->schema->getExtendOptions();
             foreach ($options as $key => $value) {
                 if ($this->isTableOptions($key)
-                    && isset($value['extend']['is_extend'])
-                    && $value['extend']['is_extend']
+                    && !empty($config['extend']['is_extend'])
                     && isset($value[ExtendOptionsManager::ENTITY_CLASS_OPTION])
                     && (
                         !isset($value[ExtendOptionsManager::MODE_OPTION])
@@ -190,5 +190,28 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         }
 
         return true;
+    }
+
+    /**
+     * Run schema related SQLs manually because this query run when diff is already calculated by schema tool
+     */
+    protected function applySchemaChanges(
+        Schema $toSchema,
+        AbstractPlatform $platform,
+        LoggerInterface $logger,
+        bool $dryRun
+    ): void {
+        $comparator = new Comparator();
+        $schemaDiff = $comparator->compare($this->schema, $toSchema);
+        $isMySql = $platform instanceof MySqlPlatform;
+        foreach ($schemaDiff->toSql($platform) as $query) {
+            if ($isMySql && stripos($query, 'CHANGE serialized_data serialized_data JSON') !== false) {
+                $query = str_replace(['CHARACTER SET utf8', 'COLLATE `utf8_unicode_ci`'], '', $query);
+            }
+            $this->logQuery($logger, $query);
+            if (!$dryRun) {
+                $this->connection->executeQuery($query);
+            }
+        }
     }
 }
