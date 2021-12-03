@@ -3,19 +3,18 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Validator\Constraints\Stub;
 
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntitySerializedFieldsBundle\Entity\SerializedFieldsTrait;
 
 class ExtendEntityStub implements ExtendEntityInterface
 {
-    /** @var array */
-    private $serializedData;
+    use SerializedFieldsTrait;
 
-    public function __construct(array $serializedData = [])
+    public function __construct(private array $serialized_data = [])
     {
-        $this->serializedData = $serializedData;
     }
 
     public function getSerializedData(): array
     {
-        return $this->serializedData;
+        return $this->serialized_data;
     }
 }

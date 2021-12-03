@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Tools\DumperExtensions;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Tests\Unit\ConfigProviderMock;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
@@ -17,7 +19,15 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
 
     protected function setUp(): void
     {
+        $connection = $this->createMock(Connection::class);
+        $connection->method('getDatabasePlatform')
+            ->willReturn(null);
+        $em = $this->createMock(EntityManager::class);
+        $em->method('getConnection')
+            ->willReturn($connection);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->configManager->method('getEntityManager')
+            ->willReturn($em);
 
         $this->extension = new SerializedEntityConfigDumperExtension(
             $this->configManager
@@ -31,7 +41,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
     {
         return [
             'column'   => 'serialized_data',
-            'type'     => 'array',
+            'type'     => 'json',
             'nullable' => true
         ];
     }

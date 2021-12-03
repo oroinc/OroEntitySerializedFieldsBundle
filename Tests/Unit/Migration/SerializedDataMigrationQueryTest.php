@@ -50,7 +50,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
         $this->query->setConnection($this->connection);
 
         $this->connection->expects($this->once())
-            ->method('fetchAll')
+            ->method('fetchAllAssociative')
             ->willReturn($row);
 
         $this->helper->expects($this->any())
@@ -77,7 +77,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
                 '$data' => ['extend' => ['is_extend' => true, 'state' => 'Active']],
                 '$expectedLoggerMessages' => 'SELECT class_name, data FROM oro_entity_config WHERE mode = ?'
                     . ' Parameters: [1] = default'
-                    . ' ALTER TABLE test_table ADD serialized_data LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:array)\''
+                    . ' ALTER TABLE test_table ADD serialized_data LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:json)\''
             ],
         ];
     }
@@ -91,7 +91,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
         $entityClass = 'Test\Entity\Entity1';
 
         $this->connection->expects(self::once())
-            ->method('fetchAll')
+            ->method('fetchAllAssociative')
             ->willReturn([['class_name' => $entityClass, 'data' => []]]);
 
         $this->schema->createTable($tableName);
@@ -106,9 +106,9 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
                 ],
             ]);
 
-        $expectedQuery = "ALTER TABLE entity_1 ADD serialized_data LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)'";
+        $expectedQuery = "ALTER TABLE entity_1 ADD serialized_data LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)'";
         $this->connection->expects(self::once())
-            ->method('query')
+            ->method('executeQuery')
             ->with($expectedQuery);
 
         $this->query->execute($logger);
@@ -123,7 +123,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
         $entityClass = 'Test\Entity\Entity1';
 
         $this->connection->expects(self::once())
-            ->method('fetchAll')
+            ->method('fetchAllAssociative')
             ->willReturn([['class_name' => $entityClass, 'data' => []]]);
 
         $this->schema->createTable($tableName);
@@ -141,10 +141,10 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $expectedQuery ='ALTER TABLE entity_1 CHANGE serialized_data serialized_data '
-            . 'LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:array)\'';
+            . 'LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:json)\'';
 
         $this->connection->expects(self::once())
-            ->method('query')
+            ->method('executeQuery')
             ->with($expectedQuery);
 
         $this->query->execute($logger);

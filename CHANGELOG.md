@@ -2,6 +2,12 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 5.0.0-rc
+
+### Changed
+
+Changed serialized fields database storage format from base64 encoded serialized string to native JSON and JSONB.
+
 ## 5.0.0-alpha.2 (2021-05-28)
 [Show detailed list of changes](incompatibilities-5-0-alpha-2.md)
 

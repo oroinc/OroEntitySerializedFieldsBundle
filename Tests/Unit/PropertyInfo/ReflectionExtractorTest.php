@@ -4,6 +4,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\PropertyInfo;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntitySerializedFieldsBundle\Entity\EntitySerializedFieldsHolder;
 use Oro\Bundle\EntitySerializedFieldsBundle\PropertyInfo\ReflectionExtractor;
 use Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Fixtures\TestClassWithSerializedFieldsTrait;
@@ -13,7 +14,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ReflectionExtractorTest extends TestCase
 {
-    private const DEFINED_PROPERTIES = ['property_one', 'property_two'];
     private ReflectionExtractor $reflectionExtractor;
 
     private ConfigManager $configManager;
@@ -22,17 +22,38 @@ class ReflectionExtractorTest extends TestCase
     {
         $this->reflectionExtractor = new ReflectionExtractor();
 
-        $config = $this->createMock(ConfigInterface::class);
-        $config->method('get')
-            ->with('schema')
-            ->willReturn([
-                'serialized_property' => array_flip(self::DEFINED_PROPERTIES),
-            ]);
+        $fieldOneConfigId = $this->createMock(FieldConfigId::class);
+        $fieldOneConfigId->method('getFieldName')
+            ->willReturn('property_one');
+        $fieldOneConfigId->method('getFieldType')
+            ->willReturn('text');
+        $fieldOneConfig = $this->createMock(ConfigInterface::class);
+        $fieldOneConfig->method('get')
+            ->with('is_serialized')
+            ->willReturn(true);
+        $fieldOneConfig->method('getId')
+            ->willReturn($fieldOneConfigId);
+
+        $fieldTwoConfigId = $this->createMock(FieldConfigId::class);
+        $fieldTwoConfigId->method('getFieldName')
+            ->willReturn('property_two');
+        $fieldTwoConfigId->method('getFieldType')
+            ->willReturn('text');
+        $fieldTwoConfig = $this->createMock(ConfigInterface::class);
+        $fieldTwoConfig->method('get')
+            ->with('is_serialized')
+            ->willReturn(true);
+        $fieldTwoConfig->method('getId')
+            ->willReturn($fieldTwoConfigId);
+
+        $fieldConfigs = [$fieldOneConfig, $fieldTwoConfig];
+
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->configManager
-            ->method('getEntityConfig')
-            ->with('extend', TestClassWithSerializedFieldsTrait::class)
-            ->willReturn($config);
+            ->method('getConfigs')
+            ->with('extend', TestClassWithSerializedFieldsTrait::class, true)
+            ->willReturn($fieldConfigs);
+
         $container = $this->createMock(ContainerInterface::class);
         $container
             ->method('get')

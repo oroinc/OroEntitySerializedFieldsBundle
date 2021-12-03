@@ -5,13 +5,18 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Validator\Constrain
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityConfigBundle\Validator\FieldConfigConstraintsFactory;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntitySerializedFieldsBundle\Entity\EntitySerializedFieldsHolder;
+use Oro\Bundle\EntitySerializedFieldsBundle\Normalizer\CompoundSerializedFieldsNormalizer;
 use Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Validator\Constraints\Stub\ExtendEntityStub;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedData;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedDataValidator;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ContextualValidatorInterface;
@@ -96,6 +101,7 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
             ->with($this->getConfig($type, $values))
             ->willReturn([$constraintGreaterThan10]);
 
+        $this->mockEntitySerializedFieldsHolder(ExtendEntityStub::class, array_keys($serializedData));
         $this->constraintValidator->initialize($context);
         $this->constraintValidator->validate(new ExtendEntityStub($serializedData), new ExtendEntitySerializedData());
     }
@@ -135,6 +141,7 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
 
         $serializedData = [self::FIELD_NAME => 'value'];
 
+        $this->mockEntitySerializedFieldsHolder(ExtendEntityStub::class, array_keys($serializedData));
         $this->constraintValidator->initialize($context);
         $this->constraintValidator->validate(new ExtendEntityStub($serializedData), new ExtendEntitySerializedData());
     }
@@ -212,6 +219,7 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
 
         $serializedData = [self::FIELD_NAME => 'value'];
 
+        $this->mockEntitySerializedFieldsHolder(ExtendEntityStub::class, array_keys($serializedData));
         $this->constraintValidator->initialize($context);
         $this->constraintValidator->validate(new ExtendEntityStub($serializedData), new ExtendEntitySerializedData());
     }
@@ -241,5 +249,52 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
             new FieldConfigId('extend', ExtendEntityStub::class, self::FIELD_NAME, $type),
             $values
         );
+    }
+
+    /**
+     * @param string $className
+     * @param array $fields
+     */
+    private function mockEntitySerializedFieldsHolder(string $className, array $fields)
+    {
+        $fieldConfigs = [];
+        foreach ($fields as $field) {
+            $fieldConfigId = $this->createMock(FieldConfigId::class);
+            $fieldConfigId->method('getFieldName')
+                ->willReturn($field);
+            $fieldConfigId->method('getFieldType')
+                ->willReturn('text');
+            $fieldConfig = $this->createMock(ConfigInterface::class);
+            $fieldConfig->method('get')
+                ->with('is_serialized')
+                ->willReturn(true);
+            $fieldConfig->method('getId')
+                ->willReturn($fieldConfigId);
+
+            $fieldConfigs[] = $fieldConfig;
+        }
+
+        $configManager = $this->createMock(ConfigManager::class);
+        $configManager->method('getConfigs')
+            ->with('extend', $className, true)
+            ->willReturn($fieldConfigs);
+        $normalizer = $this->createMock(CompoundSerializedFieldsNormalizer::class);
+        $normalizer->method('normalize')
+            ->will($this->returnCallback(function ($fieldType, $value) {
+                return $value;
+            }));
+        $normalizer->method('denormalize')
+            ->will($this->returnCallback(function ($fieldType, $value) {
+                return $value;
+            }));
+
+        $container = $this->createMock(ContainerInterface::class);
+        $container->method('get')
+            ->withConsecutive(
+                ['oro_entity_config.config_manager'],
+                ['oro_serialized_fields.normalizer.fields_compound_normalizer']
+            )->willReturnOnConsecutiveCalls($configManager, $normalizer);
+
+        EntitySerializedFieldsHolder::initialize($container);
     }
 }

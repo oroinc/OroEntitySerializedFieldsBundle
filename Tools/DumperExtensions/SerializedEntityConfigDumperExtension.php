@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tools\DumperExtensions;
 
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
@@ -41,6 +43,8 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
     {
         /** @var ConfigProvider $extendConfigProvider */
         $extendConfigProvider = $this->configManager->getProvider('extend');
+        $platform = $this->configManager->getEntityManager()->getConnection()->getDatabasePlatform();
+        $isPg = $platform instanceof PostgreSQL94Platform;
 
         /**
          * Because of values of all serialized fields are stored in "serialized_data" column we should:
@@ -59,10 +63,15 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
                 $entityClassName = $schema['entity'];
                 $schema['property'][self::SERIALIZED_DATA_FIELD] = [];
                 $schema['doctrine'][$entityClassName]['fields'][self::SERIALIZED_DATA_FIELD] = [
-                    'column'   => self::SERIALIZED_DATA_FIELD,
-                    'type'     => 'array',
+                    'column' => self::SERIALIZED_DATA_FIELD,
+                    'type' => Types::JSON,
                     'nullable' => true,
                 ];
+                if ($isPg) {
+                    $schema['doctrine'][$entityClassName]['fields'][self::SERIALIZED_DATA_FIELD]['options'] = [
+                        'jsonb' => true
+                    ];
+                }
 
                 $serializedFields = $extendConfigProvider->filter(
                     function (ConfigInterface $field) {

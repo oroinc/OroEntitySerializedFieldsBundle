@@ -36,6 +36,11 @@ class SerializedDataGeneratorExtension extends AbstractEntityGeneratorExtension
             return;
         }
 
+        if ($class->hasMethod('getSerializedData')) {
+            $class->getMethod('getSerializedData')->addComment('@internal');
+            $class->getMethod('setSerializedData')->addComment('@internal');
+        }
+
         $class->addTrait(SerializedFieldsTrait::class);
 
         if (!empty($schema['serialized_property']) && $this->isDebug) {

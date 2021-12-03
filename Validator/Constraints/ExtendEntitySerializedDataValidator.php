@@ -63,13 +63,12 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
             return;
         }
 
-        $data = $value->getSerializedData();
         foreach ($this->getFieldConstraints(ClassUtils::getClass($value)) as $fieldName => $constraints) {
-            if (isset($data[$fieldName])) {
+            if (isset($value->{$fieldName})) {
                 $this->context->getValidator()
                     ->inContext($this->context)
                     ->atPath($fieldName)
-                    ->validate($data[$fieldName], $constraints);
+                    ->validate($value->{$fieldName}, $constraints);
             }
         }
     }
