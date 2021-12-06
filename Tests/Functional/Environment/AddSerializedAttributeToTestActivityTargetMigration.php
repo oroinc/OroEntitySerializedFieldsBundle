@@ -17,7 +17,7 @@ class AddSerializedAttributeToTestActivityTargetMigration implements
     SerializedFieldsExtensionAwareInterface
 {
     /** @var SerializedFieldsExtension */
-    protected $serializedFieldsExtension;
+    private $serializedFieldsExtension;
 
     /**
      * {@inheritdoc}

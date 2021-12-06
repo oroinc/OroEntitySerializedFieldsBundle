@@ -5,8 +5,6 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Functional\Provider;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityConfigBundle\Entity\Repository\FieldConfigModelRepository;
 use Oro\Bundle\EntityConfigBundle\Provider\AttributeValueProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestActivityTarget;
@@ -15,39 +13,22 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadActivityTar
 
 class SerializedAttributeValueProviderTest extends WebTestCase
 {
-    /**
-     * @var AttributeValueProviderInterface
-     */
-    protected $provider;
-
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var FieldConfigModelRepository
-     */
-    protected $repository;
-
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
         $this->loadFixtures([
             LoadAttributeFamilyData::class,
             LoadActivityTargets::class,
         ]);
-        $this->provider = $this->getContainer()->get('oro_serialized_fields.provider.serialized_attribute_value');
-        $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $this->repository = $this->doctrineHelper->getEntityRepositoryForClass(FieldConfigModel::class);
     }
 
     public function testRemoveAttributeValues()
     {
         $attributeFamily = $this->getReference(LoadAttributeFamilyData::ATTRIBUTE_FAMILY_1);
 
-        $testActivityTargetManager = $this->doctrineHelper->getEntityManagerForClass(TestActivityTarget::class);
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $testActivityTargetManager = $doctrineHelper->getEntityManagerForClass(TestActivityTarget::class);
         $testActivityTarget = $this->loadTestActivityTarget(
             $attributeFamily,
             $testActivityTargetManager,
@@ -56,7 +37,9 @@ class SerializedAttributeValueProviderTest extends WebTestCase
 
         $this->assertNotEmpty($testActivityTarget->serialized_attribute);
 
-        $this->provider->removeAttributeValues(
+        /** @var AttributeValueProviderInterface $provider */
+        $provider = $this->getContainer()->get('oro_serialized_fields.provider.serialized_attribute_value');
+        $provider->removeAttributeValues(
             $attributeFamily,
             ['serialized_attribute']
         );
@@ -64,21 +47,14 @@ class SerializedAttributeValueProviderTest extends WebTestCase
         $this->assertEmpty($testActivityTarget->serialized_attribute);
     }
 
-    /**
-     * @param AttributeFamily $attributeFamily
-     * @param EntityManagerInterface $manager
-     * @param string $attributeName
-     * @return TestActivityTarget
-     */
-    protected function loadTestActivityTarget(
+    private function loadTestActivityTarget(
         AttributeFamily $attributeFamily,
         EntityManagerInterface $manager,
-        $attributeName
-    ) {
+        string $attributeName
+    ): TestActivityTarget {
         $testActivityTarget = $this->getReference('activity_target_one');
         $testActivityTarget->setAttributeFamily($attributeFamily);
-
-        $testActivityTarget->$attributeName = 'some string';
+        $testActivityTarget->{$attributeName} = 'some string';
 
         $manager->persist($testActivityTarget);
         $manager->flush();
