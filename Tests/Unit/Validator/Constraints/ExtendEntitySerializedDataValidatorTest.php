@@ -251,11 +251,7 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
         );
     }
 
-    /**
-     * @param string $className
-     * @param array $fields
-     */
-    private function mockEntitySerializedFieldsHolder(string $className, array $fields)
+    private function mockEntitySerializedFieldsHolder(string $className, array $fields): void
     {
         $fieldConfigs = [];
         foreach ($fields as $field) {
@@ -280,13 +276,13 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
             ->willReturn($fieldConfigs);
         $normalizer = $this->createMock(CompoundSerializedFieldsNormalizer::class);
         $normalizer->method('normalize')
-            ->will($this->returnCallback(function ($fieldType, $value) {
+            ->willReturnCallback(function ($fieldType, $value) {
                 return $value;
-            }));
+            });
         $normalizer->method('denormalize')
-            ->will($this->returnCallback(function ($fieldType, $value) {
+            ->willReturnCallback(function ($fieldType, $value) {
                 return $value;
-            }));
+            });
 
         $container = $this->createMock(ContainerInterface::class);
         $container->method('get')
