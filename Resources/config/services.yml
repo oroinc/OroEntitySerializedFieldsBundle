@@ -141,7 +141,7 @@ services:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Provider\DeletedAttributeProviderDecorator
         decorates: oro_entity_config.provider.deleted_attribute
         arguments:
-            - '@oro_serialized_fields.provider.deleted_attribute.decorator.inner'
+            - '@.inner'
 
     oro_serialized_fields.provider.deleted_serialized_attribute:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Provider\DeletedSerializedAttributeProvider
