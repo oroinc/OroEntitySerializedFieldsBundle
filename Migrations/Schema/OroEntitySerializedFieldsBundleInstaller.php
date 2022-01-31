@@ -28,7 +28,7 @@ class OroEntitySerializedFieldsBundleInstaller implements Installation, Containe
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**

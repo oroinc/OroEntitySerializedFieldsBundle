@@ -28,9 +28,13 @@ trait SerializedFieldsTrait
             $this->serialized_data = [];
         }
 
-        $this->serialized_data[$fieldName] =
-            EntitySerializedFieldsHolder::denormalize(static::class, $fieldName, $fieldValue);
-        $this->normalizedSerializedValues[$fieldName] = $fieldValue;
+        if ($fieldValue !== null) {
+            $this->serialized_data[$fieldName] =
+                EntitySerializedFieldsHolder::denormalize(static::class, $fieldName, $fieldValue);
+            $this->normalizedSerializedValues[$fieldName] = $fieldValue;
+        } elseif (isset($this->serialized_data[$fieldName])) {
+            unset($this->serialized_data[$fieldName], $this->normalizedSerializedValues[$fieldName]);
+        }
     }
 
     public function __get($fieldName)

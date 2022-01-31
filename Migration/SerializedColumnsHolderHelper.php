@@ -44,17 +44,19 @@ class SerializedColumnsHolderHelper
             }
 
             $fieldsWithDateTime = $connection->executeQuery(
-                "SELECT f.field_name, f.data FROM oro_entity_config_field f 
-                WHERE f.entity_id = ? AND f.type in (?) ",
-                [$entityRow['id'], ['date', 'datetime']],
-                [ParameterType::INTEGER, Connection::PARAM_STR_ARRAY]
+                "SELECT f.field_name, f.data, f.type FROM oro_entity_config_field f WHERE f.entity_id = ?",
+                [$entityRow['id']],
+                [ParameterType::INTEGER]
             )
                 ->fetchAllAssociative();
-            $dateFieldNames = [];
+            $fieldNames = $dateFieldNames =  [];
             foreach ($fieldsWithDateTime as &$field) {
                 $field['data'] = $connection->convertToPHPValue($field['data'], Types::ARRAY);
                 if ($field['data']['extend']['is_serialized']) {
-                    $dateFieldNames[] = $field['field_name'];
+                    $fieldNames[] = $field['field_name'];
+                    if (in_array($field['type'], ['date', 'datetime'])) {
+                        $dateFieldNames[] = $field['field_name'];
+                    }
                 }
             }
             $table = $schema->getTable($tableName);
@@ -67,6 +69,7 @@ class SerializedColumnsHolderHelper
                 'tempTable' => $tableName . '_tmp',
                 'id' => $idColumn,
                 'entityConfig' => ['id' => $entityRow['id'], 'data' => $entityData],
+                'fieldNames' => $fieldNames,
                 'datetimeFields' => $dateFieldNames
             ];
         }
