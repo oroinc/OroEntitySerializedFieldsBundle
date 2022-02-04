@@ -75,7 +75,8 @@ class ChangeSerializedDataFieldType implements
         if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
             $update = "UPDATE $tableName s
                 JOIN $tempTableName t ON t.id = s.$sourceIdColumn
-                SET s.serialized_data = t.serialized_data";
+                SET s.serialized_data = t.serialized_data
+                WHERE t.serialized_data IS NOT NULL";
         } else {
             $update = "UPDATE $tableName s
                 SET serialized_data = t.serialized_data
