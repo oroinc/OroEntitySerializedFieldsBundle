@@ -8,29 +8,26 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Entity\EntitySerializedFieldsHolder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * The EntitySerializedFieldsBundle bundle class.
- */
 class OroEntitySerializedFieldsBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function boot(): void
     {
-        parent::build($container);
+        parent::boot();
 
-        $container->addCompilerPass(new ExtendFieldValidationLoaderPass());
-        $container->addCompilerPass(new ChangePropertyAccessorReflectionExtractorPass());
+        EntitySerializedFieldsHolder::initialize($this->container);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function boot()
+    public function build(ContainerBuilder $container): void
     {
-        EntitySerializedFieldsHolder::initialize($this->container);
+        parent::build($container);
 
-        parent::boot();
+        $container->addCompilerPass(new ExtendFieldValidationLoaderPass());
+        $container->addCompilerPass(new ChangePropertyAccessorReflectionExtractorPass());
     }
 }
