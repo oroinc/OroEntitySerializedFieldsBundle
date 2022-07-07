@@ -1,8 +1,8 @@
-{% if field_name is defined and field_type is defined and record.getValue(field_name) is not null%}
+{% if field_name is defined and field_type is defined and value is defined %}
     {% import '@OroEntityConfig/macros.html.twig' as ui %}
 
     {{ ui.formatDynamicFieldValue(null, null, field_name, {
-        value: record.getValue(field_name),
+        value: value,
         type: field_type
     }) }}
 {% endif %}

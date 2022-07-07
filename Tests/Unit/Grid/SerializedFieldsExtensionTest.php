@@ -68,14 +68,20 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
             $this->doctrineHelper,
             $this->selectedFieldsProvider
         );
+        $this->extension->setDbalTypes([
+            'bigint' => 'bigint',
+            'boolean' => 'boolean',
+            'date' => 'date',
+            'datetime' => 'datetime',
+        ]);
     }
 
     public function getFieldsDataProvider(): array
     {
-        $notSerializedField1 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'notSerializedField1');
-        $notSerializedField2 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'notSerializedField2');
-        $serializedField1 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'serializedField1');
-        $serializedField2 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'serializedField2');
+        $notSerializedField1 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'notSerializedField1', 'bigint');
+        $notSerializedField2 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'notSerializedField2', 'boolean');
+        $serializedField1 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'serializedField1', 'date');
+        $serializedField2 = new FieldConfigId('scope', self::ENTITY_CLASS_NAME, 'serializedField2', 'datetime');
 
         return [
             'only not serialized fields' => [
@@ -92,10 +98,9 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
                     new Config($notSerializedField2, ['is_serialized' => false])
                 ],
                 'expectedExpressions' => [
-                    sprintf('%s.%s', self::ENTITY_ALIAS, 'serialized_data'),
-                    sprintf('%s.%s', self::ENTITY_ALIAS, 'notSerializedField1'),
-                    sprintf('%s.%s', self::ENTITY_ALIAS, 'notSerializedField2')
-                ]
+                    'entityAlias.notSerializedField1',
+                    'entityAlias.notSerializedField2',
+                ],
             ],
             'serialized and not serialized fields' => [
                 'fields' => [
@@ -114,13 +119,15 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
                     new Config($notSerializedField1, ['is_serialized' => false]),
                     new Config($notSerializedField2, ['is_serialized' => false]),
                     new Config($serializedField1, ['is_serialized' => true]),
-                    new Config($serializedField2, ['is_serialized' => true])
+                    new Config($serializedField2, ['is_serialized' => true]),
                 ],
                 'expectedExpressions' => [
-                    sprintf('%s.%s', self::ENTITY_ALIAS, 'serialized_data'),
-                    sprintf('%s.%s', self::ENTITY_ALIAS, 'notSerializedField1'),
-                    sprintf('%s.%s', self::ENTITY_ALIAS, 'notSerializedField2')
-                ]
+                    "CAST(JSON_EXTRACT(entityAlias.serialized_data,'serializedField1') as date) AS serializedField1",
+                    "CAST(JSON_EXTRACT(entityAlias.serialized_data,'serializedField2') as datetime) " .
+                    "AS serializedField2",
+                    'entityAlias.notSerializedField1',
+                    'entityAlias.notSerializedField2',
+                ],
             ],
             'only serialized fields' => [
                 'fields' => [
@@ -136,7 +143,8 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
                     new Config($serializedField2, ['is_serialized' => true])
                 ],
                 'expectedData' => [
-                    sprintf('%s.%s', self::ENTITY_ALIAS, 'serialized_data')
+                    "CAST(JSON_EXTRACT(entityAlias.serialized_data,'serializedField1') as date) AS serializedField1",
+                    "CAST(JSON_EXTRACT(entityAlias.serialized_data,'serializedField2') as datetime) AS serializedField2"
                 ]
             ],
         ];

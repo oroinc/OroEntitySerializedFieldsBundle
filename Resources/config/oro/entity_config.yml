@@ -11,11 +11,6 @@ entity_config:
                         required_properties:
                             -
                                config_id:
-                                  scope:  datagrid
-                               code:      show_filter
-                               value:     false
-                            -
-                               config_id:
                                   scope:  dataaudit
                                code:      auditable
                                value:     false
@@ -49,17 +44,6 @@ entity_config:
                                code:      is_serialized
                                value:     false
                 scale:
-                    options:
-                        required_properties:
-                            -
-                               config_id:
-                                  scope:  extend
-                               code:      is_serialized
-                               value:     false
-    datagrid:
-        field:
-            items:
-                show_filter:
                     options:
                         required_properties:
                             -

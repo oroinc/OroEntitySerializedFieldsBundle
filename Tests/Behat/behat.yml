@@ -7,6 +7,8 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
+        - Oro\Bundle\FilterBundle\Tests\Behat\Context\FilterContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
       paths:

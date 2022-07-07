@@ -3,60 +3,47 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Grid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 
+/**
+ * Dynamic field data grid extension(ORM source) decorator that properly handles serialized fields DB query's part.
+ */
 class SerializedFieldsExtension extends DynamicFieldsExtension
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function visitResult(DatagridConfiguration $config, ResultsObject $result)
+    private array $dbalTypes;
+
+    public function setDbalTypes(array $dbalTypes)
     {
-        parent::visitResult($config, $result);
-
-        $fields = $this->getSerializedFields($config);
-        if (count($fields) === 0) {
-            return;
-        }
-
-        // copy serialized fields data from storage to columns
-        /** @var ResultRecord $record */
-        foreach ($result->getData() as $record) {
-            $serializedData = $record->getValue('serialized_data');
-            /** @var FieldConfigId $serializedField */
-            foreach ($fields as $serializedField) {
-                $fieldName = $serializedField->getFieldName();
-                $value = $serializedData && array_key_exists($fieldName, $serializedData)
-                    ? $serializedData[$fieldName]
-                    : null;
-                $record->setValue($fieldName, $value);
-            }
-        }
+        $this->dbalTypes = $dbalTypes;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildExpression(array $fields, DatagridConfiguration $config, $alias)
+    public function buildExpression(array $fields, DatagridConfiguration $config, $alias): void
     {
-        $config->getOrmQuery()->addSelect(sprintf('%s.%s', $alias, 'serialized_data'));
+        $fields = array_filter($fields, function (FieldConfigId $field) use ($config, $alias) {
+            $isSerializedField = $this->isSerializedField($field, $config);
+            if ($isSerializedField) {
+                $config->getOrmQuery()->addSelect(
+                    sprintf(
+                        "CAST(JSON_EXTRACT(%s.serialized_data,'%s') as %s) AS %s",
+                        $alias,
+                        $field->getFieldName(),
+                        $this->dbalTypes[$field->getFieldType()],
+                        $field->getFieldName()
+                    )
+                );
+            }
 
-        $fields = array_filter($fields, function (FieldConfigId $field) use ($config) {
-            return !$this->isSerializedField($field, $config);
+            return !$isSerializedField;
         });
 
         parent::buildExpression($fields, $config, $alias);
     }
 
-    /**
-     * @param FieldConfigId $field
-     * @param DatagridConfiguration $config
-     * @return bool
-     */
-    private function isSerializedField(FieldConfigId $field, DatagridConfiguration $config)
+    private function isSerializedField(FieldConfigId $field, DatagridConfiguration $config): bool
     {
         $extendConfigProvider = $this->configManager->getProvider('extend');
         $entityClassName = $this->entityClassResolver->getEntityClass($this->getEntityName($config));
@@ -64,19 +51,5 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
         return $extendConfigProvider
             ->getConfig($entityClassName, $field->getFieldName())
             ->is('is_serialized');
-    }
-
-    /**
-     * @param DatagridConfiguration $config
-     *
-     * @return FieldConfigId[]
-     */
-    protected function getSerializedFields(DatagridConfiguration $config)
-    {
-        $fields = array_filter($this->getFields($config), function (FieldConfigId $field) use ($config) {
-            return $this->isSerializedField($field, $config);
-        });
-
-        return $fields;
     }
 }

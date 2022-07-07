@@ -21,11 +21,58 @@ final class EntitySerializedFieldsHolder
 
     private static ?FieldsNormalizer $fieldsNormalizer;
 
-    /**
-     * @param string $class
-     * @return array|null
-     */
     public static function getEntityFields(string $class): ?array
+    {
+        return array_keys(self::getEntityFieldsCompactConfig($class));
+    }
+
+    public static function getFieldType(string $class, string $field): string
+    {
+        $compactFieldsConfig = self::getEntityFieldsCompactConfig($class);
+        if (!isset($compactFieldsConfig[$field])) {
+            throw new NoSuchPropertyException(
+                sprintf(
+                    'There is no "%s" field in "%s" entity',
+                    $field,
+                    $class
+                )
+            );
+        }
+
+        return $compactFieldsConfig[$field]['type'];
+    }
+
+    public static function initialize(ContainerInterface $container)
+    {
+        self::$container = $container;
+        self::$configManager = self::$fieldsNormalizer = null;
+        self::$serializedFields = [];
+    }
+
+    public static function normalize(string $class, string $field, $value): mixed
+    {
+        $class = ClassUtils::getRealClass($class);
+
+        return self::getFieldsNormalizer()->normalize(self::getFieldType($class, $field), $value);
+    }
+
+    public static function denormalize(string $class, string $field, $value): mixed
+    {
+        $class = ClassUtils::getRealClass($class);
+
+        return self::getFieldsNormalizer()->denormalize(self::getFieldType($class, $field), $value);
+    }
+
+    private static function getConfigManager(): ?ConfigManager
+    {
+        if (self::$configManager === null) {
+            self::$configManager = self::$container->get('oro_entity_config.config_manager');
+        }
+
+        return self::$configManager;
+    }
+
+    private static function getEntityFieldsCompactConfig(string $class): array
     {
         $class = ClassUtils::getRealClass($class);
 
@@ -44,60 +91,9 @@ final class EntitySerializedFieldsHolder
             self::$serializedFields[$class] = $compactFieldConfigs;
         }
 
-        return array_keys(self::$serializedFields[$class]);
+        return self::$serializedFields[$class];
     }
 
-    /**
-     * @param ContainerInterface $container
-     */
-    public static function initialize(ContainerInterface $container)
-    {
-        self::$container = $container;
-        self::$configManager = self::$fieldsNormalizer = null;
-        self::$serializedFields = [];
-    }
-
-    /**
-     * @param string $class
-     * @param string $field
-     * @param $value
-     * @return mixed
-     */
-    public static function normalize(string $class, string $field, $value)
-    {
-        $class = ClassUtils::getRealClass($class);
-
-        return self::getFieldsNormalizer()->normalize(self::getFieldType($class, $field), $value);
-    }
-
-    /**
-     * @param string $class
-     * @param string $field
-     * @param $value
-     * @return mixed
-     */
-    public static function denormalize(string $class, string $field, $value)
-    {
-        $class = ClassUtils::getRealClass($class);
-
-        return self::getFieldsNormalizer()->denormalize(self::getFieldType($class, $field), $value);
-    }
-
-    /**
-     * @return ConfigManager|null
-     */
-    private static function getConfigManager(): ?ConfigManager
-    {
-        if (self::$configManager === null) {
-            self::$configManager = self::$container->get('oro_entity_config.config_manager');
-        }
-
-        return self::$configManager;
-    }
-
-    /**
-     * @return FieldsNormalizer|null
-     */
     private static function getFieldsNormalizer(): ?FieldsNormalizer
     {
         if (self::$fieldsNormalizer === null) {
@@ -106,26 +102,5 @@ final class EntitySerializedFieldsHolder
         }
 
         return self::$fieldsNormalizer;
-    }
-
-    /**
-     * @param string $class
-     * @param string $field
-     * @return string
-     * @throws NoSuchPropertyException
-     */
-    private static function getFieldType(string $class, string $field): string
-    {
-        if (!isset(self::$serializedFields[$class][$field])) {
-            throw new NoSuchPropertyException(
-                sprintf(
-                    'There is no "%s" field in "%s" entity',
-                    $field,
-                    $class
-                )
-            );
-        }
-
-        return self::$serializedFields[$class][$field]['type'];
     }
 }
