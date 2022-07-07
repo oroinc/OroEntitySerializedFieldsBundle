@@ -45,43 +45,6 @@ class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function guessSorter($class, $property, $type)
-    {
-        $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
-        if ($extendFieldConfig && $extendFieldConfig->is('is_serialized')) {
-            return new ColumnGuess(
-                [
-                    Property::DISABLED_KEY => true
-                ],
-                ColumnGuess::HIGH_CONFIDENCE
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function guessFilter($class, $property, $type)
-    {
-        $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
-        if ($extendFieldConfig && $extendFieldConfig->is('is_serialized')) {
-            return new ColumnGuess(
-                [
-                    Property::TYPE_KEY     => Property::TYPE_STRING,
-                    Property::DISABLED_KEY => true
-                ],
-                ColumnGuess::HIGH_CONFIDENCE
-            );
-        }
-
-        return null;
-    }
-
-    /**
      * @param string $scope
      * @param string $class
      * @param string $property

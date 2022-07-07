@@ -1,0 +1,20 @@
+doctrine:
+    orm:
+        dql:
+            string_functions:
+                json_extract: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonExtract
+
+oro_entity_serialized_fields:
+    dbal_types:
+        bigint: bigint
+        boolean: boolean
+        date: date
+        datetime: datetime
+        decimal: decimal
+        float: decimal
+        integer: integer
+        money: decimal
+        percent: decimal
+        smallint: integer
+        string: string
+        text: text
