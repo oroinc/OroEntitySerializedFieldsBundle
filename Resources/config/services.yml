@@ -162,7 +162,7 @@ services:
             - '@oro_serialized_fields.provider.deleted_serialized_attribute'
             - '@Doctrine\Inflector\Inflector'
         calls:
-            - [setTopic, ['oro_serialized_fields.serialized_attribute_was_removed_from_family']]
+            - [setTopic, [!php/const Oro\Bundle\EntitySerializedFieldsBundle\Async\Topic\SerializedAttributeRemovedFromFamilyTopic::NAME]]
         tags:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }
@@ -174,7 +174,7 @@ services:
             - '@logger'
             - '@oro_serialized_fields.provider.deleted_serialized_attribute'
         tags:
-            - { name: oro_message_queue.client.message_processor, topicName: 'oro_serialized_fields.serialized_attribute_was_removed_from_family' }
+            - { name: oro_message_queue.client.message_processor, topicName: !php/const Oro\Bundle\EntitySerializedFieldsBundle\Async\Topic\SerializedAttributeRemovedFromFamilyTopic::NAME }
 
     oro_serialized_fields.property_accessor.read_reflection_extractor:
         class: Oro\Bundle\EntitySerializedFieldsBundle\PropertyInfo\ReflectionExtractor
