@@ -13,7 +13,7 @@ Feature: Serialized fields on entity's grids
     And I click view User in grid
 
   Scenario Outline: Create filterable serialized fields for user entity
-    And click "Create field"
+    When click "Create field"
     And I fill form with:
       | Field name   | <Field Name>   |
       | Storage type | <Storage Type> |
@@ -23,14 +23,15 @@ Feature: Serialized fields on entity's grids
       | Label                | <Label>         |
       | Add To Grid Settings | Yes and display |
       | Show Grid Filter     | Yes             |
-    When I save and close form
+    And I save and close form
+    Then I should see "Field saved" flash message
 
     Examples:
       | Field Name          | Type     | Label               | Storage Type     |
       | serialized_string   | String   | Serialized String   | Serialized field |
       | serialized_bigint   | BigInt   | Serialized BigInt   | Serialized field |
       | serialized_boolean  | Boolean  | Serialized Boolean  | Serialized field |
-      | serialized_date     | Date     | Serialized Date     | Serialized field |
+      | serialized_date     | Date     | Serialized field Date | Serialized field |
       | serialized_datetime | DateTime | Serialized DateTime | Serialized field |
       | serialized_decimal  | Decimal  | Serialized Decimal  | Serialized field |
       | serialized_float    | Float    | Serialized Float    | Serialized field |
@@ -61,7 +62,7 @@ Feature: Serialized fields on entity's grids
     And I fill form with:
       | Serialized BigInt   | <BigInt Input Value>   |
       | Serialized Boolean  | <Boolean Input Value>  |
-      | Serialized Date     | <Date Input Value>     |
+      | Serialized field Date     | <Date Input Value>     |
       | Serialized DateTime | <DateTime Input Value> |
       | Serialized Decimal  | <Decimal Input Value>  |
       | Serialized Float    | <Float Input Value>    |
@@ -106,15 +107,15 @@ Feature: Serialized fields on entity's grids
       | charlie  | N/A                |
       | admin    | Yes                |
       | megan    | No                 |
-    When I sort grid by "Serialized Date"
+    When I sort grid by "Serialized field Date"
     Then I should see following grid:
-      | Username | Serialized Date |
+      | Username | Serialized field Date |
       | admin    | Jan 1, 1942     |
       | charlie  | Jan 9, 2013     |
       | megan    | Dec 31, 2023    |
-    When I sort grid by "Serialized Date" again
+    When I sort grid by "Serialized field Date" again
     Then I should see following grid:
-      | Username | Serialized Date |
+      | Username | Serialized field Date |
       | megan    | Dec 31, 2023    |
       | charlie  | Jan 9, 2013     |
       | admin    | Jan 1, 1942     |
@@ -233,7 +234,7 @@ Feature: Serialized fields on entity's grids
       | admin    |
     And I click "Reset"
     #  Date
-    And I filter "Serialized Date" as between "Jan 1, 2000" and "Dec 31, 2023"
+    And I filter "Serialized field Date" as between "Jan 1, 2000" and "Dec 31, 2023"
     Then there are 2 records in grid
     And I should see following grid:
       | Username |
