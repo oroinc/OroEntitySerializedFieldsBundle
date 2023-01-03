@@ -17,11 +17,9 @@ class CompoundSerializedFieldsNormalizerTest extends TestCase
     }
 
     /**
-     * @param $value
-     * @param string $fieldType
      * @dataProvider nonChangeableValuesProvider
      */
-    public function testNormalizationWithNoAvailableTypeNormalizer($value, string $fieldType)
+    public function testNormalizationWithNoAvailableTypeNormalizer(mixed $value, string $fieldType)
     {
         $this->locator->expects($this->exactly(2))
             ->method('has')
@@ -39,16 +37,12 @@ class CompoundSerializedFieldsNormalizerTest extends TestCase
     }
 
     /**
-     * @param $fieldType
-     * @param $normalizedValue
-     * @param $denormalizedValue
-     * @param SerializedFieldNormalizerInterface $normalizerMock
      * @dataProvider changeableValuesProvider
      */
     public function testNormalizationWithAvailableTypeNormalizer(
         string $fieldType,
-        $denormalizedValue,
-        $normalizedValue,
+        string $denormalizedValue,
+        object $normalizedValue,
         SerializedFieldNormalizerInterface $normalizerMock
     ) {
         $this->locator->expects($this->exactly(4))
@@ -89,36 +83,27 @@ class CompoundSerializedFieldsNormalizerTest extends TestCase
             ->willReturn(true);
         $this->locator->expects($this->once())
             ->method('get')
-            ->willReturn(new \StdClass());
+            ->willReturn(new \stdClass());
 
         $compoundNormalizer = new CompoundSerializedFieldsNormalizer($this->locator);
         $compoundNormalizer->{$method}('type', 'value');
     }
 
-    /**
-     * @return array
-     */
     public function normalizationMethodsProvider(): array
     {
         return ['normalizeMethod' => ['normalize'], 'denormalizeMethod' => ['denormalize']];
     }
 
-    /**
-     * @return array
-     */
     public function nonChangeableValuesProvider(): array
     {
         return [
             'bool' => [true, 'bool'],
             'float_number' => [1000.00, 'float_number'],
             'string' => ['test string', 'string'],
-            'object' => [new \StdClass(), 'object']
+            'object' => [new \stdClass(), 'object']
         ];
     }
 
-    /**
-     * @return array
-     */
     public function changeableValuesProvider(): array
     {
         $dateObject = new \DateTime('now');
@@ -133,7 +118,7 @@ class CompoundSerializedFieldsNormalizerTest extends TestCase
             ->with($dateObject)
             ->willReturn($dateString);
 
-        $stdObject = new \StdClass();
+        $stdObject = new \stdClass();
         $stdObject->stringKey = 'string value';
         $stdObject->floatKey = 100.01;
         $stdObjectJson = json_encode($stdObject);

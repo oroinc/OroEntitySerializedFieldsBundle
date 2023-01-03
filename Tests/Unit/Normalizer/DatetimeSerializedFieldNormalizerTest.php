@@ -8,15 +8,11 @@ use PHPUnit\Framework\TestCase;
 class DatetimeSerializedFieldNormalizerTest extends TestCase
 {
     /**
-     * @param bool $isProperDate
-     * @param null $denormalizedDate
-     * @param string|null $exceptionMessage
-     *
      * @dataProvider denormalizedDateProvider
      */
     public function testDateTimeNormalization(
         bool $isProperDate,
-        $denormalizedDate = null,
+        string|int|null $denormalizedDate = null,
         string $exceptionMessage = null
     ) {
         $datetimeNormalizer = new DatetimeSerializedFieldNormalizer();
@@ -32,15 +28,11 @@ class DatetimeSerializedFieldNormalizerTest extends TestCase
     }
 
     /**
-     * @param bool $isProperDate
-     * @param null $normalizedDate
-     * @param string|null $exceptionMessage
-     *
      * @dataProvider normalizedDateProvider
      */
     public function testDateTimeDenormalization(
         bool $isProperDate,
-        $normalizedDate = null,
+        \DateTime|string|null $normalizedDate = null,
         string $exceptionMessage = null
     ) {
         $datetimeNormalizer = new DatetimeSerializedFieldNormalizer();
@@ -55,9 +47,6 @@ class DatetimeSerializedFieldNormalizerTest extends TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function denormalizedDateProvider(): array
     {
         return [
@@ -68,9 +57,6 @@ class DatetimeSerializedFieldNormalizerTest extends TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
     public function normalizedDateProvider(): array
     {
         return [

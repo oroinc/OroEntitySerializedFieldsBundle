@@ -11,7 +11,7 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Tools\DumperExtensions\SerializedEnt
 
 class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
     /** @var SerializedEntityConfigDumperExtension */
@@ -20,13 +20,16 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
     protected function setUp(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->method('getDatabasePlatform')
+        $connection->expects(self::any())
+            ->method('getDatabasePlatform')
             ->willReturn(null);
         $em = $this->createMock(EntityManager::class);
-        $em->method('getConnection')
+        $em->expects(self::any())
+            ->method('getConnection')
             ->willReturn($connection);
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->configManager->method('getEntityManager')
+        $this->configManager->expects(self::any())
+            ->method('getEntityManager')
             ->willReturn($em);
 
         $this->extension = new SerializedEntityConfigDumperExtension(
@@ -34,10 +37,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
         );
     }
 
-    /**
-     * @return array
-     */
-    private function getSerializedDataFieldDoctrineConfig()
+    private function getSerializedDataFieldDoctrineConfig(): array
     {
         return [
             'column'   => 'serialized_data',
