@@ -4,7 +4,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\EventListener;
 
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\EventListener\DeletedAttributeRelationListener
-    as BaseDeletedAttributeRelationListener;
+as BaseDeletedAttributeRelationListener;
 
 /**
  * Overridden original listener class to produce MQ messages with entity serialized data's field names as they are .
