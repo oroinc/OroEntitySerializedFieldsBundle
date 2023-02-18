@@ -21,11 +21,8 @@ class AddSerializedFields implements ProcessorInterface
 {
     private const SERIALIZED_DATA_FIELD = 'serialized_data';
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ConfigManager */
-    private $configManager;
+    private DoctrineHelper $doctrineHelper;
+    private ConfigManager $configManager;
 
     public function __construct(DoctrineHelper $doctrineHelper, ConfigManager $configManager)
     {
@@ -36,7 +33,7 @@ class AddSerializedFields implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */
 
