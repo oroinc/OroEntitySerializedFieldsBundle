@@ -13,15 +13,15 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
 {
     private array $dbalTypes;
 
-    public function setDbalTypes(array $dbalTypes)
+    public function setDbalTypes(array $dbalTypes): void
     {
         $this->dbalTypes = $dbalTypes;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function buildExpression(array $fields, DatagridConfiguration $config, $alias): void
+    public function buildExpression(array $fields, DatagridConfiguration $config, string $alias): void
     {
         $fields = array_filter($fields, function (FieldConfigId $field) use ($config, $alias) {
             $isSerializedField = $this->isSerializedField($field, $config);
