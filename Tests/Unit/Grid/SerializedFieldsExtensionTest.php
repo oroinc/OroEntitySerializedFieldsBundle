@@ -155,7 +155,7 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
      */
     public function testBuildExpression(array $fields, array $fieldsData, array $configs, array $expectedData)
     {
-        $datagridConfig = DatagridConfiguration::create([]);
+        $datagridConfig = DatagridConfiguration::create(['extended_entity_name' => \stdClass::class]);
 
         $extendConfigProvider = $this->createMock(ConfigProvider::class);
 
