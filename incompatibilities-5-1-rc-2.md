@@ -1,0 +1,17 @@
+- [EntitySerializedFieldsBundle](#entityserializedfieldsbundle)
+
+EntitySerializedFieldsBundle
+----------------------------
+* The following classes were removed:
+   - `SerializedDataGeneratorExtension`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/Tools/GeneratorExtensions/SerializedDataGeneratorExtension.php#L14 "Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions\SerializedDataGeneratorExtension")</sup>
+   - `ConfigSerializedFieldExclusionProvider`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/Provider/ConfigSerializedFieldExclusionProvider.php#L13 "Oro\Bundle\EntitySerializedFieldsBundle\Provider\ConfigSerializedFieldExclusionProvider")</sup>
+   - `ReflectionExtractor`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/PropertyInfo/ReflectionExtractor.php#L14 "Oro\Bundle\EntitySerializedFieldsBundle\PropertyInfo\ReflectionExtractor")</sup>
+   - `ChangePropertyAccessorReflectionExtractorPass`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/DependencyInjection/Compiler/ChangePropertyAccessorReflectionExtractorPass.php#L12 "Oro\Bundle\EntitySerializedFieldsBundle\DependencyInjection\Compiler\ChangePropertyAccessorReflectionExtractorPass")</sup>
+* The following methods in class `SerializedColumnOptionsGuesser`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/Grid/SerializedColumnOptionsGuesser.php#L50 "Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser")</sup> were removed:
+   - `guessSorter`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/Grid/SerializedColumnOptionsGuesser.php#L50 "Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser::guessSorter")</sup>
+   - `guessFilter`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/Grid/SerializedColumnOptionsGuesser.php#L68 "Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser::guessFilter")</sup>
+* The following methods in class `SerializedFieldsExtension`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/Grid/SerializedFieldsExtension.php#L16 "Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension")</sup> were removed:
+   - `visitResult`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/Grid/SerializedFieldsExtension.php#L16 "Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension::visitResult")</sup>
+   - `getSerializedFields`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/Grid/SerializedFieldsExtension.php#L74 "Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension::getSerializedFields")</sup>
+* The `SerializedFieldsExtension::buildExpression($fields, DatagridConfiguration $config, $alias)`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.0.0/Grid/SerializedFieldsExtension.php#L43 "Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension")</sup> method was changed to `SerializedFieldsExtension::buildExpression($fields, DatagridConfiguration $config, $alias)`<sup>[[?]](https://github.com/oroinc/OroEntitySerializedFieldsBundle/tree/5.1.0-rc.2/Grid/SerializedFieldsExtension.php#L24 "Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension")</sup>
+
