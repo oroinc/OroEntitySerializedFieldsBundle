@@ -5,8 +5,8 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\PropertyInfo;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityExtendBundle\Extend\ReflectionExtractor;
 use Oro\Bundle\EntitySerializedFieldsBundle\Entity\EntitySerializedFieldsHolder;
-use Oro\Bundle\EntitySerializedFieldsBundle\PropertyInfo\ReflectionExtractor;
 use Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Fixtures\TestClassWithSerializedFieldsTrait;
 use Oro\Component\PropertyAccess\Tests\Unit\Fixtures\TestClassMagicGet;
 use PHPUnit\Framework\TestCase;
@@ -128,24 +128,6 @@ class ReflectionExtractorTest extends TestCase
                 'property_two'
             )
         );
-        self::assertNull(
-            $this->reflectionExtractor->getReadInfo(
-                TestClassWithSerializedFieldsTrait::class,
-                'magicProperty'
-            )
-        );
-        self::assertNull(
-            $this->reflectionExtractor->getReadInfo(
-                TestClassWithSerializedFieldsTrait::class,
-                'constantMagicProperty'
-            )
-        );
-        self::assertNull(
-            $this->reflectionExtractor->getReadInfo(
-                TestClassWithSerializedFieldsTrait::class,
-                'non_existing_property'
-            )
-        );
     }
 
     public function testCanWritePropertyInClassWithSerializedFields()
@@ -161,17 +143,5 @@ class ReflectionExtractorTest extends TestCase
             'property_two'
         );
         self::assertEmpty($writeInfo->getErrors());
-
-        $writeInfo = $this->reflectionExtractor->getWriteInfo(
-            TestClassWithSerializedFieldsTrait::class,
-            'non_existing_property'
-        );
-        self::assertNotEmpty($writeInfo->getErrors());
-
-        $writeInfo = $this->reflectionExtractor->getWriteInfo(
-            TestClassWithSerializedFieldsTrait::class,
-            'accident_magic_get_property'
-        );
-        self::assertNotEmpty($writeInfo->getErrors());
     }
 }

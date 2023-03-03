@@ -17,4 +17,12 @@ class ExtendEntityStub implements ExtendEntityInterface
     {
         return $this->serialized_data;
     }
+
+    public function get(string $name): mixed
+    {
+    }
+
+    public function set(string $name, mixed $value): static
+    {
+    }
 }

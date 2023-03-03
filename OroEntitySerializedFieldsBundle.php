@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle;
 
-use Oro\Bundle\EntitySerializedFieldsBundle\DependencyInjection\Compiler\ChangePropertyAccessorReflectionExtractorPass;
 use Oro\Bundle\EntitySerializedFieldsBundle\DependencyInjection\Compiler\EntityFieldTemplateDataConverterPass;
 use Oro\Bundle\EntitySerializedFieldsBundle\DependencyInjection\Compiler\ExtendFieldValidationLoaderPass;
 use Oro\Bundle\EntitySerializedFieldsBundle\Entity\EntitySerializedFieldsHolder;
@@ -29,7 +28,6 @@ class OroEntitySerializedFieldsBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new ExtendFieldValidationLoaderPass());
-        $container->addCompilerPass(new ChangePropertyAccessorReflectionExtractorPass());
         $container->addCompilerPass(new EntityFieldTemplateDataConverterPass());
     }
 }

@@ -9,7 +9,6 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Tools\DumperExtensions\AbstractEntityConfigDumperExtension;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
-use Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions\SerializedDataGeneratorExtension;
 
 /**
  * The extension for the entity config dumper that do the following:
@@ -18,7 +17,7 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions\Serialized
  */
 class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperExtension
 {
-    const SERIALIZED_DATA_FIELD = SerializedDataGeneratorExtension::SERIALIZED_DATA_FIELD;
+    const SERIALIZED_DATA_FIELD = 'serialized_data';
 
     /** @var ConfigManager */
     protected $configManager;
