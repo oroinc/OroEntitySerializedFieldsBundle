@@ -113,7 +113,7 @@ class ChangeSerializedDataFieldType implements
     private function updateEntityConfig(QueryBag $queries, array $entityConfig): void
     {
         $data = $entityConfig['data'];
-        $exClass = $data['extend']['extend_class'];
+        $exClass = $data['extend']['schema']['entity'];
         $fieldName = 'serialized_data';
         $data['extend']['schema']['doctrine'][$exClass]['fields'][$fieldName]['type'] = Types::JSON;
 

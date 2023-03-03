@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityConfigBundle\Validator\FieldConfigConstraintsFactory;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -59,7 +60,8 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof ExtendEntityInterface || !\method_exists($value, 'getSerializedData')) {
+        if (!$value instanceof ExtendEntityInterface ||
+            !EntityPropertyInfo::methodExists($value, 'getSerializedData')) {
             return;
         }
 

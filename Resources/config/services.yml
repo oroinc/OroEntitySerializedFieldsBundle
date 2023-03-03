@@ -19,12 +19,12 @@ services:
         arguments:
             - '@oro_entity_extend.migration.entity_metadata_helper'
 
-    oro_serialized_fields.entity_generator.extension:
-        class: Oro\Bundle\EntitySerializedFieldsBundle\Tools\GeneratorExtensions\SerializedDataGeneratorExtension
+    oro_serialized_fields.entity_field.extension:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\EntityExtend\SerializedEntityFieldExtension
         arguments:
-            - '%kernel.debug%'
+            - '@oro_serialized_fields.normalizer.fields_compound_normalizer'
         tags:
-            - { name: oro_entity_extend.entity_generator_extension }
+            - { name: 'oro_entity_extend.entity_field_extension', priority: 100 }
 
     oro_serialized_fields.entity_config_dumper.extension:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Tools\DumperExtensions\SerializedEntityConfigDumperExtension
@@ -169,15 +169,6 @@ services:
             - '@oro_serialized_fields.provider.deleted_serialized_attribute'
         tags:
             - { name: oro_message_queue.client.message_processor, topicName: !php/const Oro\Bundle\EntitySerializedFieldsBundle\Async\Topic\SerializedAttributeRemovedFromFamilyTopic::NAME }
-
-    oro_serialized_fields.property_accessor.read_reflection_extractor:
-        class: Oro\Bundle\EntitySerializedFieldsBundle\PropertyInfo\ReflectionExtractor
-        arguments: [[], null, null, false]
-
-    oro_serialized_fields.property_accessor.write_reflection_extractor:
-        class: Oro\Bundle\EntitySerializedFieldsBundle\PropertyInfo\ReflectionExtractor
-        arguments:
-            $mutatorPrefixes: ['set']
 
     oro_serialized_fields.normalizer.fields_compound_normalizer:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Normalizer\CompoundSerializedFieldsNormalizer
