@@ -6,9 +6,9 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Extend\ReflectionExtractor;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\PropertyAccess\TestClassMagicGet;
 use Oro\Bundle\EntitySerializedFieldsBundle\Entity\EntitySerializedFieldsHolder;
 use Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Fixtures\TestClassWithSerializedFieldsTrait;
-use Oro\Component\PropertyAccess\Tests\Unit\Fixtures\TestClassMagicGet;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

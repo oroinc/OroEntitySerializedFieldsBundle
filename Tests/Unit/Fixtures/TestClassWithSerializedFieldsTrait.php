@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Fixtures;
 
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\PropertyAccess\TestClassMagicGet;
 use Oro\Bundle\EntitySerializedFieldsBundle\Entity\SerializedFieldsTrait;
-use Oro\Component\PropertyAccess\Tests\Unit\Fixtures\TestClassMagicGet;
 
 class TestClassWithSerializedFieldsTrait extends TestClassMagicGet
 {
