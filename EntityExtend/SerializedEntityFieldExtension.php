@@ -14,10 +14,10 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Normalizer\CompoundSerializedFieldsN
  */
 class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implements EntityFieldExtensionInterface
 {
-    private const PROPERTY            = 'serialized_data';
+    private const PROPERTY = 'serialized_data';
     private const PROPERTY_NORMALIZED = 'serialized_normalized';
-    private const SET_METHOD          = 'setSerializedData';
-    private const GET_METHOD          = 'getSerializedData';
+    private const SET_METHOD = 'setSerializedData';
+    private const GET_METHOD = 'getSerializedData';
 
     private FieldsNormalizer $normalizer;
 
@@ -28,10 +28,9 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
 
     private function getProperty(EntityFieldProcessTransport $transport): ?array
     {
-        foreach ($transport->getFieldsMetadata() as $fieldConfig) {
-            if ($fieldConfig['is_serialized'] && $fieldConfig['fieldName'] === $transport->getName()) {
-                return $fieldConfig;
-            }
+        $filedMetadata = $transport->getFieldsMetadata();
+        if (isset($filedMetadata[$transport->getName()]) && $filedMetadata[$transport->getName()]['is_serialized']) {
+            return $filedMetadata[$transport->getName()];
         }
 
         return null;
@@ -165,6 +164,7 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
         if (in_array($transport->getName(), [self::GET_METHOD, self::SET_METHOD])) {
             $transport->setResult(true);
             $transport->setProcessed(true);
+            ExtendEntityStaticCache::setMethodExistsCache($transport, true);
         }
     }
 }
