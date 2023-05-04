@@ -11,30 +11,22 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+/**
+ * Field type extension.
+ */
 class FieldTypeExtension extends AbstractTypeExtension
 {
     const SESSION_ID_FIELD_SERIALIZED = '_extendbundle_create_entity_%s_is_serialized';
-
-    /** @var Session */
-    protected $session;
-
-    /**
-     * Array of field's names in preferred order
-     *
-     * @var array
-     */
-    protected $fieldOrder;
 
     /**
      * @param Session $session
      * @param array   $fieldOrder
      */
-    public function __construct(Session $session, $fieldOrder = [])
+    public function __construct(protected RequestStack $requestStack, protected $fieldOrder = [])
     {
-        $this->session    = $session;
-        $this->fieldOrder = $fieldOrder;
     }
 
     /**
@@ -62,7 +54,7 @@ class FieldTypeExtension extends AbstractTypeExtension
         $configModel = $event->getData();
 
         if ($form->isValid()) {
-            $this->session->set(
+            $this->requestStack->getSession()->set(
                 sprintf(self::SESSION_ID_FIELD_SERIALIZED, $configModel->getEntity()->getId()),
                 $isSerialized
             );

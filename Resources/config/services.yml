@@ -50,7 +50,7 @@ services:
     oro_serialized_fields.form.extension.field_extension:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension
         arguments:
-            - "@session"
+            - "@request_stack"
             - ['fieldName', 'is_serialized', 'type']
         tags:
             - { name: form.type_extension, alias: oro_entity_extend_field_type, extended_type: Oro\Bundle\EntityExtendBundle\Form\Type\FieldType }
@@ -121,7 +121,7 @@ services:
         arguments:
             - '@oro_serialized_fields.entity_proxy_update_config_provider'
             - '@oro_entity_extend.entity_generator'
-            - '@session'
+            - '@request_stack'
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.field.create, method: createField, priority: -255 }
             - { name: kernel.event_listener, event: oro.entity_config.pre_flush, method: preFlush, priority: -255 }

@@ -17,6 +17,8 @@ use Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Oro\Bundle\EntitySerializedFieldsBundle\Provider\EntityProxyUpdateConfigProviderInterface;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
@@ -33,7 +35,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
     private $entityGenerator;
 
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
-    private $session;
+    private $requestStack;
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
@@ -48,7 +50,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->entityProxyUpdateConfigProvider = $this->createMock(EntityProxyUpdateConfigProviderInterface::class);
         $this->entityGenerator = $this->createMock(EntityGenerator::class);
-        $this->session = $this->createMock(Session::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->extendConfigProvider = new ConfigProviderMock($this->configManager, 'extend');
 
@@ -68,7 +70,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new EntityConfigListener(
             $this->entityProxyUpdateConfigProvider,
             $this->entityGenerator,
-            $this->session
+            $this->requestStack
         );
     }
 
@@ -108,14 +110,28 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->entityProxyUpdateConfigProvider->expects(self::once())
             ->method('isEntityProxyUpdateAllowed')
             ->willReturn(false);
-        $this->session->expects(self::once())
+        $sessionMock = $this->createMock(Session::class);
+        $this->requestStack->expects(self::once())
+            ->method('getSession')
+            ->willReturn($sessionMock);
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::once())
+            ->method('getSession')
+            ->willReturn($sessionMock);
+        $requestMock->expects($this->once())
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
+        $sessionMock->expects(self::once())
             ->method('isStarted')
             ->willReturn(true);
-        $this->session->expects(self::once())
+        $sessionMock->expects(self::once())
             ->method('has')
             ->with($sessionKey)
             ->willReturn(true);
-        $this->session->expects(self::once())
+        $sessionMock->expects(self::once())
             ->method('get')
             ->with($sessionKey)
             ->willReturn(true);
@@ -146,15 +162,25 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             $fieldName,
             ['state' => ExtendScope::STATE_NEW]
         );
-
         $this->entityProxyUpdateConfigProvider->expects(self::never())
             ->method('isEntityProxyUpdateAllowed');
-        $this->session->expects(self::once())
+        $sessionMock = $this->createMock(Session::class);
+        $this->requestStack->expects(self::never())
+            ->method('getSession')
+            ->willReturn($sessionMock);
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects($this->once())
+            ->method('hasSession')
+            ->willReturn(false);
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
+        $sessionMock->expects(self::never())
             ->method('isStarted')
             ->willReturn(false);
-        $this->session->expects(self::never())
+        $sessionMock->expects(self::never())
             ->method('has');
-        $this->session->expects(self::never())
+        $sessionMock->expects(self::never())
             ->method('get');
         $this->configManager->expects(self::once())
             ->method('persist')
@@ -184,14 +210,28 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->entityProxyUpdateConfigProvider->expects(self::never())
             ->method('isEntityProxyUpdateAllowed');
-        $this->session->expects(self::once())
+        $sessionMock = $this->createMock(Session::class);
+        $this->requestStack->expects(self::once())
+            ->method('getSession')
+            ->willReturn($sessionMock);
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::once())
+            ->method('getSession')
+            ->willReturn($sessionMock);
+        $requestMock->expects($this->once())
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
+        $sessionMock->expects(self::once())
             ->method('isStarted')
             ->willReturn(true);
-        $this->session->expects(self::once())
+        $sessionMock->expects(self::once())
             ->method('has')
             ->with($sessionKey)
             ->willReturn(true);
-        $this->session->expects(self::once())
+        $sessionMock->expects(self::once())
             ->method('get')
             ->with($sessionKey)
             ->willReturn(false);
@@ -228,14 +268,28 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->entityProxyUpdateConfigProvider->expects(self::once())
             ->method('isEntityProxyUpdateAllowed')
             ->willReturn(true);
-        $this->session->expects(self::once())
+        $sessionMock = $this->createMock(Session::class);
+        $this->requestStack->expects(self::once())
+            ->method('getSession')
+            ->willReturn($sessionMock);
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::once())
+            ->method('getSession')
+            ->willReturn($sessionMock);
+        $requestMock->expects($this->once())
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
+        $sessionMock->expects(self::once())
             ->method('isStarted')
             ->willReturn(true);
-        $this->session->expects(self::once())
+        $sessionMock->expects(self::once())
             ->method('has')
             ->with($sessionKey)
             ->willReturn(true);
-        $this->session->expects(self::once())
+        $sessionMock->expects(self::once())
             ->method('get')
             ->with($sessionKey)
             ->willReturn(true);
