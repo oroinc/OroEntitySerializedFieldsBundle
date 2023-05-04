@@ -12,22 +12,23 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Test\FormBuilderInterface;
 use Symfony\Component\Form\Test\FormInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
-    private $session;
+    private $requestStack;
 
     /** @var FieldTypeExtension */
     private $extension;
 
     protected function setUp(): void
     {
-        $this->session = $this->createMock(Session::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->extension = new FieldTypeExtension(
-            $this->session,
+            $this->requestStack,
             ['fieldName', 'is_serialized', 'type']
         );
 
@@ -84,7 +85,11 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $fieldConfigModel = new FieldConfigModel('test_field', 'string');
         $fieldConfigModel->setEntity($entityConfigModel);
 
-        $this->session->expects($this->once())
+        $sessionMock = $this->createMock(Session::class);
+        $this->requestStack->expects($this->once())
+            ->method('getSession')
+            ->willReturn($sessionMock);
+        $sessionMock->expects($this->once())
             ->method('set')
             ->with('_extendbundle_create_entity_1_is_serialized', true);
 

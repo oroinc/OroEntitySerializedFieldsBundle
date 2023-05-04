@@ -13,28 +13,21 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\EntityGenerator;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Oro\Bundle\EntitySerializedFieldsBundle\Provider\EntityProxyUpdateConfigProviderInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * The entity config listener to manage serialized fields.
  */
 class EntityConfigListener
 {
-    private EntityProxyUpdateConfigProviderInterface $entityProxyUpdateConfigProvider;
-    private EntityGenerator $entityGenerator;
-    private Session $session;
-
     /** @var array [entity class => true/false, ...] */
     private array $hasChangedSerializedFields = [];
 
     public function __construct(
-        EntityProxyUpdateConfigProviderInterface $entityProxyUpdateConfigProvider,
-        EntityGenerator $entityGenerator,
-        Session $session
+        private EntityProxyUpdateConfigProviderInterface $entityProxyUpdateConfigProvider,
+        private EntityGenerator $entityGenerator,
+        private RequestStack $requestStack,
     ) {
-        $this->entityProxyUpdateConfigProvider = $entityProxyUpdateConfigProvider;
-        $this->entityGenerator = $entityGenerator;
-        $this->session = $session;
     }
 
     public function createField(FieldConfigEvent $event): void
@@ -42,13 +35,14 @@ class EntityConfigListener
         $className = $event->getClassName();
         $configManager = $event->getConfigManager();
         $fieldConfig = $configManager->getFieldConfig('extend', $className, $event->getFieldName());
-
-        if ($this->session->isStarted()) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (null !== $request && $request->hasSession() && $request->getSession()->isStarted()) {
             $sessionKey = sprintf(
                 FieldTypeExtension::SESSION_ID_FIELD_SERIALIZED,
                 $configManager->getConfigModelId($className)
             );
-            if ($this->session->has($sessionKey) && $this->session->get($sessionKey)) {
+            $session = $this->requestStack->getSession();
+            if ($session->has($sessionKey) && $session->get($sessionKey)) {
                 $fieldConfig->set('is_serialized', true);
             }
         }
