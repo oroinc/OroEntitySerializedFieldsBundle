@@ -3,7 +3,7 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Tools\DumperExtensions;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Tests\Unit\ConfigProviderMock;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
@@ -23,7 +23,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
         $connection->expects(self::any())
             ->method('getDatabasePlatform')
             ->willReturn(null);
-        $em = $this->createMock(EntityManager::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::any())
             ->method('getConnection')
             ->willReturn($connection);
