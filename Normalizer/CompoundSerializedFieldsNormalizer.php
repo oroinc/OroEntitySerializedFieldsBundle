@@ -37,8 +37,6 @@ class CompoundSerializedFieldsNormalizer
     }
 
     /**
-     * @param string $fieldType
-     * @return SerializedFieldNormalizerInterface|null
      * @throws \RuntimeException
      */
     private function getNormalizer(string $fieldType): ?SerializedFieldNormalizerInterface

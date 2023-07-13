@@ -28,8 +28,8 @@ class FieldTypeExtension extends AbstractTypeExtension
     protected $fieldOrder;
 
     /**
-     * @param Session $session
-     * @param array   $fieldOrder
+     * @param RequestStack $requestStack
+     * @param array $fieldOrder
      */
     public function __construct(Session $session, $fieldOrder = [])
     {

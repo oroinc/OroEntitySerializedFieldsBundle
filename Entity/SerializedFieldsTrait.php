@@ -63,9 +63,6 @@ trait SerializedFieldsTrait
         return $fields === null || in_array($fieldName, $fields);
     }
 
-    /**
-     * @param string $fieldName
-     */
     private function validateFieldAvailability(string $fieldName): void
     {
         if (!isset($this->{$fieldName})) {
