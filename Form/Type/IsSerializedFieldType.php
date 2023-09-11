@@ -56,7 +56,7 @@ class IsSerializedFieldType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_serialized_fields_is_serialized_type';
     }
@@ -64,7 +64,7 @@ class IsSerializedFieldType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }
