@@ -12,7 +12,7 @@ class ExtendEntitySerializedData extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_serialized_fields.validator.extend_entity_serialized_data';
     }
@@ -20,7 +20,7 @@ class ExtendEntitySerializedData extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }
