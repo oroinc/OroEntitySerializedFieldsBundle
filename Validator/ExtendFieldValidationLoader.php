@@ -16,7 +16,7 @@ class ExtendFieldValidationLoader extends BaseLoader
     /**
      * {@inheritdoc}
      */
-    public function loadClassMetadata(ClassMetadata $metadata)
+    public function loadClassMetadata(ClassMetadata $metadata): bool
     {
         if ($metadata->getClassName() === ExtendEntityInterface::class) {
             $metadata->addConstraint(new ExtendEntitySerializedData());
