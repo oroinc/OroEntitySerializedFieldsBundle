@@ -155,7 +155,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
             $options = $this->schema->getExtendOptions();
             foreach ($options as $key => $value) {
                 if ($this->isTableOptions($key)
-                    && !empty($config['extend']['is_extend'])
+                    && !empty($value['extend']['is_extend'])
                     && isset($value[ExtendOptionsManager::ENTITY_CLASS_OPTION])
                     && (
                         !isset($value[ExtendOptionsManager::MODE_OPTION])
