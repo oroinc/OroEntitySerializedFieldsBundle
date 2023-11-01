@@ -154,7 +154,6 @@ services:
         arguments:
             - '@oro_message_queue.message_producer'
             - '@oro_serialized_fields.provider.deleted_serialized_attribute'
-            - '@Doctrine\Inflector\Inflector'
         calls:
             - [setTopic, [!php/const Oro\Bundle\EntitySerializedFieldsBundle\Async\Topic\SerializedAttributeRemovedFromFamilyTopic::NAME]]
         tags:
