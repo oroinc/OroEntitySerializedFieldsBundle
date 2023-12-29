@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_2;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -24,17 +24,11 @@ class ChangeSerializedDataFieldType implements
     ConnectionAwareInterface,
     ContainerAwareInterface
 {
+    use ConnectionAwareTrait;
     use ContainerAwareTrait;
 
     public const ORDER = MoveSerializedDataToTempTables::ORDER + 10;
     private const BATCH_SIZE = 10000;
-
-    protected Connection $connection;
-
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
 
     public function getOrder()
     {
