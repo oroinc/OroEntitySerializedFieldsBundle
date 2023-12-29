@@ -7,6 +7,7 @@ use Doctrine\DBAL\Query\QueryException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -22,17 +23,11 @@ class MoveSerializedDataToTempTables implements
     ConnectionAwareInterface,
     ContainerAwareInterface
 {
+    use ConnectionAwareTrait;
     use ContainerAwareTrait;
 
     public const ORDER = CreateTempTables::ORDER + 10;
     private const CHUNK_SIZE = 1000;
-
-    protected Connection $connection;
-
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
 
     public function getOrder()
     {

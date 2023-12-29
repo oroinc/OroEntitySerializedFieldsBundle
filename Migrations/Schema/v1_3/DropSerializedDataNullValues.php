@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -19,14 +19,8 @@ class DropSerializedDataNullValues implements
     ConnectionAwareInterface,
     ContainerAwareInterface
 {
+    use ConnectionAwareTrait;
     use ContainerAwareTrait;
-
-    protected Connection $connection;
-
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
 
     public function up(Schema $schema, QueryBag $queries)
     {

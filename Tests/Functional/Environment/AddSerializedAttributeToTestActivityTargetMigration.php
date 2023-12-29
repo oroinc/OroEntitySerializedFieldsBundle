@@ -4,8 +4,8 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Functional\Environment;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtension;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareInterface;
+use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -16,16 +16,7 @@ class AddSerializedAttributeToTestActivityTargetMigration implements
     Migration,
     SerializedFieldsExtensionAwareInterface
 {
-    /** @var SerializedFieldsExtension */
-    private $serializedFieldsExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSerializedFieldsExtension(SerializedFieldsExtension $serializedFieldsExtension)
-    {
-        $this->serializedFieldsExtension = $serializedFieldsExtension;
-    }
+    use SerializedFieldsExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

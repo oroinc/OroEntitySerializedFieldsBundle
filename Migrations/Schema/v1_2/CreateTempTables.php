@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_2;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -22,16 +22,10 @@ class CreateTempTables implements
     ConnectionAwareInterface,
     ContainerAwareInterface
 {
+    use ConnectionAwareTrait;
     use ContainerAwareTrait;
 
     public const ORDER = 10;
-
-    protected Connection $connection;
-
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
 
     public function getOrder()
     {
