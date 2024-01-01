@@ -4,7 +4,6 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
-use Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_0\UpdateCustomFieldsWithStorageType;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -15,20 +14,20 @@ class OroEntitySerializedFieldsBundleInstaller implements Installation, Containe
     use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_3';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         if ($this->container->get(ApplicationState::class)->isInstalled()) {
-            $queries->addQuery(new UpdateCustomFieldsWithStorageType($schema));
+            $queries->addQuery(new UpdateCustomFieldsWithStorageType());
         }
     }
 }

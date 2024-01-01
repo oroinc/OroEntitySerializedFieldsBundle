@@ -1,24 +1,15 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_0;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema;
 
-use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
 
 class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
 {
-    /** @var Schema */
-    protected $schema;
-
-    public function __construct(Schema $schema)
-    {
-        $this->schema = $schema;
-    }
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDescription()
     {
@@ -29,7 +20,7 @@ class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function execute(LoggerInterface $logger)
     {
@@ -37,14 +28,12 @@ class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
     }
 
     /**
-     * @param LoggerInterface $logger
-     * @param bool            $dryRun
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function doExecute(LoggerInterface $logger, $dryRun = false)
+    public function doExecute(LoggerInterface $logger, bool $dryRun = false): void
     {
-        $entities            = $this->getConfigurableEntitiesData($logger);
-        $hasSchemaChanges    = false;
+        $entities = $this->getConfigurableEntitiesData($logger);
+        $hasSchemaChanges = false;
         $updateConfigQueries = [];
 
         foreach ($entities as $configData) {
@@ -78,17 +67,15 @@ class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
     /**
      * @param LoggerInterface $logger
      *
-     * @return array
-     *  key - class name
-     *  value - entity config array data
+     * @return array [class name => entity config array data, ...]
      */
-    protected function getConfigurableEntitiesData(LoggerInterface $logger)
+    private function getConfigurableEntitiesData(LoggerInterface $logger)
     {
         $sql = 'SELECT id, class_name, data FROM oro_entity_config';
         $this->logQuery($logger, $sql);
 
         $result = [];
-        $rows   = $this->connection->fetchAll($sql);
+        $rows = $this->connection->fetchAll($sql);
         foreach ($rows as $row) {
             $result[$row['class_name']] = [
                 'id'   => $row['id'],
@@ -103,11 +90,9 @@ class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
      * @param LoggerInterface $logger
      * @param null            $entityId
      *
-     * @return array
-     *  key - field id
-     *  value - field config array data
+     * @return array [field id => field config array data, ...]
      */
-    protected function getConfigurableEntityFieldsData(LoggerInterface $logger, $entityId = null)
+    private function getConfigurableEntityFieldsData(LoggerInterface $logger, $entityId = null)
     {
         $sql = sprintf(
             'SELECT id, data FROM oro_entity_config_field WHERE entity_id = %d',
