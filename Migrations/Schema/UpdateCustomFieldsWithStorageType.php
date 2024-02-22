@@ -75,7 +75,7 @@ class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
         $this->logQuery($logger, $sql);
 
         $result = [];
-        $rows = $this->connection->fetchAll($sql);
+        $rows = $this->connection->fetchAllAssociative($sql);
         foreach ($rows as $row) {
             $result[$row['class_name']] = [
                 'id'   => $row['id'],
@@ -102,7 +102,7 @@ class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
 
         $result = [];
         if ($entityId) {
-            $rows = $this->connection->fetchAll($sql);
+            $rows = $this->connection->fetchAllAssociative($sql);
             foreach ($rows as $row) {
                 $result[$row['id']] = $this->connection->convertToPHPValue($row['data'], 'array');
             }
