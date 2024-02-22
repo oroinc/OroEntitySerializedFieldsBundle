@@ -73,7 +73,7 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
         $this->logQuery($logger, $sql);
 
         $result = [];
-        $rows   = $this->connection->fetchAll($sql);
+        $rows   = $this->connection->fetchAllAssociative($sql);
         foreach ($rows as $row) {
             $result[$row['class_name']] = [
                 'id'   => $row['id'],
@@ -100,7 +100,7 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
 
         $result = [];
         if ($entityId) {
-            $rows = $this->connection->fetchAll($sql);
+            $rows = $this->connection->fetchAllAssociative($sql);
             foreach ($rows as $row) {
                 $result[$row['id']] = [
                     'data'       => $this->connection->convertToPHPValue($row['data'], 'array'),
@@ -141,8 +141,8 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
             $this->logQuery($logger, $indexSql, $indexParams);
 
             if (!$dryRun) {
-                $this->connection->prepare($fieldSql)->execute($fieldParams);
-                $this->connection->prepare($indexSql)->execute($indexParams);
+                $this->connection->prepare($fieldSql)->executeQuery($fieldParams);
+                $this->connection->prepare($indexSql)->executeQuery($indexParams);
             }
         }
     }
