@@ -149,7 +149,7 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
                 ],
                 'renamedSerializedField4' => [
                     'property_path' => 'serializedField4',
-                    'data_type'     => 'int',
+                    'data_type'     => 'integer',
                     'depends_on'    => ['serialized_data', 'another_field']
                 ]
             ]
@@ -166,11 +166,11 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
 
         $fieldConfigs = [
             new Config(
-                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField1', 'int'),
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField1', 'integer'),
                 ['is_serialized' => true]
             ),
             new Config(
-                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField2', 'int'),
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField2', 'integer'),
                 ['is_serialized' => true]
             ),
             new Config(
@@ -200,11 +200,11 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
                     ],
                     'serializedField1'        => [
                         'exclude'    => true,
-                        'data_type'  => 'int',
+                        'data_type'  => 'integer',
                         'depends_on' => ['serialized_data']
                     ],
                     'serializedField2'        => [
-                        'data_type'  => 'int',
+                        'data_type'  => 'integer',
                         'depends_on' => ['serialized_data']
                     ],
                     'renamedSerializedField3' => [
@@ -214,7 +214,7 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
                     ],
                     'renamedSerializedField4' => [
                         'property_path' => 'serializedField4',
-                        'data_type'     => 'int',
+                        'data_type'     => 'integer',
                         'depends_on'    => ['serialized_data', 'another_field']
                     ]
                 ]
@@ -255,11 +255,11 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
 
         $fieldConfigs = [
             new Config(
-                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField1', 'int'),
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField1', 'integer'),
                 ['is_serialized' => true, 'is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM]
             ),
             new Config(
-                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField2', 'int'),
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField2', 'integer'),
                 ['is_serialized' => true, 'is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM]
             )
         ];
@@ -281,11 +281,11 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
                         'exclude' => true
                     ],
                     'serializedField1' => [
-                        'data_type'  => 'int',
+                        'data_type'  => 'integer',
                         'depends_on' => ['serialized_data']
                     ],
                     'serializedField2' => [
-                        'data_type'  => 'int',
+                        'data_type'  => 'integer',
                         'depends_on' => ['serialized_data']
                     ]
                 ]
@@ -327,11 +327,11 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
 
         $fieldConfigs = [
             new Config(
-                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField1', 'int'),
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField1', 'integer'),
                 ['is_serialized' => true, 'is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM]
             ),
             new Config(
-                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField2', 'int'),
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField2', 'integer'),
                 ['is_serialized' => true, 'is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM]
             ),
             new Config(
@@ -361,11 +361,11 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
                         'exclude' => true
                     ],
                     'serializedField1' => [
-                        'data_type'  => 'int',
+                        'data_type'  => 'integer',
                         'depends_on' => ['serialized_data']
                     ],
                     'serializedField2' => [
-                        'data_type'  => 'int',
+                        'data_type'  => 'integer',
                         'depends_on' => ['serialized_data']
                     ],
                     'serializedField3' => [
