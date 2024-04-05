@@ -143,10 +143,7 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
      */
     public function isset(EntityFieldProcessTransport $transport): void
     {
-        if ($this->isSerializedProperty($transport) || $transport->getName() === self::PROPERTY) {
-            $transport->setResult(true);
-            $transport->setProcessed(true);
-        }
+        $this->propertyExists($transport);
     }
 
     /**
