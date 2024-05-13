@@ -1,3 +1,4 @@
+@regression
 @ticket-BAP-17916
 Feature: Serialized fields validation on import
   In order to manage data of serialized fields
