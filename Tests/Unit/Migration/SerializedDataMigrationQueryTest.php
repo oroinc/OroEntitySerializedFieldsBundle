@@ -200,7 +200,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
                 ],
             ]);
 
-        $expectedQuery ='ALTER TABLE entity_1 CHANGE serialized_data serialized_data '
+        $expectedQuery = 'ALTER TABLE entity_1 CHANGE serialized_data serialized_data '
             . 'LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:json)\'';
 
         $this->connection->expects(self::once())
