@@ -31,7 +31,7 @@ class AddSerializedFields implements ProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function process(ContextInterface $context): void
     {
@@ -66,6 +66,9 @@ class AddSerializedFields implements ProcessorInterface
         }
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     private function addSerializedFields(
         EntityDefinitionConfig $definition,
         string $entityClass,
@@ -82,13 +85,15 @@ class AddSerializedFields implements ProcessorInterface
             $fieldName = $fieldId->getFieldName();
             $field = $definition->findField($fieldName, true);
             if (null !== $field) {
-                if (!$field->getDataType()) {
+                if (!$field->getDataType() && !ExtendHelper::isEnumerableType($fieldId->getFieldType())) {
                     $field->setDataType($fieldId->getFieldType());
                 }
                 $field->addDependsOn(self::SERIALIZED_DATA_FIELD);
             } elseif (!$skipNotConfiguredCustomFields || !$this->isCustomField($fieldConfig)) {
                 $field = $definition->addField($fieldName);
-                $field->setDataType($fieldId->getFieldType());
+                if (!ExtendHelper::isEnumerableType($fieldId->getFieldType())) {
+                    $field->setDataType($fieldId->getFieldType());
+                }
                 $field->setDependsOn([self::SERIALIZED_DATA_FIELD]);
             }
         }

@@ -7,6 +7,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Guess\ColumnGuess;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface as Property;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
 /**
  * Column options Guesser for serialized field configs.
@@ -27,12 +28,14 @@ class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
     public function guessFormatter($class, $property, $type)
     {
         $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
-        if ($extendFieldConfig && $extendFieldConfig->is('is_serialized')) {
+        if ($extendFieldConfig
+            && $extendFieldConfig->is('is_serialized')
+            && !ExtendHelper::isEnumerableType($type)) {
             $options = [
                 'frontend_type' => Property::TYPE_HTML,
-                'type'          => 'twig',
-                'template'      => '@OroEntitySerializedFields/Datagrid/Property/serialized.html.twig',
-                'context'       => [
+                'type' => 'twig',
+                'template' => '@OroEntitySerializedFields/Datagrid/Property/serialized.html.twig',
+                'context' => [
                     'field_name' => $property,
                     'field_type' => $type,
                 ],

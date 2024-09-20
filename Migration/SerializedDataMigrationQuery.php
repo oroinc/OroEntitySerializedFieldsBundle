@@ -11,6 +11,7 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -142,6 +143,8 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
             $config = $this->connection->convertToPHPValue($row['data'], Types::ARRAY);
             if (!empty($config['extend']['is_extend'])
                 && $config['extend']['state'] === ExtendScope::STATE_ACTIVE
+                // enum option entity is not should be checked for 'serialized_data' field
+                && EnumOption::class !== $entityClass
             ) {
                 $tableName = $config['extend']['schema']['doctrine'][$entityClass]['table'] ??
                     $this->metadataHelper->getTableNameByEntityClass($entityClass);

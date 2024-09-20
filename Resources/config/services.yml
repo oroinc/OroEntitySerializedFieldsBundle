@@ -191,4 +191,27 @@ services:
         arguments:
             - '%oro_serialized_fields.dbal_types%'
         tags:
-            - { name: 'oro_entity.virtual_field_provider'}
+            - { name: 'oro_entity.virtual_field_provider' }
+    
+    oro_serialized_fields.normalizer.serialized_enum_normalizer:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Normalizer\SerializedEnumFieldsNormalizer
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: 'oro_serialized_fields.field_normalizer', field_type: 'enum' }
+    
+    oro_serialized_fields.normalizer.common_multi_enum_normalizer:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\Normalizer\SerializedMultiEnumFieldsNormalizer
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: 'oro_serialized_fields.field_normalizer', field_type: 'multiEnum' }
+
+    oro_serialized_fields.enumerable_change_set_to_audit_field_converter:
+        class: Oro\Bundle\EntitySerializedFieldsBundle\DataAudit\EnumerableChangeSetToAuditFieldsConverter
+        decorates: oro_dataaudit.converter.change_set_to_audit_fields
+        public: false
+        arguments:
+            - '@.inner'
+            - '@oro_entity_config.config_manager'
+            - '@oro_dataaudit.audit_config_provider'
