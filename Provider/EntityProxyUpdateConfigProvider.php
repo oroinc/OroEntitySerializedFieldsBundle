@@ -7,9 +7,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Provider;
  */
 class EntityProxyUpdateConfigProvider implements EntityProxyUpdateConfigProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isEntityProxyUpdateAllowed(): bool
     {
         return true;

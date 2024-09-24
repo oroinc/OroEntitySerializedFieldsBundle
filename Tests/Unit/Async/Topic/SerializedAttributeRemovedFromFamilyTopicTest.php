@@ -10,11 +10,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class SerializedAttributeRemovedFromFamilyTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new SerializedAttributeRemovedFromFamilyTopic();
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         $fullOptionsSet = [
@@ -30,6 +32,7 @@ class SerializedAttributeRemovedFromFamilyTopicTest extends AbstractTopicTestCas
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

@@ -14,6 +14,7 @@ class SerializedEnumFieldsNormalizer implements SerializedFieldNormalizerInterfa
     {
     }
 
+    #[\Override]
     public function normalize($value, string $fieldName = null): mixed
     {
         if (null === $value) {
@@ -24,6 +25,7 @@ class SerializedEnumFieldsNormalizer implements SerializedFieldNormalizerInterfa
             ?->getReference(EnumOption::class, $value);
     }
 
+    #[\Override]
     public function denormalize($value): mixed
     {
         if (!is_object($value) || !is_callable([$value, 'getId'])) {

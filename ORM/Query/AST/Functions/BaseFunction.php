@@ -31,6 +31,7 @@ abstract class BaseFunction extends FunctionNode
         $this->argMapping[] = $parserMethod;
     }
 
+    #[\Override]
     public function parse(Parser $parser): void
     {
         $this->initFunctionMapping();
@@ -57,6 +58,7 @@ abstract class BaseFunction extends FunctionNode
         }
     }
 
+    #[\Override]
     public function getSql(SqlWalker $sqlWalker): string
     {
         $dispatched = [];

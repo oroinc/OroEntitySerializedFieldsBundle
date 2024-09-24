@@ -10,9 +10,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroEntitySerializedFieldsBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function boot(): void
     {
         parent::boot();
@@ -20,9 +18,7 @@ class OroEntitySerializedFieldsBundle extends Bundle
         EntitySerializedFieldsHolder::initialize($this->container);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);

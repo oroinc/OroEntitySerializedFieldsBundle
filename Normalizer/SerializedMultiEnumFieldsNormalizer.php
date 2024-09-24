@@ -15,6 +15,7 @@ class SerializedMultiEnumFieldsNormalizer implements SerializedFieldNormalizerIn
     {
     }
 
+    #[\Override]
     public function normalize($value, string $fieldName = null): mixed
     {
         if (!is_array($value) && !$value instanceof Collection) {
@@ -30,6 +31,7 @@ class SerializedMultiEnumFieldsNormalizer implements SerializedFieldNormalizerIn
         return $enumFields;
     }
 
+    #[\Override]
     public function denormalize($value): mixed
     {
         if (!is_array($value) && !$value instanceof Collection) {

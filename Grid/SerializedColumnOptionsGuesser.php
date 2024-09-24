@@ -22,9 +22,7 @@ class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function guessFormatter($class, $property, $type)
     {
         $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);

@@ -11,6 +11,7 @@ class DeletedSerializedAttributeProvider extends DeletedAttributeProvider
      * @param array $ids
      * @return FieldConfigModel[]
      */
+    #[\Override]
     public function getAttributesByIds(array $ids)
     {
         $attributes = parent::getAttributesByIds($ids);

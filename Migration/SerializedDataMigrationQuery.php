@@ -43,17 +43,13 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         $this->metadataHelper = $metadataHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->runSerializedData($logger);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();

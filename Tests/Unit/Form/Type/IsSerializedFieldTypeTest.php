@@ -18,6 +18,7 @@ class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
     /** @var IsSerializedFieldType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->serializedFieldProvider = $this->createMock(SerializedFieldProvider::class);

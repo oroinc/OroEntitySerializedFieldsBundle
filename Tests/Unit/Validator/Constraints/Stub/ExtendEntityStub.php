@@ -15,10 +15,12 @@ class ExtendEntityStub implements ExtendEntityInterface
         return $this->serializedData;
     }
 
+    #[\Override]
     public function get(string $name): mixed
     {
     }
 
+    #[\Override]
     public function set(string $name, mixed $value): static
     {
     }

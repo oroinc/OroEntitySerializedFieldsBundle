@@ -10,9 +10,7 @@ use Oro\Bundle\EntityConfigBundle\ImportExport\DataConverter\EntityFieldTemplate
  */
 class EntityFieldTemplateDataConverter extends BaseConverter
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getMainHeaders(): array
     {
         return ['fieldName', 'is_serialized', 'type'];

@@ -22,6 +22,7 @@ class DropSerializedDataNullValues implements
     use ConnectionAwareTrait;
     use ContainerAwareTrait;
 
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $helper = $this->container->get('oro_serialized_fields.migration.serialized_columns_holder_helper');

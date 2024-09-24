@@ -7,17 +7,13 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Normalizer;
  */
 class PercentSerializedFieldNormalizer implements SerializedFieldNormalizerInterface
 {
-    /**
-     * {@inheriDoc}
-     */
+    #[\Override]
     public function normalize($value)
     {
         return is_numeric($value) ? $value : null;
     }
 
-    /**
-     * {@inheriDoc}
-     */
+    #[\Override]
     public function denormalize($value)
     {
         return is_numeric($value) ? json_decode($value) : null;

@@ -15,6 +15,7 @@ class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
     /** @var DeletedAttributeProviderDecorator */
     private $decorator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->deletedAttributeProvider = $this->createMock(DeletedAttributeProviderInterface::class);

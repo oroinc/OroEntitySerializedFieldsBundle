@@ -21,9 +21,7 @@ class EnumerableChangeSetToAuditFieldsConverter implements ChangeSetToAuditField
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert(
         string $auditEntryClass,
         string $auditFieldClass,

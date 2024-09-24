@@ -23,6 +23,7 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
     /** @var AddSerializedFields */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

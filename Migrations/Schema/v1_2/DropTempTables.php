@@ -21,11 +21,13 @@ class DropTempTables implements Migration, OrderedMigrationInterface, Connection
 
     public const ORDER = ChangeSerializedDataFieldType::ORDER + 10;
 
+    #[\Override]
     public function getOrder()
     {
         return self::ORDER;
     }
 
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $helper = $this->container->get('oro_serialized_fields.migration.serialized_columns_holder_helper');

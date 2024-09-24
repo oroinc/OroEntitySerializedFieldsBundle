@@ -27,6 +27,7 @@ class JsonExtract extends FunctionNode
     /**
      * Parse JSON_EXTRACT(e.json_field, 'some_field')
      */
+    #[\Override]
     public function parse(Parser $parser): void
     {
         $parser->match(Lexer::T_IDENTIFIER);
@@ -38,6 +39,7 @@ class JsonExtract extends FunctionNode
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 
+    #[\Override]
     public function getSql(SqlWalker $sqlWalker): string
     {
         $entityFieldPath = $sqlWalker->walkStringPrimary($this->entityFieldPath);

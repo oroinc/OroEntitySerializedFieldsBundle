@@ -12,9 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class EntityFieldTemplateDataConverterPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         $container->getDefinition('oro_entity_config.importexport.template_data_converter.entity_field')

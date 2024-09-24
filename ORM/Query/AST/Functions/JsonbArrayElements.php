@@ -9,6 +9,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions;
  */
 class JsonbArrayElements extends BaseFunction
 {
+    #[\Override]
     protected function initFunctionMapping(): void
     {
         $this->setFunctionFormat('jsonb_array_elements(%s)');

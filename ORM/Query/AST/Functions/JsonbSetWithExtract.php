@@ -9,6 +9,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions;
  */
 class JsonbSetWithExtract extends BaseFunction
 {
+    #[\Override]
     protected function initFunctionMapping(): void
     {
         $this->setFunctionFormat('jsonb_set(%s::jsonb, %s, (%s->%s)::jsonb - %s)');

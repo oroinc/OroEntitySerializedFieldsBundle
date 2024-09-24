@@ -58,6 +58,7 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
         }
     }
 
+    #[\Override]
     public function get(EntityFieldProcessTransport $transport): void
     {
         if ($transport->getName() === self::PROPERTY) {
@@ -93,6 +94,7 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
         }
     }
 
+    #[\Override]
     public function set(EntityFieldProcessTransport $transport): void
     {
         if ($transport->getName() === self::PROPERTY) {
@@ -131,6 +133,7 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
         }
     }
 
+    #[\Override]
     public function call(EntityFieldProcessTransport $transport): void
     {
         if ($transport->getName() === self::SET_METHOD) {
@@ -239,6 +242,7 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
         return $enumMethods;
     }
 
+    #[\Override]
     public function isset(EntityFieldProcessTransport $transport): void
     {
         if ($this->isSerializedProperty($transport) || $transport->getName() === self::PROPERTY) {
@@ -247,6 +251,7 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
         }
     }
 
+    #[\Override]
     public function propertyExists(EntityFieldProcessTransport $transport): void
     {
         if ($this->isSerializedProperty($transport)
@@ -257,6 +262,7 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
         }
     }
 
+    #[\Override]
     public function methodExists(EntityFieldProcessTransport $transport): void
     {
         if (in_array($transport->getName(), [self::GET_METHOD, self::SET_METHOD])

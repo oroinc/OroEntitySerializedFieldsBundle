@@ -18,9 +18,7 @@ class AddSerializedAttributeToTestActivityTargetMigration implements
 {
     use SerializedFieldsExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->serializedFieldsExtension->addSerializedField(

@@ -29,11 +29,13 @@ class MoveSerializedDataToTempTables implements
     public const ORDER = CreateTempTables::ORDER + 10;
     private const CHUNK_SIZE = 1000;
 
+    #[\Override]
     public function getOrder()
     {
         return self::ORDER;
     }
 
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $helper = $this->container->get('oro_serialized_fields.migration.serialized_columns_holder_helper');

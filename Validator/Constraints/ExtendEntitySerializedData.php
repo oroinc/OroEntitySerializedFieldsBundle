@@ -9,17 +9,13 @@ use Symfony\Component\Validator\Constraint;
  */
 class ExtendEntitySerializedData extends Constraint
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_serialized_fields.validator.extend_entity_serialized_data';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

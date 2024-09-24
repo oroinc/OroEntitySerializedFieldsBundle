@@ -18,9 +18,7 @@ class SerializedDataMigration implements Migration
         $this->metadataHelper = $metadataHelper;
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         if ($schema instanceof ExtendSchema) {
