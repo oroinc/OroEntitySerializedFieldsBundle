@@ -20,6 +20,7 @@ class UniqueExtendEntityFieldValidator extends ConstraintValidator
         $this->validationHelper = $validationHelper;
     }
 
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof FieldConfigModel) {

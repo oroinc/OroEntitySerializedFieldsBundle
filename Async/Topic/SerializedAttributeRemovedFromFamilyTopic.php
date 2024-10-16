@@ -11,11 +11,13 @@ class SerializedAttributeRemovedFromFamilyTopic extends AttributeRemovedFromFami
 {
     public const NAME = 'oro_serialized_fields.serialized_attribute_was_removed_from_family';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Removes an serialized attribute from family';

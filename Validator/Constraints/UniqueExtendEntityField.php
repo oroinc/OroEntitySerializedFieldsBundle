@@ -12,9 +12,7 @@ class UniqueExtendEntityField extends Constraint
     /** @var string */
     public $message = 'This name is reserved to store values of serialized fields.';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

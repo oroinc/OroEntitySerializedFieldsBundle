@@ -28,9 +28,7 @@ class FieldTypeExtension extends AbstractTypeExtension
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
@@ -60,9 +58,7 @@ class FieldTypeExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $fields      = [];
@@ -77,9 +73,7 @@ class FieldTypeExtension extends AbstractTypeExtension
         $view->children = $fields + $view->children;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [FieldType::class];

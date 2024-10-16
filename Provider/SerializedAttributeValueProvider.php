@@ -24,6 +24,7 @@ class SerializedAttributeValueProvider implements AttributeValueProviderInterfac
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    #[\Override]
     public function removeAttributeValues(AttributeFamily $attributeFamily, array $names)
     {
         $manager = $this->doctrineHelper->getEntityManagerForClass($attributeFamily->getEntityClass());

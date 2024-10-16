@@ -45,6 +45,7 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var SerializedFieldsExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

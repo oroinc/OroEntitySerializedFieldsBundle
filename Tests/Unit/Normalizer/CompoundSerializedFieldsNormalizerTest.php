@@ -11,6 +11,7 @@ class CompoundSerializedFieldsNormalizerTest extends TestCase
 {
     private ServiceLocator $locator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->locator = $this->createMock(ServiceLocator::class);

@@ -7,9 +7,7 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Normalizer;
  */
 class DatetimeSerializedFieldNormalizer implements SerializedFieldNormalizerInterface
 {
-    /**
-     * {@inheriDoc}
-     */
+    #[\Override]
     public function normalize($value)
     {
         if ($value === null || $value instanceof \DateTimeInterface) {
@@ -28,9 +26,7 @@ class DatetimeSerializedFieldNormalizer implements SerializedFieldNormalizerInte
         return $dateTime;
     }
 
-    /**
-     * {@inheriDoc}
-     */
+    #[\Override]
     public function denormalize($value)
     {
         if ($value === null) {

@@ -27,17 +27,13 @@ class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperEx
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($actionType)
     {
         return $actionType === ExtendConfigDumper::ACTION_POST_UPDATE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function postUpdate()
     {
         /** @var ConfigProvider $extendConfigProvider */

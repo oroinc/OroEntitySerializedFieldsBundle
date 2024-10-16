@@ -20,6 +20,7 @@ class DeletedSerializedAttributeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var DeletedSerializedAttributeProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configModelManager = $this->createMock(ConfigModelManager::class);

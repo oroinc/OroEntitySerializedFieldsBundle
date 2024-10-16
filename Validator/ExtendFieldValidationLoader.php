@@ -13,9 +13,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class ExtendFieldValidationLoader extends BaseLoader
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function loadClassMetadata(ClassMetadata $metadata): bool
     {
         if ($metadata->getClassName() === ExtendEntityInterface::class) {
@@ -25,9 +23,7 @@ class ExtendFieldValidationLoader extends BaseLoader
         return parent::loadClassMetadata($metadata);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isApplicable(ConfigInterface $extendConfig): bool
     {
         return parent::isApplicable($extendConfig)

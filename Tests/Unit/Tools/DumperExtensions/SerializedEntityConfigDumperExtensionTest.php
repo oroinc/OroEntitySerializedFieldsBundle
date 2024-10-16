@@ -17,6 +17,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
     /** @var SerializedEntityConfigDumperExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $connection = $this->createMock(Connection::class);

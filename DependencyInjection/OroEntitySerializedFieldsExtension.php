@@ -9,14 +9,12 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroEntitySerializedFieldsExtension extends Extension
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
-
-        $container->setParameter('oro_serialized_fields.dbal_types', $config['dbal_types']);
+        $dbalTypes = $config['dbal_types'];
+        $container->setParameter('oro_serialized_fields.dbal_types', $dbalTypes);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');

@@ -10,6 +10,7 @@ class ReflectionExtractorTest extends TestCase
 {
     private ReflectionExtractor $reflectionExtractor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->reflectionExtractor = new ReflectionExtractor();

@@ -3,6 +3,11 @@ doctrine:
         dql:
             string_functions:
                 json_extract: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonExtract
+                jsonb_set: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonbSet
+                jsonb_array_elements: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonbArrayElements
+                jsonb_array_elements_text: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonbArrayElementsText
+                jsonb_array_contains_json: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonbArrayContainJson
+                jsonb_set_with_extract: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonbSetWithExtract
 
 oro_entity_serialized_fields:
     dbal_types:

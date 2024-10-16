@@ -8,9 +8,7 @@ use Psr\Log\LoggerInterface;
 
 class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -19,9 +17,7 @@ class UpdateCustomFieldsWithStorageType extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

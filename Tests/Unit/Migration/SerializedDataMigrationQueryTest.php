@@ -26,6 +26,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
     /** @var SerializedDataMigrationQuery */
     private $query;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->connection = $this->createMock(Connection::class);

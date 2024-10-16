@@ -22,6 +22,7 @@ class DeletedAttributeProviderDecorator implements DeletedAttributeProviderInter
      * @param array $ids
      * @return FieldConfigModel[]
      */
+    #[\Override]
     public function getAttributesByIds(array $ids)
     {
         $attributes = $this->deletedAttributeProvider->getAttributesByIds($ids);
@@ -31,6 +32,7 @@ class DeletedAttributeProviderDecorator implements DeletedAttributeProviderInter
         });
     }
 
+    #[\Override]
     public function removeAttributeValues(AttributeFamily $attributeFamily, array $names)
     {
         $this->deletedAttributeProvider->removeAttributeValues($attributeFamily, $names);

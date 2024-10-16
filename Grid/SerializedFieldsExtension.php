@@ -18,9 +18,7 @@ class SerializedFieldsExtension extends DynamicFieldsExtension
         $this->dbalTypes = $dbalTypes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildExpression(array $fields, DatagridConfiguration $config, string $alias): void
     {
         $fields = array_filter($fields, function (FieldConfigId $field) use ($config, $alias) {

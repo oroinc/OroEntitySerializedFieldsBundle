@@ -18,10 +18,10 @@ class CompoundSerializedFieldsNormalizer
      * @param mixed $value
      * @return mixed
      */
-    public function normalize(string $fieldType, $value)
+    public function normalize(string $fieldType, $value, $fieldName = null)
     {
         if ($normalizer = $this->getNormalizer($fieldType)) {
-            return $normalizer->normalize($value);
+            return null !== $fieldName ? $normalizer->normalize($value, $fieldName) : $normalizer->normalize($value);
         }
 
         return $value;

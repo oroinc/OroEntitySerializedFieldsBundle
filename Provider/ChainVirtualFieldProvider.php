@@ -11,17 +11,13 @@ use Symfony\Component\PropertyAccess\Exception\AccessException;
  */
 class ChainVirtualFieldProvider implements VirtualFieldProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isVirtualField($className, $fieldName): bool
     {
         return $this->isSerializedField($className, $fieldName);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getVirtualFieldQuery($className, $fieldName): array
     {
         if (!$this->isSerializedField($className, $fieldName)) {
@@ -40,9 +36,7 @@ class ChainVirtualFieldProvider implements VirtualFieldProviderInterface
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getVirtualFields($className)
     {
         return EntitySerializedFieldsHolder::getEntityFields($className);

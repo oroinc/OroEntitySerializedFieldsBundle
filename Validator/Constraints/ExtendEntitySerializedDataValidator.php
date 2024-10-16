@@ -55,9 +55,7 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
         $this->constraintsMapping[$fieldType] = $constraintData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof ExtendEntityInterface ||

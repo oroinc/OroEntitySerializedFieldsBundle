@@ -18,6 +18,7 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
     /** @var SerializedColumnOptionsGuesser */
     private $guesser;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

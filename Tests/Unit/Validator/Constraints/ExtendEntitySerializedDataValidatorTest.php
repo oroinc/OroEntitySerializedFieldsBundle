@@ -35,6 +35,7 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
     /** @var ExtendEntitySerializedDataValidator */
     private $constraintValidator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

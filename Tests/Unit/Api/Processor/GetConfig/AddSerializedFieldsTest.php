@@ -14,15 +14,16 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\GetConfig\AddSerialize
 
 class AddSerializedFieldsTest extends ConfigProcessorTestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
     /** @var AddSerializedFields */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -134,6 +135,9 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testForConfigurableEntity()
     {
         $config = [
@@ -151,6 +155,12 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
                     'property_path' => 'serializedField4',
                     'data_type'     => 'integer',
                     'depends_on'    => ['serialized_data', 'another_field']
+                ],
+                'enumField2'              => [
+                    'data_type' => 'string'
+                ],
+                'multiEnumField2'         => [
+                    'data_type' => 'string'
                 ]
             ]
         ];
@@ -179,6 +189,22 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
             ),
             new Config(
                 new FieldConfigId('extend', self::TEST_CLASS_NAME, 'serializedField4', 'string'),
+                ['is_serialized' => true]
+            ),
+            new Config(
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'enumField1', 'enum'),
+                ['is_serialized' => true]
+            ),
+            new Config(
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'enumField2', 'enum'),
+                ['is_serialized' => true]
+            ),
+            new Config(
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'multiEnumField1', 'multiEnum'),
+                ['is_serialized' => true]
+            ),
+            new Config(
+                new FieldConfigId('extend', self::TEST_CLASS_NAME, 'multiEnumField2', 'multiEnum'),
                 ['is_serialized' => true]
             )
         ];
@@ -216,6 +242,20 @@ class AddSerializedFieldsTest extends ConfigProcessorTestCase
                         'property_path' => 'serializedField4',
                         'data_type'     => 'integer',
                         'depends_on'    => ['serialized_data', 'another_field']
+                    ],
+                    'enumField1'              => [
+                        'depends_on' => ['serialized_data']
+                    ],
+                    'enumField2'              => [
+                        'depends_on' => ['serialized_data'],
+                        'data_type'  => 'string'
+                    ],
+                    'multiEnumField1'         => [
+                        'depends_on' => ['serialized_data']
+                    ],
+                    'multiEnumField2'         => [
+                        'depends_on' => ['serialized_data'],
+                        'data_type'  => 'string'
                     ]
                 ]
             ],

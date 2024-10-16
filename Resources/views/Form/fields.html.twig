@@ -9,6 +9,7 @@
                     var _onChangeStorageType = function () {
                         var serializableTypes = {{ form.vars.serializableTypes|json_encode()|raw }};
                         var excludeTypes = [];
+                        var enumerableTypes = ['enum', 'multiEnum'];
                         {% if form.parent.vars.excludeTypes is defined %}
                             excludeTypes = {{ form.parent.vars.excludeTypes|json_encode()|raw }};
                         {% endif %}
@@ -20,6 +21,8 @@
                                     if (serializableTypes.indexOf($(value).val()) === -1) {
                                         $(value).attr('disabled', 'disabled');
                                     }
+                                } else if (selectedStorageType == 0 && enumerableTypes.indexOf($(value).val()) >= 0) {
+                                    $(value).attr('disabled', 'disabled');
                                 } else {
                                     if (excludeTypes.indexOf($(value).val()) !== -1) {
                                         $(value).attr('disabled', 'disabled');
@@ -34,6 +37,9 @@
 
                     mediator.once('page:beforeChange', function () {
                         $(storageTypeSelector).off('change.changeStorageType', _onChangeStorageType);
+                    });
+                    mediator.once('page:update', function () {
+                        _onChangeStorageType();
                     });
                 })
             });

@@ -12,9 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ExtendFieldValidationLoaderPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         $container->getDefinition('oro_entity_extend.validation_loader')

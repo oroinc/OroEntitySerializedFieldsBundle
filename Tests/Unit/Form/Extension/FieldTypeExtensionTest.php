@@ -23,6 +23,7 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var FieldTypeExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
