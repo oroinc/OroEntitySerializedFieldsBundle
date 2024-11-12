@@ -353,8 +353,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 
         $entityConfig = $this->addEntityConfig($entityClassName);
 
-        $this->entityProxyUpdateConfigProvider->expects(self::never())
-            ->method('isEntityProxyUpdateAllowed');
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($entityConfig))
@@ -374,8 +372,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $entityConfig = $this->addEntityConfig($entityClassName);
         $this->addFieldConfig($entityClassName, $fieldName);
 
-        $this->entityProxyUpdateConfigProvider->expects(self::never())
-            ->method('isEntityProxyUpdateAllowed');
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($entityConfig))
@@ -388,7 +384,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preFlush($event);
     }
 
-    public function testPreFlushForSerializedFieldWhenEntityProxyUpdateNotAllowed()
+    public function testPreFlushForSerializedFieldShouldAlwaysUpdateSchema()
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -406,24 +402,21 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(false);
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($fieldConfig))
             ->willReturn(['old', 'new']);
-        $this->configManager->expects(self::never())
+        $this->configManager->expects(self::once())
             ->method('calculateConfigChangeSet');
-        $this->configManager->expects(self::never())
+        $this->configManager->expects(self::once())
             ->method('persist');
 
         $event = new PreFlushConfigEvent(['extend' => $fieldConfig], $this->configManager);
         $this->listener->preFlush($event);
 
         self::assertEquals(ExtendScope::STATE_UPDATE, $entityConfig->get('state'));
-        self::assertEquals(ExtendScope::STATE_NEW, $fieldConfig->get('state'));
-        self::assertSame([], $this->getHasChangedSerializedFields());
+        self::assertEquals(ExtendScope::STATE_ACTIVE, $fieldConfig->get('state'));
+        self::assertSame(['Test\Entity' => true], $this->getHasChangedSerializedFields());
     }
 
     public function testPreFlushShouldNotModifyEntityConfigState()
@@ -441,8 +434,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ['is_serialized' => true]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::never())
-            ->method('isEntityProxyUpdateAllowed');
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($entityConfig))
@@ -475,8 +466,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ['is_serialized' => true]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::never())
-            ->method('isEntityProxyUpdateAllowed');
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($entityConfig))
@@ -511,9 +500,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(true);
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($fieldConfig))
@@ -552,9 +538,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(true);
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($fieldConfig))
@@ -598,9 +581,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(true);
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($fieldConfig))
@@ -653,9 +633,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(true);
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($fieldConfig))
@@ -714,9 +691,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(true);
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($fieldConfig))
@@ -771,9 +745,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(true);
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($fieldConfig))
@@ -827,9 +798,6 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(true);
         $this->configManager->expects(self::once())
             ->method('getConfigChangeSet')
             ->with(self::identicalTo($fieldConfig))
@@ -1129,9 +1097,8 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(true);
+        $this->entityProxyUpdateConfigProvider->expects(self::never())
+            ->method('isEntityProxyUpdateAllowed');
 
         $event = new PreSetRequireUpdateEvent(['extend' => $fieldConfig], $this->configManager);
         self::assertTrue($event->isUpdateRequired());
@@ -1154,9 +1121,8 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->entityProxyUpdateConfigProvider->expects(self::once())
-            ->method('isEntityProxyUpdateAllowed')
-            ->willReturn(true);
+        $this->entityProxyUpdateConfigProvider->expects(self::never())
+            ->method('isEntityProxyUpdateAllowed');
 
         $event = new PreSetRequireUpdateEvent(['extend' => $fieldConfig], $this->configManager);
         self::assertTrue($event->isUpdateRequired());
@@ -1187,7 +1153,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
             $fieldName,
             [
                 'state'         => ExtendScope::STATE_DELETE,
-                'is_serialized' => true,
+                'is_serialized' => false,
             ]
         );
 
