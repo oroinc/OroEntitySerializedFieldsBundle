@@ -74,7 +74,6 @@ class EntityConfigListener
 
         if (!$event->isFieldConfig()
             || !$config->is('is_serialized')
-            || !$this->entityProxyUpdateConfigProvider->isEntityProxyUpdateAllowed()
         ) {
             return;
         }
@@ -192,7 +191,7 @@ class EntityConfigListener
             return;
         }
 
-        if (!$this->entityProxyUpdateConfigProvider->isEntityProxyUpdateAllowed()) {
+        if (!$config->is('is_serialized') && !$this->entityProxyUpdateConfigProvider->isEntityProxyUpdateAllowed()) {
             return;
         }
 
