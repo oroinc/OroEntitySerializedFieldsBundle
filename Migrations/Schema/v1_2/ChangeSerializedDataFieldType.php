@@ -66,6 +66,15 @@ class ChangeSerializedDataFieldType implements
 
     private function moveData(string $tableName, string $tempTableName, Column $idColumn)
     {
+        if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+            $tempTableExists = $this->connection->executeQuery("SHOW TABLES LIKE '$tempTableName'")->fetchOne();
+        } else {
+            $tempTableExists = $this->connection->executeQuery("SELECT to_regclass('public.$tempTableName')")->fetchOne();
+        }
+        if (!$tempTableExists) {
+            return;
+        }
+        
         $sourceIdColumn = $idColumn->getName();
 
         if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
@@ -108,6 +117,12 @@ class ChangeSerializedDataFieldType implements
 
     private function updateEntityConfig(QueryBag $queries, array $entityConfig): void
     {
+        if (!isset(
+            $entityConfig['id'],
+            $entityConfig['data']['extend']['schema']['entity']
+        )) {
+            return ;
+        }
         $data = $entityConfig['data'];
         $exClass = $data['extend']['schema']['entity'];
         $fieldName = 'serialized_data';

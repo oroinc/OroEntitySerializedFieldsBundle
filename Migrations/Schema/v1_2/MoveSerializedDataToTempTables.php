@@ -3,6 +3,7 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Query\QueryException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
@@ -96,7 +97,25 @@ class MoveSerializedDataToTempTables implements
             }
 
             $this->connection->executeQuery("UPDATE $tableName SET serialized_data = NULL");
-            $this->connection->executeQuery("CREATE INDEX {$tempTableName}_id_idx ON $tempTableName (id)");
+            $indexName = "{$tempTableName}_id_idx";
+            if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+                $tempTableExists = $this->connection->executeQuery("SHOW TABLES LIKE '$tempTableName'")->fetchOne(); 
+                if ($tempTableExists) {
+                    /** @var $result \Doctrine\DBAL\ForwardCompatibility\Result */
+                    $result = $this->connection->executeQuery("SHOW INDEX FROM $tempTableName WHERE KEY_NAME = '$indexName'");
+                    if ($result->fetchAllNumeric()[0][0] ?? 0) {
+                        $this->connection->executeQuery("DROP INDEX $indexName ON $tempTableName");
+                    }
+                }
+            } else {
+                $tempTableExists = $this->connection->executeQuery("SELECT to_regclass('public.$tempTableName')")->fetchOne();
+                if ($tempTableExists) {
+                    $this->connection->executeQuery("DROP INDEX IF EXISTS $indexName");
+                }
+            }
+            if ($tempTableExists) {
+                $this->connection->executeQuery("CREATE INDEX $indexName ON $tempTableName (id)");
+            }
         }
     }
 }
