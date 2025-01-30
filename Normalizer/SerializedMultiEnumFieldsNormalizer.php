@@ -16,7 +16,7 @@ class SerializedMultiEnumFieldsNormalizer implements SerializedFieldNormalizerIn
     }
 
     #[\Override]
-    public function normalize($value, string $fieldName = null): mixed
+    public function normalize($value, ?string $fieldName = null): mixed
     {
         if (!is_array($value) && !$value instanceof Collection) {
             return $value;

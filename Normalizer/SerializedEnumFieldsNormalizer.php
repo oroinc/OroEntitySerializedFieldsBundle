@@ -15,7 +15,7 @@ class SerializedEnumFieldsNormalizer implements SerializedFieldNormalizerInterfa
     }
 
     #[\Override]
-    public function normalize($value, string $fieldName = null): mixed
+    public function normalize($value, ?string $fieldName = null): mixed
     {
         if (null === $value) {
             return null;
