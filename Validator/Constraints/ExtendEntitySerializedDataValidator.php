@@ -168,7 +168,7 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
         return $constraints;
     }
 
-    private function createConstraint(string $className, array $options = null): Constraint
+    private function createConstraint(string $className, ?array $options = null): Constraint
     {
         $fullClassName = '\\Symfony\\Component\\Validator\\Constraints\\' . $className;
 
