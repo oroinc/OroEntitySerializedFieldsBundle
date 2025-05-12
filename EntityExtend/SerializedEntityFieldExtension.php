@@ -186,10 +186,11 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
                 $serialized[$transport->getName()] = array_values($serialized[$transport->getName()]);
             }
         }
-        if (isset($normalized[$transport->getValue()])) {
+        if (isset($normalized[$transport->getName()])) {
             $normalizedKey = array_search($value, $normalized[$transport->getName()]);
             if (false !== $normalizedKey) {
-                unset($serialized[$transport->getName()][$normalizedKey]);
+                unset($normalized[$transport->getName()][$normalizedKey]);
+                $normalized[$transport->getName()] = array_values($normalized[$transport->getName()]);
             }
         }
         $transport->setProcessed(true);
