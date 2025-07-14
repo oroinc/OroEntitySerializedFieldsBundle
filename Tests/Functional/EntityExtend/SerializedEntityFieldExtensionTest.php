@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Functional\EntityExtend\Extension;
+namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Functional\EntityExtend;
 
 use Oro\Bundle\EntityExtendBundle\Tests\Functional\EntityExtend\Extension\EntityExtendTransportTrait;
 use Oro\Bundle\EntitySerializedFieldsBundle\EntityExtend\SerializedEntityFieldExtension;
@@ -16,6 +16,7 @@ class SerializedEntityFieldExtensionTest extends WebTestCase
 
     private SerializedEntityFieldExtension $serializedExtension;
 
+    #[\Override]
     public function setUp(): void
     {
         self::bootKernel();
