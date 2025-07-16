@@ -4,19 +4,18 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Provider\SerializedFieldProvider;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
+class IsSerializedFieldTypeTest extends TestCase
 {
-    /** @var SerializedFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $serializedFieldProvider;
-
-    /** @var IsSerializedFieldType */
-    private $type;
+    private SerializedFieldProvider&MockObject $serializedFieldProvider;
+    private IsSerializedFieldType $type;
 
     #[\Override]
     protected function setUp(): void
@@ -26,7 +25,7 @@ class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
         $this->type = new IsSerializedFieldType($this->serializedFieldProvider);
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
@@ -35,14 +34,14 @@ class IsSerializedFieldTypeTest extends \PHPUnit\Framework\TestCase
         $this->type->configureOptions($resolver);
     }
 
-    public function testType()
+    public function testType(): void
     {
         $this->assertSame('oro_serialized_fields_is_serialized_type', $this->type->getName());
         $this->assertSame(ChoiceType::class, $this->type->getParent());
         $this->assertInstanceOf(AbstractType::class, $this->type);
     }
 
-    public function testFinishView()
+    public function testFinishView(): void
     {
         $expectedElements = [
             'string',

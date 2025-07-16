@@ -7,6 +7,8 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\Form\Type\FieldType;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Type\IsSerializedFieldType;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -15,13 +17,10 @@ use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
+class FieldTypeExtensionTest extends TestCase
 {
-    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
-    private $requestStack;
-
-    /** @var FieldTypeExtension */
-    private $extension;
+    private RequestStack&MockObject $requestStack;
+    private FieldTypeExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -39,12 +38,12 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetExtendedTypes()
+    public function testGetExtendedTypes(): void
     {
         $this->assertEquals([FieldType::class], FieldTypeExtension::getExtendedTypes());
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $builder = $this->createMock(FormBuilderInterface::class);
 
@@ -58,7 +57,7 @@ class FieldTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->buildForm($builder, []);
     }
 
-    public function testPostSubmit()
+    public function testPostSubmit(): void
     {
         $formConfig = $this->createMock(Form::class);
         $formConfig->expects($this->once())

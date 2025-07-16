@@ -16,7 +16,7 @@ class ReflectionExtractorTest extends TestCase
         $this->reflectionExtractor = new ReflectionExtractor();
     }
 
-    public function testCanReadPropertyInClass()
+    public function testCanReadPropertyInClass(): void
     {
         self::assertNotNull(
             $this->reflectionExtractor->getReadInfo(
@@ -41,7 +41,7 @@ class ReflectionExtractorTest extends TestCase
         );
     }
 
-    public function testCanWritePropertyInClass()
+    public function testCanWritePropertyInClass(): void
     {
         $writeInfo = $this->reflectionExtractor->getWriteInfo(
             TestClassMagicGet::class,

@@ -7,21 +7,16 @@ use Oro\Bundle\EntityConfigBundle\Validator\FieldConfigConstraintsFactory;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedData;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\ExtendFieldValidationLoader;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class ExtendFieldValidationLoaderTest extends \PHPUnit\Framework\TestCase
+class ExtendFieldValidationLoaderTest extends TestCase
 {
-    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $extendConfigProvider;
-
-    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $formConfigProvider;
-
-    /** @var FieldConfigConstraintsFactory|\PHPUnit\Framework\MockObject\MockObject */
-    private $fieldConfigConstraintsFactory;
-
-    /** @var ExtendFieldValidationLoader */
-    private $loader;
+    private ConfigProvider&MockObject $extendConfigProvider;
+    private ConfigProvider&MockObject $formConfigProvider;
+    private FieldConfigConstraintsFactory&MockObject $fieldConfigConstraintsFactory;
+    private ExtendFieldValidationLoader $loader;
 
     #[\Override]
     protected function setUp(): void

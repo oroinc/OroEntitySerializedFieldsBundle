@@ -16,24 +16,22 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Normalizer\CompoundSerializedFieldsN
 use Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Validator\Constraints\Stub\ExtendEntityStub;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedData;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedDataValidator;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ContextualValidatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCase
+class ExtendEntitySerializedDataValidatorTest extends TestCase
 {
     private const FIELD_NAME = 'test_field';
 
-    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $configProvider;
-
-    /** @var FieldConfigConstraintsFactory|\PHPUnit\Framework\MockObject\MockObject */
-    private $fieldConfigConstraintsFactory;
-
-    /** @var ExtendEntitySerializedDataValidator */
-    private $constraintValidator;
+    private ConfigProvider&MockObject $configProvider;
+    private FieldConfigConstraintsFactory&MockObject $fieldConfigConstraintsFactory;
+    private ExtendEntitySerializedDataValidator $constraintValidator;
 
     #[\Override]
     protected function setUp(): void
@@ -68,7 +66,7 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
 
         $serializedData = [self::FIELD_NAME => 'value1', 'some_other_field' => 'value2'];
 
-        $constraintGreaterThan10 = new Constraints\GreaterThan(10);
+        $constraintGreaterThan10 = new GreaterThan(10);
 
         $contextualValidator = $this->createMock(ContextualValidatorInterface::class);
         $contextualValidator->expects(self::once())
@@ -80,7 +78,7 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
             ->with(
                 $serializedData[self::FIELD_NAME],
                 [
-                    new Constraints\Type(['type' => 'integer']),
+                    new Type(['type' => 'integer']),
                     $constraintGreaterThan10,
                 ]
             );

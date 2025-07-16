@@ -6,14 +6,13 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\DeletedAttributeProviderInterface;
 use Oro\Bundle\EntitySerializedFieldsBundle\Provider\DeletedAttributeProviderDecorator;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
+class DeletedAttributeProviderDecoratorTest extends TestCase
 {
-    /** @var DeletedAttributeProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $deletedAttributeProvider;
-
-    /** @var DeletedAttributeProviderDecorator */
-    private $decorator;
+    private DeletedAttributeProviderInterface&MockObject $deletedAttributeProvider;
+    private DeletedAttributeProviderDecorator $decorator;
 
     #[\Override]
     protected function setUp(): void
@@ -23,7 +22,7 @@ class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
         $this->decorator = new DeletedAttributeProviderDecorator($this->deletedAttributeProvider);
     }
 
-    public function testGetAttributesByIds()
+    public function testGetAttributesByIds(): void
     {
         $ids = [1, 2];
         $serializedAttribute = $this->getAttribute(true);
@@ -41,7 +40,7 @@ class DeletedAttributeProviderDecoratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($fieldColumnAttribute, array_pop($attributes));
     }
 
-    public function testRemoveAttributeValues()
+    public function testRemoveAttributeValues(): void
     {
         $attributeFamily = new AttributeFamily();
         $names = [];

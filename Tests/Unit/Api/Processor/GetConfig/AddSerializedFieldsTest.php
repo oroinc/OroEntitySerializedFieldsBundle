@@ -11,17 +11,13 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntitySerializedFieldsBundle\Api\Processor\GetConfig\AddSerializedFields;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class AddSerializedFieldsTest extends ConfigProcessorTestCase
 {
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var AddSerializedFields */
-    private $processor;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private ConfigManager&MockObject $configManager;
+    private AddSerializedFields $processor;
 
     #[\Override]
     protected function setUp(): void

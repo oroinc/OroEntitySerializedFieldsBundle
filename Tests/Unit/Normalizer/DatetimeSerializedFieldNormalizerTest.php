@@ -14,7 +14,7 @@ class DatetimeSerializedFieldNormalizerTest extends TestCase
         bool $isProperDate,
         string|int|null $denormalizedDate = null,
         ?string $exceptionMessage = null
-    ) {
+    ): void {
         $datetimeNormalizer = new DatetimeSerializedFieldNormalizer();
 
         if (!$isProperDate) {
@@ -34,7 +34,7 @@ class DatetimeSerializedFieldNormalizerTest extends TestCase
         bool $isProperDate,
         \DateTime|string|null $normalizedDate = null,
         ?string $exceptionMessage = null
-    ) {
+    ): void {
         $datetimeNormalizer = new DatetimeSerializedFieldNormalizer();
 
         if (!$isProperDate) {
