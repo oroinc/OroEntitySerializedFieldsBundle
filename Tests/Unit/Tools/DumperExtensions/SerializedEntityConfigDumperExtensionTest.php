@@ -8,14 +8,13 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Tests\Unit\ConfigProviderMock;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Tools\DumperExtensions\SerializedEntityConfigDumperExtension;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestCase
+class SerializedEntityConfigDumperExtensionTest extends TestCase
 {
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var SerializedEntityConfigDumperExtension */
-    private $extension;
+    private ConfigManager&MockObject $configManager;
+    private SerializedEntityConfigDumperExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -47,17 +46,17 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
         ];
     }
 
-    public function testShouldSupportPostUpdateAction()
+    public function testShouldSupportPostUpdateAction(): void
     {
         self::assertTrue($this->extension->supports(ExtendConfigDumper::ACTION_POST_UPDATE));
     }
 
-    public function testShouldNotSupportPreUpdateAction()
+    public function testShouldNotSupportPreUpdateAction(): void
     {
         self::assertFalse($this->extension->supports(ExtendConfigDumper::ACTION_PRE_UPDATE));
     }
 
-    public function testPostUpdateShouldSkipExtendedEntityIfSchemaIsNotPrepared()
+    public function testPostUpdateShouldSkipExtendedEntityIfSchemaIsNotPrepared(): void
     {
         $extendConfigProvider = new ConfigProviderMock($this->configManager, 'extend');
 
@@ -81,7 +80,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
         self::assertFalse($entityConfig->has('index'));
     }
 
-    public function testPostUpdateForSerializedDataFieldEvenIfEntityDoesNotHaveSerializedFields()
+    public function testPostUpdateForSerializedDataFieldEvenIfEntityDoesNotHaveSerializedFields(): void
     {
         $extendConfigProvider = new ConfigProviderMock($this->configManager, 'extend');
 
@@ -125,7 +124,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
         self::assertFalse($entityConfig->has('index'));
     }
 
-    public function testPostUpdateShouldClearUpSchemaForSerializedFieldsIfAllOfThemAreDeleted()
+    public function testPostUpdateShouldClearUpSchemaForSerializedFieldsIfAllOfThemAreDeleted(): void
     {
         $extendConfigProvider = new ConfigProviderMock($this->configManager, 'extend');
 
@@ -201,7 +200,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
         );
     }
 
-    public function testPostUpdateForNewSerializedField()
+    public function testPostUpdateForNewSerializedField(): void
     {
         $extendConfigProvider = new ConfigProviderMock($this->configManager, 'extend');
 
@@ -279,7 +278,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
         );
     }
 
-    public function testPostUpdateForRestoredSerializedField()
+    public function testPostUpdateForRestoredSerializedField(): void
     {
         $extendConfigProvider = new ConfigProviderMock($this->configManager, 'extend');
 
@@ -343,7 +342,7 @@ class SerializedEntityConfigDumperExtensionTest extends \PHPUnit\Framework\TestC
         );
     }
 
-    public function testPostUpdateForDeletedSerializedField()
+    public function testPostUpdateForDeletedSerializedField(): void
     {
         $extendConfigProvider = new ConfigProviderMock($this->configManager, 'extend');
 

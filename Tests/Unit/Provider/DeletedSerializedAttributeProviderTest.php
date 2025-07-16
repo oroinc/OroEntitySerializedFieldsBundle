@@ -8,17 +8,14 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\FieldConfigModelRepository;
 use Oro\Bundle\EntityConfigBundle\Provider\AttributeValueProviderInterface;
 use Oro\Bundle\EntitySerializedFieldsBundle\Provider\DeletedSerializedAttributeProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DeletedSerializedAttributeProviderTest extends \PHPUnit\Framework\TestCase
+class DeletedSerializedAttributeProviderTest extends TestCase
 {
-    /** @var ConfigModelManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configModelManager;
-
-    /** @var AttributeValueProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $attributeValueProvider;
-
-    /** @var DeletedSerializedAttributeProvider */
-    private $provider;
+    private ConfigModelManager&MockObject $configModelManager;
+    private AttributeValueProviderInterface&MockObject $attributeValueProvider;
+    private DeletedSerializedAttributeProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -32,7 +29,7 @@ class DeletedSerializedAttributeProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetAttributesByIds()
+    public function testGetAttributesByIds(): void
     {
         $ids = [1, 2];
         $serializedAttribute = $this->getAttribute(true);

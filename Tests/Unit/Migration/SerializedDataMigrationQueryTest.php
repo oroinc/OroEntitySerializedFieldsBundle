@@ -11,20 +11,15 @@ use Oro\Bundle\EntityExtendBundle\Migration\Schema\ExtendSchema;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\SerializedDataMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
+class SerializedDataMigrationQueryTest extends TestCase
 {
-    /** @var Connection|\PHPUnit\Framework\MockObject\MockObject */
-    private $connection;
-
-    /** @var EntityMetadataHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $helper;
-
-    /** @var Schema */
-    private $schema;
-
-    /** @var SerializedDataMigrationQuery */
-    private $query;
+    private Connection&MockObject $connection;
+    private EntityMetadataHelper&MockObject $helper;
+    private Schema $schema;
+    private SerializedDataMigrationQuery $query;
 
     #[\Override]
     protected function setUp(): void
@@ -48,7 +43,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
      * @param array $data
      * @param string $expectedLoggerMessages
      */
-    public function testExecute(array $row, array $data, $expectedLoggerMessages)
+    public function testExecute(array $row, array $data, $expectedLoggerMessages): void
     {
         $logger = new ArrayLogger();
         $this->query->setConnection($this->connection);
@@ -89,8 +84,12 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider extendSchemaDataProvider
      */
-    public function testExecuteExtendSchema(array $row, array $data, array $extendOptions, $expectedLoggerMessages)
-    {
+    public function testExecuteExtendSchema(
+        array $row,
+        array $data,
+        array $extendOptions,
+        $expectedLoggerMessages
+    ): void {
         $extendOptionsManager = $this->createMock(ExtendOptionsManager::class);
         $extendOptionsManager->expects(self::once())
             ->method('getExtendOptions')
@@ -143,7 +142,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testExecuteCheckColumnNotExists()
+    public function testExecuteCheckColumnNotExists(): void
     {
         $logger = new ArrayLogger();
         $this->query->setConnection($this->connection);
@@ -175,7 +174,7 @@ class SerializedDataMigrationQueryTest extends \PHPUnit\Framework\TestCase
         $this->query->execute($logger);
     }
 
-    public function testExecuteCheckColumnExists()
+    public function testExecuteCheckColumnExists(): void
     {
         $logger = new ArrayLogger();
         $this->query->setConnection($this->connection);

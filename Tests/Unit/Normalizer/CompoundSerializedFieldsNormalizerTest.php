@@ -20,7 +20,7 @@ class CompoundSerializedFieldsNormalizerTest extends TestCase
     /**
      * @dataProvider nonChangeableValuesProvider
      */
-    public function testNormalizationWithNoAvailableTypeNormalizer(mixed $value, string $fieldType)
+    public function testNormalizationWithNoAvailableTypeNormalizer(mixed $value, string $fieldType): void
     {
         $this->locator->expects($this->exactly(2))
             ->method('has')
@@ -45,7 +45,7 @@ class CompoundSerializedFieldsNormalizerTest extends TestCase
         string $denormalizedValue,
         object $normalizedValue,
         SerializedFieldNormalizerInterface $normalizerMock
-    ) {
+    ): void {
         $this->locator->expects($this->exactly(4))
             ->method('has')
             ->with($fieldType)
@@ -71,7 +71,7 @@ class CompoundSerializedFieldsNormalizerTest extends TestCase
     /**
      * @dataProvider normalizationMethodsProvider
      */
-    public function testLocatorNormalizerTypeException($method)
+    public function testLocatorNormalizerTypeException($method): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(sprintf(

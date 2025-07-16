@@ -7,10 +7,11 @@ use Oro\Bundle\EntityExtendBundle\Migration\Schema\ExtendSchema;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\SerializedDataMigration;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\SerializedDataMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use PHPUnit\Framework\TestCase;
 
-class SerializedDataMigrationTest extends \PHPUnit\Framework\TestCase
+class SerializedDataMigrationTest extends TestCase
 {
-    public function testUp()
+    public function testUp(): void
     {
         $metadataHelper = $this->createMock(EntityMetadataHelper::class);
         $schema = $this->createMock(ExtendSchema::class);

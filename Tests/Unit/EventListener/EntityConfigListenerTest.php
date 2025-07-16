@@ -17,6 +17,8 @@ use Oro\Bundle\EntitySerializedFieldsBundle\EventListener\EntityConfigListener;
 use Oro\Bundle\EntitySerializedFieldsBundle\Form\Extension\FieldTypeExtension;
 use Oro\Bundle\EntitySerializedFieldsBundle\Provider\EntityProxyUpdateConfigProviderInterface;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -26,25 +28,14 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
+class EntityConfigListenerTest extends TestCase
 {
-    /** @var EntityProxyUpdateConfigProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityProxyUpdateConfigProvider;
-
-    /** @var EntityGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityGenerator;
-
-    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
-    private $requestStack;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var ConfigProviderMock */
-    private $extendConfigProvider;
-
-    /** @var EntityConfigListener */
-    private $listener;
+    private EntityProxyUpdateConfigProviderInterface&MockObject $entityProxyUpdateConfigProvider;
+    private EntityGenerator&MockObject $entityGenerator;
+    private RequestStack&MockObject $requestStack;
+    private ConfigManager&MockObject $configManager;
+    private ConfigProviderMock $extendConfigProvider;
+    private EntityConfigListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -95,7 +86,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         return $this->extendConfigProvider->addFieldConfig($className, $fieldName, 'string', $values);
     }
 
-    public function testCreateSerializedFieldWhenEntityProxyUpdateNotAllowed()
+    public function testCreateSerializedFieldWhenEntityProxyUpdateNotAllowed(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -153,7 +144,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertSame([], $this->getHasChangedSerializedFields());
     }
 
-    public function testCreateFieldWhenSessionIsNotStarted()
+    public function testCreateFieldWhenSessionIsNotStarted(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -196,7 +187,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertSame([], $this->getHasChangedSerializedFields());
     }
 
-    public function testCreateNotSerializedFieldWhenSessionIsStarted()
+    public function testCreateNotSerializedFieldWhenSessionIsStarted(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -253,7 +244,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertSame([], $this->getHasChangedSerializedFields());
     }
 
-    public function testCreateSerializedFieldWhenSessionIsStarted()
+    public function testCreateSerializedFieldWhenSessionIsStarted(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -311,7 +302,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertSame([$entityClassName => true], $this->getHasChangedSerializedFields());
     }
 
-    public function testPreFlushForNotExtendableEntity()
+    public function testPreFlushForNotExtendableEntity(): void
     {
         $entityClassName = 'Test\Entity';
 
@@ -328,7 +319,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preFlush($event);
     }
 
-    public function testPreFlushWhenExtendedEntityConfigIsNotChanged()
+    public function testPreFlushWhenExtendedEntityConfigIsNotChanged(): void
     {
         $entityClassName = 'Test\Entity';
 
@@ -347,7 +338,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preFlush($event);
     }
 
-    public function testPreFlushForEntityConfigWhenNoChangedSerializedFields()
+    public function testPreFlushForEntityConfigWhenNoChangedSerializedFields(): void
     {
         $entityClassName = 'Test\Entity';
 
@@ -364,7 +355,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preFlush($event);
     }
 
-    public function testPreFlushForEntityConfigAndNotSerializedField()
+    public function testPreFlushForEntityConfigAndNotSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -384,7 +375,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preFlush($event);
     }
 
-    public function testPreFlushForSerializedFieldShouldAlwaysUpdateSchema()
+    public function testPreFlushForSerializedFieldShouldAlwaysUpdateSchema(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -419,7 +410,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertSame(['Test\Entity' => true], $this->getHasChangedSerializedFields());
     }
 
-    public function testPreFlushShouldNotModifyEntityConfigState()
+    public function testPreFlushShouldNotModifyEntityConfigState(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -451,7 +442,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertEquals(ExtendScope::STATE_ACTIVE, $entityConfig->get('state'));
     }
 
-    public function testPreFlushShouldDoNothingIfEntityConfigStateIsNotChangedForEntityConfigAndSerializedField()
+    public function testPreFlushShouldDoNothingIfEntityConfigStateIsNotChangedForEntityConfigAndSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -482,7 +473,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertEquals(ExtendScope::STATE_DELETE, $entityConfig->get('state'));
     }
 
-    public function testPreFlushNewSerializedField()
+    public function testPreFlushNewSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -520,7 +511,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertSame([$entityClassName => true], $this->getHasChangedSerializedFields());
     }
 
-    public function testPreFlushDeletedSerializedField()
+    public function testPreFlushDeletedSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -558,7 +549,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertSame([$entityClassName => true], $this->getHasChangedSerializedFields());
     }
 
-    public function testPreFlushShouldUpdateEntitySchemaForNewSerializedField()
+    public function testPreFlushShouldUpdateEntitySchemaForNewSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -609,7 +600,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPreFlushShouldUpdateEntitySchemaForDeletedSerializedField()
+    public function testPreFlushShouldUpdateEntitySchemaForDeletedSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -663,7 +654,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPreFlushShouldUpdateEntitySchemaForRestoredSerializedField()
+    public function testPreFlushShouldUpdateEntitySchemaForRestoredSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -719,7 +710,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPreFlushShouldUpdateEntitySchemaForExistingSerializedField()
+    public function testPreFlushShouldUpdateEntitySchemaForExistingSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -771,7 +762,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPreFlushShouldUpdateEntitySchemaForDeletedSerializedFieldThatAlreadyExistsInSchema()
+    public function testPreFlushShouldUpdateEntitySchemaForDeletedSerializedFieldThatAlreadyExistsInSchema(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -828,7 +819,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPostFlushWithoutRememberedFieldConfig()
+    public function testPostFlushWithoutRememberedFieldConfig(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -869,7 +860,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPostFlushForChangedSerializedField()
+    public function testPostFlushForChangedSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -914,7 +905,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPostFlushForChangedNotSerializedField()
+    public function testPostFlushForChangedNotSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -955,7 +946,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPostFlushWhenNoChangedFields()
+    public function testPostFlushWhenNoChangedFields(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -996,7 +987,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPostFlushForUnsupportedEntity()
+    public function testPostFlushForUnsupportedEntity(): void
     {
         $this->entityProxyUpdateConfigProvider->expects(self::never())
             ->method('isEntityProxyUpdateAllowed');
@@ -1010,7 +1001,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPreSetRequireUpdateEntityConfigNewSerializedField()
+    public function testPreSetRequireUpdateEntityConfigNewSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -1041,7 +1032,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($event->isUpdateRequired());
     }
 
-    public function testPreSetRequireUpdateEntityConfigNoNewSerializedField()
+    public function testPreSetRequireUpdateEntityConfigNoNewSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
 
@@ -1061,7 +1052,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($event->isUpdateRequired());
     }
 
-    public function testPreSetRequireUpdateFieldConfigNotSerializedField()
+    public function testPreSetRequireUpdateFieldConfigNotSerializedField(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -1083,7 +1074,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($event->isUpdateRequired());
     }
 
-    public function testPreSetRequireUpdateFieldConfigSerializedFieldConfigStateNotDelete()
+    public function testPreSetRequireUpdateFieldConfigSerializedFieldConfigStateNotDelete(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -1107,7 +1098,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($event->isUpdateRequired());
     }
 
-    public function testPreSetRequireUpdateFieldConfigSerializedFieldConfigStateDelete()
+    public function testPreSetRequireUpdateFieldConfigSerializedFieldConfigStateDelete(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';
@@ -1131,7 +1122,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($event->isUpdateRequired());
     }
 
-    public function testPreSetRequireUpdateEmptyConfig()
+    public function testPreSetRequireUpdateEmptyConfig(): void
     {
         $this->entityProxyUpdateConfigProvider->expects(self::never())
             ->method('isEntityProxyUpdateAllowed');
@@ -1143,7 +1134,7 @@ class EntityConfigListenerTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($event->isUpdateRequired());
     }
 
-    public function testPreSetRequireUpdateWhenEntityProxyUpdateNotAllowed()
+    public function testPreSetRequireUpdateWhenEntityProxyUpdateNotAllowed(): void
     {
         $entityClassName = 'Test\Entity';
         $fieldName = 'testField';

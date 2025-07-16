@@ -15,35 +15,22 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Grid\FieldsHelper;
 use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedFieldsExtension;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
+class SerializedFieldsExtensionTest extends TestCase
 {
     private const ENTITY_CLASS_NAME = 'SomeEntityClassName';
     private const ENTITY_ALIAS = 'entityAlias';
 
-    /** @var FieldsHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $fieldsHelper;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var EntityClassResolver|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityClassResolver;
-
-    /** @var DatagridGuesser|\PHPUnit\Framework\MockObject\MockObject */
-    private $datagridGuesser;
-
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
-
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var SelectedFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $selectedFieldsProvider;
-
-    /** @var SerializedFieldsExtension */
-    private $extension;
+    private FieldsHelper&MockObject $fieldsHelper;
+    private ConfigManager&MockObject $configManager;
+    private EntityClassResolver&MockObject $entityClassResolver;
+    private DatagridGuesser&MockObject $datagridGuesser;
+    private FeatureChecker&MockObject $featureChecker;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private SelectedFieldsProviderInterface&MockObject $selectedFieldsProvider;
+    private SerializedFieldsExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -154,7 +141,7 @@ class SerializedFieldsExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getFieldsDataProvider
      */
-    public function testBuildExpression(array $fields, array $fieldsData, array $configs, array $expectedData)
+    public function testBuildExpression(array $fields, array $fieldsData, array $configs, array $expectedData): void
     {
         $datagridConfig = DatagridConfiguration::create(['extended_entity_name' => \stdClass::class]);
 

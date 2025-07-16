@@ -8,15 +8,14 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntitySerializedFieldsBundle\Grid\SerializedColumnOptionsGuesser;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Guess\Guess;
 
-class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
+class SerializedColumnOptionsGuesserTest extends TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var SerializedColumnOptionsGuesser */
-    private $guesser;
+    private ConfigManager&MockObject $configManager;
+    private SerializedColumnOptionsGuesser $guesser;
 
     #[\Override]
     protected function setUp(): void
@@ -26,14 +25,14 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
         $this->guesser = new SerializedColumnOptionsGuesser($this->configManager);
     }
 
-    public function testGuessFormatterNoGuess()
+    public function testGuessFormatterNoGuess(): void
     {
         $this->prepareFieldConfig();
         $guess = $this->guesser->guessFormatter('TestClass', 'testProp', 'string');
         $this->assertNull($guess);
     }
 
-    public function testGuessFormatterNoConfig()
+    public function testGuessFormatterNoConfig(): void
     {
         $class = 'TestClass';
         $property = 'testProp';
@@ -53,7 +52,7 @@ class SerializedColumnOptionsGuesserTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($guess);
     }
 
-    public function testGuessFormatter()
+    public function testGuessFormatter(): void
     {
         $class = 'TestClass';
         $property = 'testProp';
