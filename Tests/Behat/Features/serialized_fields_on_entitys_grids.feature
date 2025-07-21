@@ -1,6 +1,7 @@
 @regression
 @ticket-BAP-21052
 @fixture-OroUserBundle:users.yml
+@ticket-BB-25327
 Feature: Serialized fields on entity's grids
   In order to manage data of serialized fields
   As an Administrator
