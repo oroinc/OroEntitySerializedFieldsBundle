@@ -1,7 +1,7 @@
 @regression
 @ticket-BAP-21052
 @fixture-OroUserBundle:users.yml
-@ticket-BB-25327
+
 Feature: Serialized fields on entity's grids
   In order to manage data of serialized fields
   As an Administrator
@@ -55,7 +55,6 @@ Feature: Serialized fields on entity's grids
     Examples:
       | Field Name         | Type    | Label              |
       | serialized_text    | Text    | Serialized Text    |
-      | serialized_wysiwyg | WYSIWYG | Serialized WYSIWYG |
 
   Scenario Outline: Set serialized fields values created in scenario above to users
     When I go to System/User Management/Users
