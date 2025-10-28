@@ -6,6 +6,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Validator\ExtendFieldValidationLoader as BaseLoader;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedData;
+use Oro\Bundle\ImportExportBundle\Validator\TypeValidationLoader;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
@@ -18,6 +19,9 @@ class ExtendFieldValidationLoader extends BaseLoader
     {
         if ($metadata->getClassName() === ExtendEntityInterface::class) {
             $metadata->addConstraint(new ExtendEntitySerializedData());
+            $metadata->addConstraint(new ExtendEntitySerializedData([
+                'groups' => [TypeValidationLoader::IMPORT_FIELD_TYPE_VALIDATION_GROUP]
+            ]));
         }
 
         return parent::loadClassMetadata($metadata);
