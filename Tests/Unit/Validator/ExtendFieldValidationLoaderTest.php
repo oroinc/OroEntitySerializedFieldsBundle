@@ -7,6 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Validator\FieldConfigConstraintsFactory;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedData;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\ExtendFieldValidationLoader;
+use Oro\Bundle\ImportExportBundle\Validator\TypeValidationLoader;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -39,9 +40,14 @@ class ExtendFieldValidationLoaderTest extends TestCase
             ->method('getClassName')
             ->willReturn(ExtendEntityInterface::class);
 
-        $metadata->expects(self::once())
+        $metadata->expects(self::exactly(2))
             ->method('addConstraint')
-            ->with(new ExtendEntitySerializedData());
+            ->withConsecutive(
+                [new ExtendEntitySerializedData()],
+                [new ExtendEntitySerializedData([
+                    'groups' => [TypeValidationLoader::IMPORT_FIELD_TYPE_VALIDATION_GROUP]
+                ])]
+            );
 
         $this->loader->loadClassMetadata($metadata);
     }

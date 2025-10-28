@@ -63,12 +63,25 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
             return;
         }
 
+        $validationGroups = (array)$this->context->getGroup();
+
         foreach ($this->getFieldConstraints(ClassUtils::getClass($value)) as $fieldName => $constraints) {
-            if (isset($value->{$fieldName})) {
+            if (!isset($value->{$fieldName})) {
+                continue;
+            }
+
+            // Filter constraints by current validation groups.
+            $applicableConstraints = array_filter($constraints, function ($constraint) use ($validationGroups) {
+                $constraintGroups = (array)$constraint->groups;
+
+                return empty($constraintGroups) || array_intersect($constraintGroups, $validationGroups);
+            });
+
+            if ($applicableConstraints) {
                 $this->context->getValidator()
                     ->inContext($this->context)
                     ->atPath($fieldName)
-                    ->validate($value->{$fieldName}, $constraints);
+                    ->validate($value->{$fieldName}, $applicableConstraints, $validationGroups);
             }
         }
     }
