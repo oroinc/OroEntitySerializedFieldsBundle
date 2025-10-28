@@ -17,7 +17,8 @@ use Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Validator\Constraints\Stu
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedData;
 use Oro\Bundle\EntitySerializedFieldsBundle\Validator\Constraints\ExtendEntitySerializedDataValidator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ContextualValidatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -68,7 +69,8 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
 
         $serializedData = [self::FIELD_NAME => 'value1', 'some_other_field' => 'value2'];
 
-        $constraintGreaterThan10 = new Constraints\GreaterThan(10);
+        $constraintGreaterThan10 = new GreaterThan(10, null, null, ['Default']);
+        $constraintType = new Type(['type' => 'integer'], null, ['Default']);
 
         $contextualValidator = $this->createMock(ContextualValidatorInterface::class);
         $contextualValidator->expects(self::once())
@@ -77,17 +79,14 @@ class ExtendEntitySerializedDataValidatorTest extends \PHPUnit\Framework\TestCas
             ->willReturnSelf();
         $contextualValidator->expects(self::once())
             ->method('validate')
-            ->with(
-                $serializedData[self::FIELD_NAME],
-                [
-                    new Constraints\Type(['type' => 'integer']),
-                    $constraintGreaterThan10,
-                ]
-            );
+            ->with($serializedData[self::FIELD_NAME], [$constraintType, $constraintGreaterThan10]);
 
         $validator = $this->createMock(ValidatorInterface::class);
 
         $context = $this->createMock(ExecutionContextInterface::class);
+        $context->expects(self::once())
+            ->method('getGroup')
+            ->willReturn('Default');
         $context->expects(self::once())
             ->method('getValidator')
             ->willReturn($validator);
