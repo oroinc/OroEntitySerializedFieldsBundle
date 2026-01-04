@@ -17,7 +17,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
  */
 class SerializedEntityConfigDumperExtension extends AbstractEntityConfigDumperExtension
 {
-    const SERIALIZED_DATA_FIELD = 'serialized_data';
+    public const SERIALIZED_DATA_FIELD = 'serialized_data';
 
     /** @var ConfigManager */
     protected $configManager;

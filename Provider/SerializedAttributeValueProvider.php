@@ -12,7 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Provider\AttributeValueProviderInterface;
  */
 class SerializedAttributeValueProvider implements AttributeValueProviderInterface
 {
-    const BATCH_SIZE = 1000;
+    public const BATCH_SIZE = 1000;
 
     /**
      * @var DoctrineHelper

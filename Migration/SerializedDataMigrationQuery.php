@@ -29,7 +29,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
     /**
      * @internal
      */
-    const COLUMN_NAME = 'serialized_data';
+    public const COLUMN_NAME = 'serialized_data';
 
     /** @var Schema */
     protected $schema;
