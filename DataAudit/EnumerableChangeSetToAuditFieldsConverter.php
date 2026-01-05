@@ -15,9 +15,9 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 class EnumerableChangeSetToAuditFieldsConverter implements ChangeSetToAuditFieldsConverterInterface
 {
     public function __construct(
-        readonly private ChangeSetToAuditFieldsConverterInterface $innerConverter,
-        readonly private ConfigManager $configManager,
-        readonly private AuditConfigProvider $auditConfigProvider,
+        private readonly ChangeSetToAuditFieldsConverterInterface $innerConverter,
+        private readonly ConfigManager $configManager,
+        private readonly AuditConfigProvider $auditConfigProvider,
     ) {
     }
 
