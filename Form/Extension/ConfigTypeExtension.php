@@ -10,6 +10,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Extends the ConfigType form to add serialized field options and reorder form fields.
+ */
 class ConfigTypeExtension extends AbstractTypeExtension
 {
     /**
@@ -28,7 +31,7 @@ class ConfigTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $configModel = $options['config_model'];
         if ($configModel && $configModel instanceof FieldConfigModel) {
@@ -47,7 +50,7 @@ class ConfigTypeExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $fields      = [];
         $fieldsOrder = $this->fieldOrder;

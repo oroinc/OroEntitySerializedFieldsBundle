@@ -109,7 +109,7 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     private function executeUpdates(array $fieldsToUpdate, LoggerInterface $logger, $dryRun)
     {
