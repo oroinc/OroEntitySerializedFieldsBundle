@@ -139,7 +139,8 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         foreach ($rows as $row) {
             $entityClass = $row['class_name'];
             $config = $this->connection->convertToPHPValue($row['data'], Types::ARRAY);
-            if (!empty($config['extend']['is_extend'])
+            if (
+                !empty($config['extend']['is_extend'])
                 && $config['extend']['state'] === ExtendScope::STATE_ACTIVE
                 // enum option entity is not should be checked for 'serialized_data' field
                 && EnumOption::class !== $entityClass
@@ -155,7 +156,8 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         if ($this->schema instanceof ExtendSchema) {
             $options = $this->schema->getExtendOptions();
             foreach ($options as $key => $value) {
-                if ($this->isTableOptions($key)
+                if (
+                    $this->isTableOptions($key)
                     && !empty($value['extend']['is_extend'])
                     && isset($value[ExtendOptionsManager::ENTITY_CLASS_OPTION])
                     && (

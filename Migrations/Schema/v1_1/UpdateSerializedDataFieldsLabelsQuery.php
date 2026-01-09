@@ -46,7 +46,8 @@ class UpdateSerializedDataFieldsLabelsQuery extends ParametrizedMigrationQuery
             if (isset($config['extend']['is_extend']) && $config['extend']['is_extend'] === true) {
                 $entityFields = $this->getConfigurableEntityFieldsData($logger, $configData['id']);
                 foreach ($entityFields as $fieldId => $fieldConfig) {
-                    if ($fieldConfig['field_name'] === 'serialized_data'
+                    if (
+                        $fieldConfig['field_name'] === 'serialized_data'
                         && isset($fieldConfig['data']['entity']['label'])
                         && $fieldConfig['data']['entity']['label'] === 'data'
                     ) {

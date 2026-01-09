@@ -58,8 +58,10 @@ class ExtendEntitySerializedDataValidator extends ConstraintValidator
     #[\Override]
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof ExtendEntityInterface ||
-            !EntityPropertyInfo::methodExists($value, 'getSerializedData')) {
+        if (
+            !$value instanceof ExtendEntityInterface ||
+            !EntityPropertyInfo::methodExists($value, 'getSerializedData')
+        ) {
             return;
         }
 
