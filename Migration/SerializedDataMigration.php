@@ -8,6 +8,9 @@ use Oro\Bundle\EntityExtendBundle\Migration\Schema\ExtendSchema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * Migration for handling serialized data schema changes.
+ */
 class SerializedDataMigration implements Migration
 {
     /** @var EntityMetadataHelper */

@@ -6,6 +6,9 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\DeletedAttributeProviderInterface;
 
+/**
+ * Decorator for deleted attribute provider that filters out serialized attributes.
+ */
 class DeletedAttributeProviderDecorator implements DeletedAttributeProviderInterface
 {
     /**
