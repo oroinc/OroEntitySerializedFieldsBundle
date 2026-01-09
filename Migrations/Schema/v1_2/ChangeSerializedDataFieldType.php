@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_2;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
@@ -12,8 +12,8 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Change serialized_data column type to JSON in table and move data back from temp table.
@@ -51,7 +51,7 @@ class ChangeSerializedDataFieldType implements
 
     private function changeSerializedColumnTypeToJson(string $tableName): void
     {
-        if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+        if ($this->connection->getDatabasePlatform() instanceof MySQLPlatform) {
             $this->connection->executeQuery("ALTER TABLE $tableName MODIFY COLUMN serialized_data json");
         } else {
             $this->connection->executeQuery("
@@ -68,7 +68,7 @@ class ChangeSerializedDataFieldType implements
     {
         $sourceIdColumn = $idColumn->getName();
 
-        if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+        if ($this->connection->getDatabasePlatform() instanceof MySQLPlatform) {
             $update = "UPDATE $tableName s
                 JOIN $tempTableName t ON t.id = s.$sourceIdColumn
                 SET s.serialized_data = t.serialized_data

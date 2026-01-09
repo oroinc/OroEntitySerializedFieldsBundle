@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Removes serialized_data column's(JSON type) null valued items.
@@ -38,7 +38,7 @@ class DropSerializedDataNullValues implements
             return;
         }
 
-        if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+        if ($this->connection->getDatabasePlatform() instanceof MySQLPlatform) {
             $caseWhens = [];
             foreach ($fieldNames as $fieldName) {
                 $caseWhens[] = sprintf(

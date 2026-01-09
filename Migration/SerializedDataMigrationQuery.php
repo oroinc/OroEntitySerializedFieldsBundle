@@ -3,7 +3,7 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Migration;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
@@ -71,24 +71,26 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
 
         $options = [
             'notnull' => false,
-            OroOptions::KEY => [
-                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
-                'entity' => [
-                    'label' => 'oro.entity_serialized_fields.data.label'
-                ],
-                'extend' => [
-                    'is_extend' => false,
-                    'owner' => ExtendScope::OWNER_CUSTOM
-                ],
-                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
-                'form' => ['is_enabled' => false],
-                'view' => ['is_displayable' => false],
-                'merge' => ['display' => false],
-                'dataaudit' => ['auditable' => false]
+            'platformOptions' => [
+                OroOptions::KEY => [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_HIDDEN,
+                    'entity' => [
+                        'label' => 'oro.entity_serialized_fields.data.label'
+                    ],
+                    'extend' => [
+                        'is_extend' => false,
+                        'owner' => ExtendScope::OWNER_CUSTOM
+                    ],
+                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                    'form' => ['is_enabled' => false],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => false]
+                ]
             ]
         ];
         if ($platform instanceof PostgreSQL94Platform) {
-            $options['customSchemaOptions'] = ['jsonb' => true];
+            $options['platformOptions']['jsonb'] = true;
         }
 
         foreach ($entities as $tableName) {
@@ -202,7 +204,7 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
     ): void {
         $comparator = new Comparator();
         $schemaDiff = $comparator->compare($this->schema, $toSchema);
-        $isMySql = $platform instanceof MySqlPlatform;
+        $isMySql = $platform instanceof MySQLPlatform;
         foreach ($schemaDiff->toSql($platform) as $query) {
             if ($isMySql && stripos($query, 'CHANGE serialized_data serialized_data JSON') !== false) {
                 $query = str_replace(['CHARACTER SET utf8', 'COLLATE `utf8_unicode_ci`'], '', $query);

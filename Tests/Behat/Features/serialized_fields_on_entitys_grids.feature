@@ -170,7 +170,7 @@ Feature: Serialized fields on entity's grids
     When I sort grid by "Serialized Money"
     Then I should see following grid:
       | Username | Serialized Money       |
-      | admin    | N/A                    |
+      | admin    | $0.00                  |
       | charlie  | $924.57                |
       | megan    | $90,000,000,000,000.00 |
     When I sort grid by "Serialized Money" again
@@ -178,7 +178,7 @@ Feature: Serialized fields on entity's grids
       | Username | Serialized Money       |
       | megan    | $90,000,000,000,000.00 |
       | charlie  | $924.57                |
-      | admin    | N/A                    |
+      | admin    | $0.00                  |
     When I sort grid by "Serialized Percent"
     Then I should see following grid:
       | Username | Serialized Percent   |

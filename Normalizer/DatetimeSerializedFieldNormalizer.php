@@ -22,6 +22,9 @@ class DatetimeSerializedFieldNormalizer implements SerializedFieldNormalizerInte
         if ($dateTime === false) {
             throw new \RuntimeException(sprintf("Can't convert '%s' date string into 'DateTime' object", $value));
         }
+        if ($dateTime->getTimezone()->getName() === '+00:00') {
+            $dateTime->setTimezone(new \DateTimeZone('UTC'));
+        }
 
         return $dateTime;
     }

@@ -60,7 +60,7 @@ class SerializedColumnsHolderHelper
                 }
             }
             $table = $schema->getTable($tableName);
-            $primaryKeyColumns = $table->getPrimaryKeyColumns();
+            $primaryKeyColumns = $table->getPrimaryKey()->getColumns();
             $id = reset($primaryKeyColumns);
             $idColumn = $table->getColumn($id);
 

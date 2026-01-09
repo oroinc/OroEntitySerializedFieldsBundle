@@ -3,7 +3,7 @@
 namespace Oro\Bundle\EntitySerializedFieldsBundle\Tests\Unit\Migration;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\Migration\EntityMetadataHelper;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -28,7 +28,7 @@ class SerializedDataMigrationQueryTest extends TestCase
 
         $this->connection->expects($this->any())
             ->method('getDatabasePlatform')
-            ->willReturn(new MySqlPlatform());
+            ->willReturn(new MySQLPlatform());
 
         $this->helper = $this->createMock(EntityMetadataHelper::class);
 
