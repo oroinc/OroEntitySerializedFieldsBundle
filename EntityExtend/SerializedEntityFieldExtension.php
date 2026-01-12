@@ -76,7 +76,8 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
 
             $result = null;
             if (isset($serialized[$transport->getName()])) {
-                if (!array_key_exists($transport->getName(), $normalized)
+                if (
+                    !array_key_exists($transport->getName(), $normalized)
                     || !$this->isFreshNormalize($normalized[$transport->getName()], $serialized[$transport->getName()])
                 ) {
                     $normalized[$transport->getName()] = $this->normalizer->normalize(
@@ -255,9 +256,11 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
     #[\Override]
     public function propertyExists(EntityFieldProcessTransport $transport): void
     {
-        if ($this->isSerializedProperty($transport)
+        if (
+            $this->isSerializedProperty($transport)
             || $transport->getName() === self::PROPERTY
-            || in_array($transport->getName(), $this->getEnumMethods($transport))) {
+            || in_array($transport->getName(), $this->getEnumMethods($transport))
+        ) {
             $transport->setResult(true);
             $transport->setProcessed(true);
         }
@@ -266,8 +269,10 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
     #[\Override]
     public function methodExists(EntityFieldProcessTransport $transport): void
     {
-        if (in_array($transport->getName(), [self::GET_METHOD, self::SET_METHOD])
-            || array_key_exists($transport->getName(), $this->getEnumMethods($transport))) {
+        if (
+            in_array($transport->getName(), [self::GET_METHOD, self::SET_METHOD])
+            || array_key_exists($transport->getName(), $this->getEnumMethods($transport))
+        ) {
             $transport->setResult(true);
             $transport->setProcessed(true);
             ExtendEntityStaticCache::setMethodExistsCache($transport, true);
@@ -276,8 +281,10 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
 
     protected function initializeDefault(EntityFieldProcessTransport $transport): void
     {
-        if (!is_array($transport->getStorage()[static::PROPERTY])
-            || array_key_exists($transport->getName(), $transport->getStorage()[static::PROPERTY])) {
+        if (
+            !is_array($transport->getStorage()[static::PROPERTY])
+            || array_key_exists($transport->getName(), $transport->getStorage()[static::PROPERTY])
+        ) {
             return;
         }
         $defaultValue = null;

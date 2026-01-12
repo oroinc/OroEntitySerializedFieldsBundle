@@ -46,7 +46,8 @@ class EntityConfigListener
                 $fieldConfig->set('is_serialized', true);
             }
         }
-        if ($fieldConfig->is('is_serialized')
+        if (
+            $fieldConfig->is('is_serialized')
             && $this->entityProxyUpdateConfigProvider->isEntityProxyUpdateAllowed()
         ) {
             $this->hasChangedSerializedFields[$className] = true;
@@ -72,7 +73,8 @@ class EntityConfigListener
             return;
         }
 
-        if (!$event->isFieldConfig()
+        if (
+            !$event->isFieldConfig()
             || !$config->is('is_serialized')
         ) {
             return;
@@ -85,7 +87,8 @@ class EntityConfigListener
          *  - field's "state" attribute should be "Active"
          *  - owning entity "state" attribute should NOT be changed
          */
-        if (!$config->is('state', ExtendScope::STATE_DELETE)
+        if (
+            !$config->is('state', ExtendScope::STATE_DELETE)
             && !$config->is('state', ExtendScope::STATE_ACTIVE)
         ) {
             $this->hasChangedSerializedFields[$className] = true;
@@ -111,7 +114,8 @@ class EntityConfigListener
          */
         $entityConfig = $configManager->getEntityConfig('extend', $className);
         $schema = $entityConfig->get('schema', false, []);
-        if ($schema
+        if (
+            $schema
             && $this->updateEntitySchema($schema, $config->getId()->getFieldName(), $config->is('is_deleted'))
         ) {
             $entityConfig->set('schema', $schema);
@@ -163,7 +167,8 @@ class EntityConfigListener
         $hasChanges = false;
         if (isset($schema['serialized_property'][$fieldName])) {
             if ($isDeletedField) {
-                if (!isset($schema['serialized_property'][$fieldName]['private'])
+                if (
+                    !isset($schema['serialized_property'][$fieldName]['private'])
                     || !$schema['serialized_property'][$fieldName]['private']
                 ) {
                     $schema['serialized_property'][$fieldName]['private'] = true;

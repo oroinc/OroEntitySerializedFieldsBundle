@@ -26,9 +26,11 @@ class SerializedColumnOptionsGuesser extends AbstractColumnOptionsGuesser
     public function guessFormatter($class, $property, $type)
     {
         $extendFieldConfig = $this->getFieldConfig('extend', $class, $property);
-        if ($extendFieldConfig
+        if (
+            $extendFieldConfig
             && $extendFieldConfig->is('is_serialized')
-            && !ExtendHelper::isEnumerableType($type)) {
+            && !ExtendHelper::isEnumerableType($type)
+        ) {
             $options = [
                 'frontend_type' => Property::TYPE_HTML,
                 'type' => 'twig',

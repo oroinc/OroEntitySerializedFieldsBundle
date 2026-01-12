@@ -5,6 +5,9 @@ namespace Oro\Bundle\EntitySerializedFieldsBundle\Provider;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\DeletedAttributeProvider;
 
+/**
+ * Provides deleted serialized attributes from the entity configuration.
+ */
 class DeletedSerializedAttributeProvider extends DeletedAttributeProvider
 {
     /**
