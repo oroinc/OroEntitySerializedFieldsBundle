@@ -10,6 +10,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Form type for selecting whether a field is serialized or stored in the database.
+ */
 class IsSerializedFieldType extends AbstractType
 {
     /**
