@@ -26,6 +26,14 @@ services:
         tags:
             - { name: 'oro_entity_extend.entity_field_extension', priority: 100 }
 
+    oro_serialized_fields.duplicator_filter_type.serialized_data:
+        class: 'Oro\Component\Duplicator\ObjectType'
+        arguments:
+            - serialized_data_storage
+            - Oro\Bundle\EntitySerializedFieldsBundle\Duplicator\Filter\SerializedDataFilter
+        tags:
+            - { name: oro_action.duplicate.filter_type }
+
     oro_serialized_fields.entity_config_dumper.extension:
         class: Oro\Bundle\EntitySerializedFieldsBundle\Tools\DumperExtensions\SerializedEntityConfigDumperExtension
         arguments:
