@@ -206,7 +206,16 @@ class SerializedDataMigrationQuery extends ParametrizedMigrationQuery
         $isMySql = $platform instanceof MySqlPlatform;
         foreach ($schemaDiff->toSql($platform) as $query) {
             if ($isMySql && stripos($query, 'CHANGE serialized_data serialized_data JSON') !== false) {
-                $query = str_replace(['CHARACTER SET utf8', 'COLLATE `utf8_unicode_ci`'], '', $query);
+                $query = str_replace(
+                    [
+                        'CHARACTER SET utf8mb3',
+                        'COLLATE `utf8mb3_unicode_ci`',
+                        'CHARACTER SET utf8',
+                        'COLLATE `utf8_unicode_ci`',
+                    ],
+                    '',
+                    $query
+                );
             }
             $this->logQuery($logger, $query);
             if (!$dryRun) {
