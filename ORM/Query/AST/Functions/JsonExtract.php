@@ -14,15 +14,26 @@ use Doctrine\ORM\Query\SqlWalker;
  */
 class JsonExtract extends FunctionNode
 {
-    /**
-     * @var Subselect|Node|string
-     */
+    /** @var Subselect|Node|string */
     private $entityFieldPath;
 
-    /**
-     * @var Subselect|Node|string
-     */
+    /** @var Subselect|Node|string */
     private $jsonFieldPath;
+
+    /**
+     * @param Subselect|Node|string $entityFieldPath
+     * @param Subselect|Node|string $jsonFieldPath
+     *
+     * @return $this
+     */
+    public static function create($entityFieldPath, $jsonFieldPath): self
+    {
+        $astExpr = new JsonExtract('JSON_EXTRACT');
+        $astExpr->entityFieldPath = $entityFieldPath;
+        $astExpr->jsonFieldPath = $jsonFieldPath;
+
+        return $astExpr;
+    }
 
     /**
      * Parse JSON_EXTRACT(e.json_field, 'some_field')
