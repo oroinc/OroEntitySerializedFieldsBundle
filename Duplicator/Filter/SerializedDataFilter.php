@@ -8,13 +8,18 @@ use DeepCopy\Filter\Filter;
 use DeepCopy\Reflection\ReflectionHelper;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntitySerializedFieldsBundle\Entity\EntitySerializedFieldsHolder;
+use Oro\Component\Duplicator\Filter\SourceBagRetentionTrait;
 use Oro\Component\Duplicator\Filter\SourceEntityAwareFilterInterface;
+use Oro\Component\Duplicator\PropertyBag;
+use Oro\Component\Duplicator\PropertyBagInterface;
 
 /**
  * DeepCopy Serialized Data Filter
  */
 class SerializedDataFilter implements Filter, SourceEntityAwareFilterInterface
 {
+    use SourceBagRetentionTrait;
+
     private ?object $sourceEntity = null;
 
     #[\Override]
@@ -26,6 +31,11 @@ class SerializedDataFilter implements Filter, SourceEntityAwareFilterInterface
     #[\Override]
     public function apply($object, $property, $objectCopier): void
     {
+        $entityClass = $this->getEntityClass($object);
+        if ($entityClass === null) {
+            return;
+        }
+
         $reflectionProperty = ReflectionHelper::getProperty($object, $property);
         $value = $reflectionProperty->getValue($object);
 
@@ -33,11 +43,11 @@ class SerializedDataFilter implements Filter, SourceEntityAwareFilterInterface
             return;
         }
 
-        $entityClass = ClassUtils::getClass($this->sourceEntity);
+        $bag = new PropertyBag($entityClass, $value);
+        $this->retainSourceBag($bag);
+        $copiedBag = $objectCopier($bag);
 
-        $copiedBag = $objectCopier((object)$value);
-
-        $copiedArray = (array)$copiedBag;
+        $copiedArray = $copiedBag->toArray();
 
         // Post-pass: normalize objects → raw arrays
         $normalized = $this->normalizeData($entityClass, $copiedArray);
@@ -55,5 +65,17 @@ class SerializedDataFilter implements Filter, SourceEntityAwareFilterInterface
         }
 
         return $result;
+    }
+
+    /**
+     * The storage bag knows its owner; any other bag falls back to the source entity.
+     */
+    private function getEntityClass(object $object): ?string
+    {
+        if ($object instanceof PropertyBagInterface) {
+            return $object->getOwnerClass();
+        }
+
+        return $this->sourceEntity === null ? null : ClassUtils::getClass($this->sourceEntity);
     }
 }
