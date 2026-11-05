@@ -8,6 +8,7 @@ doctrine:
                 jsonb_array_elements_text: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonbArrayElementsText
                 jsonb_array_contains_json: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonbArrayContainJson
                 jsonb_set_with_extract: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonbSetWithExtract
+                jsonb_enum_internal_ids: Oro\Bundle\EntitySerializedFieldsBundle\ORM\Query\AST\Functions\JsonbEnumInternalIds
 
 oro_entity_serialized_fields:
     dbal_types:
