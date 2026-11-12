@@ -227,6 +227,10 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
 
     private function getEnumMethods(EntityFieldProcessTransport $transport): array
     {
+        $cachedValue = $this->getCachedExtensionItem($transport, $this::class, 'getEnumMethods');
+        if (null !== $cachedValue) {
+            return $cachedValue;
+        }
         $fieldsMetadata = $transport->getFieldsMetadata();
         $enumMethods = [];
         foreach ($fieldsMetadata as $fieldName => $fieldData) {
@@ -240,6 +244,7 @@ class SerializedEntityFieldExtension extends AbstractEntityFieldExtension implem
                 $enumMethods[EntityFieldAccessorsHelper::removerName($fieldName)] = $fieldName;
             }
         }
+        $this->setExtensionCacheItem($transport, $this::class, 'getEnumMethods', $enumMethods);
 
         return $enumMethods;
     }
